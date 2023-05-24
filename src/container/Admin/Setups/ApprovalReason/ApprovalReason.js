@@ -83,7 +83,7 @@ const ApprovalReason = () => {
   const dataTwo = [
     {
       ApprovalReason: (
-        <span className="Table_content_Approval_reason">Approval Reason1</span>
+        <span className="Table_content_Approval_reason">Approvall Reason1</span>
       ),
       Edit: <i className="icon-edit color-blue Edit_Icon"></i>,
       Delete: (
