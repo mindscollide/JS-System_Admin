@@ -102,7 +102,7 @@ const SignUpRequest = () => {
                 >
                   <Row>
                     <Col sm={12} md={12} lg={12}>
-                      <span className="Heading-js">JS Login Portal</span>
+                      <span className="Heading-js">JS Logins Portal</span>
                       <span className="signup-request-heading">
                         Signup Request
                       </span>
