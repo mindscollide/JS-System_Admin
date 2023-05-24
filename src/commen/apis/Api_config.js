@@ -10,7 +10,6 @@ const authenticationRefreshToken = {
   RequestMethod: "ServiceManager.RefreshToken",
 };
 
-
 const authenticationRoleList = {
   RequestMethod: "ServiceManager.RoleList",
 };
