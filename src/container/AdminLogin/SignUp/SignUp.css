@@ -1,0 +1,148 @@
+.signup {
+  height: 100vh !important;
+  background: url(../../../assets/images/login-bg.png) no-repeat !important;
+  background-size: cover !important;
+  background-position: fixed !important;
+  padding: 15px 0px !important;
+}
+
+.signup-container {
+  min-height: 80vh !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sign-up-div {
+  display: flex;
+  justify-content: center !important;
+  margin: 0 auto !important;
+  width: 400px;
+  height: 504px;
+  background: rgba(255, 255, 255, 0.5);
+  min-height: 100px;
+  align-items: center !important;
+  border-radius: 12px;
+  padding: 0px 20px;
+}
+
+.Heading-js {
+  display: flex;
+  justify-content: center;
+  color: #eb5300;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: "Montserrat", sans-serif;
+}
+
+.signup-heading {
+  display: flex;
+  justify-content: center;
+  color: #eb5300;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: "Montserrat", sans-serif;
+}
+
+.Goback-Signup-btn {
+  width: 93px !important;
+  height: 39px !important;
+  background: linear-gradient(to bottom, #5b67cd 0%, #2a38af 100%) !important;
+  border-top-right-radius: 0px;
+  border-bottom-left-radius: 0px;
+  border-top-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border: none !important;
+}
+
+.Goback-Signup-btn:is(:hover, ) {
+  background: linear-gradient(to bottom, #feac78 0%, #e97225 100%) !important;
+}
+
+.Signup-btn {
+  width: 101px !important;
+  height: 39px !important;
+  background: linear-gradient(to bottom, #feac78 0%, #e97225 100%) !important;
+  border-top-right-radius: 0px;
+  border-bottom-left-radius: 0px;
+  border-top-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border: none !important;
+}
+
+.Signup-btn:is(:hover, ) {
+  background: linear-gradient(to bottom, #5b67cd 0%, #2a38af 100%) !important;
+}
+
+.sign-up-field {
+  height: 37px !important;
+  font-family: "Montserrat", sans-serif !important;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.5) !important;
+  font-size: 14px !important;
+  outline: none !important;
+  color: #002650 !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.Icon-Field-class {
+  background: rgba(255, 255, 255, 0.5) !important;
+  font-size: 17px !important;
+  outline: none !important;
+  color: #002650 !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.goback-signup-btn-col {
+  display: flex;
+  justify-content: center !important;
+  gap: 5px !important;
+}
+
+.sign-up-col-field {
+  display: flex;
+  gap: 20px !important;
+}
+
+.fields-label {
+  font-family: "Montserrat", sans-serif !important;
+  font-size: 12px !important;
+  color: #004990 !important;
+  font-weight: 500 !important;
+}
+
+.required-span {
+  color: #eb1100 !important;
+}
+
+.TransactionFilter .css-13cymwt-control,
+.css-13cymwt-control {
+  background: rgba(255, 255, 255, 0.5) !important;
+  border: none !important;
+  border-radius: 3px !important;
+  width: 362px !important;
+  height: 37px !important;
+  color: #45494d !important;
+  font-weight: 400 !important;
+  font-size: 13px;
+  /* line-height: 37px; */
+  font-family: "Montserrat", sans-serif !important;
+}
+.css-t3ipsp-control {
+  background: rgba(255, 255, 255, 0.5) !important;
+  border: none !important;
+  border-radius: 3px !important;
+  width: 362px !important;
+  height: 37px !important;
+  color: #45494d !important;
+  font-weight: 400 !important;
+  font-size: 13px;
+  /* line-height: 37px; */
+  font-family: "Montserrat", sans-serif !important;
+}
+
+.TransactionFilter .ant-select-arrow {
+  color: #002650 !important;
+}

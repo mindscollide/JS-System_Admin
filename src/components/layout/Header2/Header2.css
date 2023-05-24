@@ -1,0 +1,255 @@
+.container-header-2 {
+  width: 100% !important;
+  background: #f4f4f4;
+  z-index: 1 !important;
+}
+
+.js-logo {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  gap: 20px;
+}
+.navbar-header {
+  display: flex !important;
+}
+
+.Bell-icon {
+  color: #45494d;
+  font-weight: 400 !important;
+  font-size: 20px !important;
+  position: absolute;
+  top: 27px;
+  cursor: pointer;
+}
+
+.caluclator-button {
+  background: linear-gradient(to bottom, #5b67cd 0%, #2a38af 100%);
+  border-radius: 4px !important;
+  padding: 5px 35px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  text-align: center !important;
+  align-items: center;
+}
+
+.caluclator-button:hover {
+  background: linear-gradient(to bottom, #f8ae58 0%, #f76729 100%);
+  border-radius: 4px !important;
+  padding: 5px 35px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  text-align: center !important;
+  align-items: center;
+}
+
+.nav-rfq-calculator {
+  display: flex;
+  justify-content: end !important;
+}
+
+.profilebtn-dropdown-header2 {
+  max-width: 240px;
+}
+
+.dropdown-toggle-header2 {
+  margin: 0;
+  padding: 2px 2px;
+  border-radius: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white !important;
+  color: #000;
+  border: none !important;
+}
+
+.dropdown-toggle::after {
+  display: none !important;
+}
+
+.image-john-header2 {
+  padding: 2px;
+  border-radius: 50%;
+  width: 45px !important;
+  height: 45px !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.user-name-header2 {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+  padding: 0px 4px;
+  max-width: 100px;
+  color: #45494d !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden;
+}
+
+.user-dropdown .dropdown-toggle .user-name-header2 {
+  margin: 0 5px;
+}
+
+.dropdown_menu-Header2 {
+  border: none !important;
+  width: 100% !important;
+}
+
+.dropdown-select-labels {
+  font-size: 14px;
+  font-family: "Montserrat", sans-serif !important;
+  font-weight: 500;
+  margin-left: 0px;
+  color: #1e2125 !important;
+}
+
+/* for modal setting */
+
+.modal-setting .modal-content {
+  margin-top: -2%;
+  height: 86vh !important;
+  width: 48vw !important;
+  background-color: #ffffff;
+  border: none !important;
+  display: flex !important;
+  /* align-items: center !important; */
+  justify-content: center !important;
+  padding: 10px 15px;
+  margin-left: 10%;
+}
+
+.top-button-setting-modal {
+  display: flex;
+  justify-content: start !important;
+  gap: 5px !important;
+}
+
+.modal-setting-btn-notActive,
+.modal-setting-btn-notActive:hover {
+  margin: 0% !important;
+  padding: 4px 10px !important;
+  background: #e5e8ff !important;
+  color: #002650;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 2px;
+}
+
+.modal-setting-btn-Active {
+  margin: 0% !important;
+  padding: 4px 10px !important;
+  background: linear-gradient(to bottom, #5b67cd 0%, #2a38af 100%) !important;
+  color: #ffffff;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 2px;
+}
+
+.modal-setting-passcode-notActive,
+.modal-setting-passcode-notActive:hover {
+  margin: 0% !important;
+  padding: 4px 14px !important;
+  background: #e5e8ff !important;
+  color: #002650;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 2px;
+}
+
+.modal-setting-passcode-active {
+  margin: 0% !important;
+  padding: 4px 14px !important;
+  background: linear-gradient(to bottom, #5b67cd 0%, #2a38af 100%) !important;
+  color: #ffffff;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 2px;
+}
+
+.modal-setting-checkbox-col {
+  display: flex;
+  justify-content: start !important;
+  padding: 4px 8px !important;
+  gap: 10px !important;
+  border-bottom: 1px solid rgb(230, 228, 228);
+}
+
+.modal-setting-para {
+  font-size: 14px;
+  font-weight: 400 !important;
+}
+
+.header-Modal-setting {
+  font-size: 11px;
+  border: none !important;
+  position: absolute;
+  right: 0px;
+  top: 20px;
+  font-size: 9px;
+}
+
+.modal-setting-footer {
+  display: contents;
+  border: none !important;
+}
+
+.modal-footer-save-btn {
+  padding: 6px 24px !important;
+  background: linear-gradient(to bottom, #5b67cd 0%, #2a38af 100%) !important;
+  color: #ffffff;
+  border: none;
+  border-radius: 2px !important;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 4px !important;
+}
+
+.border-line-passcode {
+  border-bottom: 1px solid rgb(230, 228, 228) !important;
+}
+
+.change-password-btn {
+  padding: 5px 16px;
+  border-radius: 4px;
+  font-size: 16px;
+  color: #ffffff;
+  border: none !important;
+  background: linear-gradient(to bottom, #f8ae58 0%, #f76729 100%);
+}
+
+.icn-wrapper {
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.site-header .icn-wrapper > i {
+  font-size: 20px;
+  cursor: pointer;
+}
+.notification-badge {
+  width: 18px;
+  height: 18px;
+  background: #dd4e4e;
+  color: #ffffff;
+  border-radius: 100%;
+  overflow: hidden;
+  font-size: 10px;
+  line-height: 19px;
+  position: absolute;
+  right: 212px !important;
+  top: 15px !important;
+  text-align: center;
+}
+
+.icon-bell-color {
+  color: #45494d !important;
+}

@@ -1,0 +1,96 @@
+.Approval-container {
+  align-items: top !important;
+  height: 350px !important;
+  width: 100% !important;
+  left: 260px !important;
+  justify-content: center !important;
+  position: fixed !important;
+}
+
+.Aprroval_reason_heading {
+  font-size: 18px;
+  color: #004990;
+  font-weight: 600;
+}
+
+.Approval_reason_paper {
+  width: 100% !important;
+  padding: 20px 20px !important;
+  box-shadow: none !important;
+}
+
+.AddApprovalReason-btn {
+  border-top-right-radius: 0px;
+  border-bottom-left-radius: 0px;
+  border-top-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  cursor: pointer;
+  margin-left: -10px !important;
+  /* height: 37px !important;
+  width: 235px !important; */
+  padding: 6px 17px;
+  background: linear-gradient(to bottom, #5b67cd 0%, #2a38af 100%);
+  border-color: #5b67cd;
+}
+
+.AddApprovalReason-btn:is(:hover, ) {
+  background: linear-gradient(to bottom, #feac78 0%, #e97225 100%) !important;
+}
+
+.Table_content_Approval_reason {
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.Table_header {
+  display: flex !important;
+  justify-content: center !important;
+  font-weight: 700;
+  font-size: 15px;
+  color: #ffffff;
+}
+.Table_header_two {
+  display: flex !important;
+  justify-content: center !important;
+  font-weight: 700;
+  font-size: 15px;
+  color: #ffffff;
+}
+
+.Table_header_Delete {
+  display: flex !important;
+  justify-content: center !important;
+  font-weight: 700;
+  font-size: 15px;
+  color: #ffffff;
+}
+
+.Edit_Icon {
+  font-size: 18px;
+  color: #2230aa;
+  cursor: pointer;
+}
+
+.Delete_Icon {
+  color: #cf5b5b;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.icon-margin {
+  font-size: 17px;
+  margin-right: 10px;
+}
+
+.Approval-Reason-textfield {
+  font-size: 13px !important;
+  height: 37px !important;
+}
+
+@media screen and (max-width: 1300px) {
+  .Approval_reason_paper {
+    width: 92% !important;
+    padding: 20px 20px !important;
+    box-shadow: none !important;
+  }
+}
