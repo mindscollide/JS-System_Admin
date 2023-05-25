@@ -127,7 +127,7 @@ const logIn = (UserData, navigate) => {
               response.data.responseResult.responseMessage ===
               "ERM_AuthService_AuthManager_Login_03"
             ) {
-              if (response.data.responseResult.roleID === 2) {
+              if (response.data.responseResult.roleID === 4) {
                 localStorage.setItem(
                   "userID",
                   response.data.responseResult.userID
