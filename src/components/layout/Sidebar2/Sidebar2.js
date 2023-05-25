@@ -47,6 +47,14 @@ const Sidebar2 = () => {
     navigate("/AdminDashboard/AssetBanking");
   };
 
+  const navigateToLoginHistory = () => {
+    navigate("/AdminDashboard/loginHistory");
+  };
+
+  const navigateToUserLogin = () => {
+    navigate("/AdminDashboard/userLogin");
+  };
+
   //this will change the route on page refresh
   useEffect(() => {
     navigate("/AdminDashboard/PropertyType");
@@ -98,6 +106,22 @@ const Sidebar2 = () => {
                     >
                       Rejection Reason
                     </Menu.Item>
+
+                    <Menu.Item
+                      className="menu-items-sidebar"
+                      key="6"
+                      onClick={navigateToLoginHistory}
+                    >
+                      Login History
+                    </Menu.Item>
+
+                    <Menu.Item
+                      className="menu-items-sidebar"
+                      key="7"
+                      onClick={navigateToUserLogin}
+                    >
+                      User Login
+                    </Menu.Item>
                   </SubMenu>
                   <SubMenu
                     key="sub2"
@@ -107,7 +131,7 @@ const Sidebar2 = () => {
                   >
                     <Menu.Item
                       className="menu-items-sidebar"
-                      key="6"
+                      key="8"
                       onClick={navigateToReport}
                     >
                       Non-Banking Assets
