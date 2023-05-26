@@ -55,6 +55,10 @@ const Sidebar2 = () => {
     navigate("/AdminDashboard/userLogin");
   };
 
+  const navigateToTrade = () => {
+    navigate("/AdminDashboard/tradeCount");
+  };
+
   //this will change the route on page refresh
   useEffect(() => {
     navigate("/AdminDashboard/PropertyType");
@@ -122,6 +126,14 @@ const Sidebar2 = () => {
                     >
                       User Login
                     </Menu.Item>
+
+                    <Menu.Item
+                      className="menu-items-sidebar"
+                      key="8"
+                      onClick={navigateToTrade}
+                    >
+                      Trade Count
+                    </Menu.Item>
                   </SubMenu>
                   <SubMenu
                     key="sub2"
@@ -131,7 +143,7 @@ const Sidebar2 = () => {
                   >
                     <Menu.Item
                       className="menu-items-sidebar"
-                      key="8"
+                      key="9"
                       onClick={navigateToReport}
                     >
                       Non-Banking Assets

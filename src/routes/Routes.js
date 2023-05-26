@@ -11,6 +11,7 @@ import AssetsBanking from "../container/Admin/Reports/Non-Banking-Assets/Assets-
 import AdminDashboard from "../container/Admin/AdminDashboard/AdminDashboard";
 import LoginHistory from "../container/Admin/Setups/LoginHistory/LoginHistory";
 import UserLogin from "../container/Admin/Setups/UserLoginHistory/UserLogin";
+import TradeCount from "../container/Admin/Setups/TradeCount/Tradecount";
 
 import AdminLogin from "../container/AdminLogin/Login/AdminLogin";
 import SignUpRequest from "../container/AdminLogin/SignUp-Request/SignupRequest";
@@ -30,6 +31,7 @@ export const router = createHashRouter(
         <Route path="AssetBanking" element={<AssetsBanking />} />
         <Route path="loginHistory" element={<LoginHistory />} />
         <Route path="userLogin" element={<UserLogin />} />
+        <Route path="tradeCount" element={<TradeCount />} />
       </Route>
     </>
   )

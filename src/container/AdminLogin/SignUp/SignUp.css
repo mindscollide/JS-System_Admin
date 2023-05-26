@@ -117,7 +117,7 @@
   color: #eb1100 !important;
 }
 
-.TransactionFilter .css-13cymwt-control,
+/* .TransactionFilter .css-13cymwt-control,
 .css-13cymwt-control {
   background: rgba(255, 255, 255, 0.5) !important;
   border: none !important;
@@ -127,7 +127,7 @@
   color: #45494d !important;
   font-weight: 400 !important;
   font-size: 13px;
-  /* line-height: 37px; */
+  line-height: 37px;
   font-family: "Montserrat", sans-serif !important;
 }
 .css-t3ipsp-control {
@@ -139,9 +139,9 @@
   color: #45494d !important;
   font-weight: 400 !important;
   font-size: 13px;
-  /* line-height: 37px; */
+  line-height: 37px;
   font-family: "Montserrat", sans-serif !important;
-}
+} */
 
 .TransactionFilter .ant-select-arrow {
   color: #002650 !important;

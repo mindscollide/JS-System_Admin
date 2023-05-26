@@ -260,7 +260,12 @@ const LoginHistory = () => {
                       />
                     </Col>
 
-                    <Col lg={3} md={3} sm={12} />
+                    <Col lg={3} md={3} sm={12}>
+                      <Select
+                        placeholder="Category"
+                        className="loginHistor-textField-fontsize"
+                      />
+                    </Col>
                   </Row>
                   <Row className="mt-3">
                     <Col
