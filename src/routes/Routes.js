@@ -12,6 +12,7 @@ import AdminDashboard from "../container/Admin/AdminDashboard/AdminDashboard";
 import LoginHistory from "../container/Admin/Setups/LoginHistory/LoginHistory";
 import UserLogin from "../container/Admin/Setups/UserLoginHistory/UserLogin";
 import TradeCount from "../container/Admin/Setups/TradeCount/Tradecount";
+import CounterLimit from "../container/Admin/Reports/CounterParty/CounterLimit";
 
 import AdminLogin from "../container/AdminLogin/Login/AdminLogin";
 import SignUpRequest from "../container/AdminLogin/SignUp-Request/SignupRequest";
@@ -32,6 +33,7 @@ export const router = createHashRouter(
         <Route path="loginHistory" element={<LoginHistory />} />
         <Route path="userLogin" element={<UserLogin />} />
         <Route path="tradeCount" element={<TradeCount />} />
+        <Route path="counterLimit" element={<CounterLimit />} />
       </Route>
     </>
   )

@@ -59,6 +59,10 @@ const Sidebar2 = () => {
     navigate("/AdminDashboard/tradeCount");
   };
 
+  const navigateToCounter = () => {
+    navigate("/AdminDashboard/counterLimit");
+  };
+
   //this will change the route on page refresh
   useEffect(() => {
     navigate("/AdminDashboard/PropertyType");
@@ -147,6 +151,14 @@ const Sidebar2 = () => {
                       onClick={navigateToReport}
                     >
                       Non-Banking Assets
+                    </Menu.Item>
+
+                    <Menu.Item
+                      className="menu-items-sidebar"
+                      key="10"
+                      onClick={navigateToCounter}
+                    >
+                      Counter Party Limit
                     </Menu.Item>
                   </SubMenu>
                 </Menu>

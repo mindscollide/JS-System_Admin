@@ -9,7 +9,7 @@ const CustomCheckbox = ({
   onChange,
   classNameDiv,
   disabled,
-  className
+  className,
 }) => {
   return (
     <>
