@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { Col, Row, Container } from "react-bootstrap";
 import {
   CustomPaper,
@@ -7,13 +7,43 @@ import {
   Table,
 } from "../../../../components/elements";
 import { validateEmail } from "../../../../commen/functions/emailValidation";
+import {
+  bankUserLogin,
+  getAllCategoriesCorporate,
+} from "../../../../store/actions/Auth-Actions";
 import Select from "react-select";
+import { Spin } from "antd";
 import "./UserLogin.css";
+import { useSelector, useDispatch } from "react-redux";
 
 const UserLogin = () => {
+  const dispatch = useDispatch();
+  const { auth } = useSelector((state) => state);
+  // state for set data from api in rows
+  const [rows, setRows] = useState([]);
+
+  // state for category dropdown
+  const [selectCategoryBank, setSelectCategoryBank] = useState([]);
+  const [selectCategoryBankValue, setSelectCategoryBankValue] = useState([]);
+
+  // dispatch getALLCategoryDropdown API
+  useEffect(() => {
+    dispatch(getAllCategoriesCorporate());
+  }, []);
+
   // state for LoginHistory fields
   const [userLoginHistory, setUserLoginHistory] = useState({
-    Name: {
+    FirstName: {
+      value: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+    LastName: {
+      value: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+    corporateCategoryID: {
       value: "",
       errorMessage: "",
       errorStatus: false,
@@ -36,23 +66,43 @@ const UserLogin = () => {
     let name = e.target.name;
     let value = e.target.value;
 
-    if (name === "Name" && value !== "") {
+    if (name === "FirstName" && value !== "") {
       let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
       console.log("valueCheckvalueCheck", valueCheck);
       if (valueCheck !== "") {
         setUserLoginHistory({
           ...userLoginHistory,
-          Name: {
+          FirstName: {
             value: valueCheck.trimStart(),
             errorMessage: "",
             errorStatus: false,
           },
         });
       }
-    } else if (name === "Name" && value === "") {
+    } else if (name === "FirstName" && value === "") {
       setUserLoginHistory({
         ...userLoginHistory,
-        Name: { value: "", errorMessage: "", errorStatus: false },
+        FirstName: { value: "", errorMessage: "", errorStatus: false },
+      });
+    }
+
+    if (name === "LastName" && value !== "") {
+      let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
+      console.log("valueCheckvalueCheck", valueCheck);
+      if (valueCheck !== "") {
+        setUserLoginHistory({
+          ...userLoginHistory,
+          LastName: {
+            value: valueCheck.trimStart(),
+            errorMessage: "",
+            errorStatus: false,
+          },
+        });
+      }
+    } else if (name === "LastName" && value === "") {
+      setUserLoginHistory({
+        ...userLoginHistory,
+        LastName: { value: "", errorMessage: "", errorStatus: false },
       });
     }
 
@@ -100,6 +150,27 @@ const UserLogin = () => {
     }
   };
 
+  //ON CHANGE HANDLER FOR CATEGORY DROPDOWN
+  const selectCategoryOnchangeHandler = async (selectedCategory) => {
+    console.log(selectedCategory, "selectedOptionselectedOption");
+    setSelectCategoryBankValue(selectedCategory);
+    setUserLoginHistory({
+      ...userLoginHistory,
+      corporateCategoryID: {
+        value: selectedCategory.value,
+        label: selectedCategory.label,
+      },
+    });
+  };
+
+  // useEffect for render data inside bank user login table
+  useEffect(() => {
+    let newData = {
+      BankID: 1,
+    };
+    dispatch(bankUserLogin(newData));
+  }, []);
+
   //email validation handler
   const handlerEmail = () => {
     if (userLoginHistory.Email.value !== "") {
@@ -117,29 +188,58 @@ const UserLogin = () => {
       title: <label className="bottom-table-header">Email</label>,
       dataIndex: "email",
       key: "email",
+      width: "250px",
+      render: (text) => <label className="issue-date-column">{text}</label>,
+    },
+    {
+      title: <label className="bottom-table-header">First Name</label>,
+      dataIndex: "firstName",
+      key: "firstName",
+      align: "center",
       width: "150px",
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
     {
-      title: <label className="bottom-table-header">Name</label>,
-      dataIndex: "name",
-      key: "name",
+      title: <label className="bottom-table-header">Last Name</label>,
+      dataIndex: "lastName",
+      key: "lastName",
       width: "150px",
+      align: "center",
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
     {
       title: <label className="bottom-table-header">Company</label>,
-      dataIndex: "company",
-      key: "company",
+      dataIndex: "companyName",
+      key: "companyName",
       width: "100px",
+      align: "center",
+      ellipsis: true,
+      render: (text) => <label className="issue-date-column">{text}</label>,
+    },
+    {
+      title: <label className="bottom-table-header">Bank Name</label>,
+      dataIndex: "bankName",
+      key: "bankName",
+      width: "150px",
+      align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
     {
       title: <label className="bottom-table-header">Ip Address</label>,
-      dataIndex: "ipaddress",
-      key: "ipaddress",
+      dataIndex: "ipAddress",
+      key: "ipAddress",
       width: "100px",
+      align: "center",
+      ellipsis: true,
+      render: (text) => <label className="issue-date-column">{text}</label>,
+    },
+    {
+      title: <label className="bottom-table-header">LogIn Date</label>,
+      dataIndex: "loginDate",
+      key: "loginDate",
+      width: "150px",
+      align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
@@ -147,24 +247,26 @@ const UserLogin = () => {
       title: <label className="bottom-table-header">Logged In Time</label>,
       dataIndex: "loginTime",
       key: "loginTime",
+      align: "center",
       width: "150px",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
     {
+      title: <label className="bottom-table-header">LogOut Date</label>,
+      dataIndex: "logOutDate",
+      key: "logOutDate",
+      width: "200px",
+      align: "center",
+      ellipsis: true,
+      render: (text) => <label className="issue-date-column">{text}</label>,
+    },
+    {
       title: <label className="bottom-table-header">Logged Out Time</label>,
-      dataIndex: "logoutTime",
-      key: "logoutTime",
+      dataIndex: "logOutTime",
+      key: "logOutTime",
       width: "200px",
       align: "center",
-      ellipsis: true,
-      render: (text) => <label className="issue-date-column">{text}</label>,
-    },
-    {
-      title: <label className="bottom-table-header">Total Span</label>,
-      dataIndex: "totalSpan",
-      key: "totalSpan",
-      width: "200px",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
@@ -177,6 +279,7 @@ const UserLogin = () => {
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
+
     {
       title: <label className="bottom-table-header">Interface</label>,
       dataIndex: "interface",
@@ -188,31 +291,33 @@ const UserLogin = () => {
     },
   ];
 
-  // data for Columns loginHistory
-  const userCustomerData = [
-    {
-      key: "1",
-      email: "muhammad.ahmed",
-      name: "muhammad.ahmed",
-      company: "Shield",
-      ipaddress: "39.57.197.237",
-      loginTime: "16/04/2023 0:34:00",
-      logoutTime: "15/05/2023 03:20:45",
-      totalSpan: "0 hrs 3 mins 13 secs (62 ms)",
-      interface: "Web",
-    },
-    {
-      key: "1",
-      email: "muhammad.ahmed",
-      name: "muhammad.ahmed",
-      company: "Shield",
-      ipaddress: "39.57.197.237",
-      loginTime: "16/04/2023 0:34:00",
-      logoutTime: "15/05/2023 03:20:45",
-      totalSpan: "0 hrs 3 mins 13 secs (62 ms)",
-      interface: "Web",
-    },
-  ];
+  // render table inside table
+  useEffect(() => {
+    if (
+      auth.bankUserLoginHistory !== null &&
+      auth.bankUserLoginHistory !== undefined &&
+      auth.bankUserLoginHistory.length > 0
+    ) {
+      setRows(auth.bankUserLoginHistory);
+    } else {
+      setRows([]);
+    }
+  }, [auth.bankUserLoginHistory]);
+
+  // for category Corporate in select drop down
+  useEffect(() => {
+    if (Object.keys(auth.getAllCorporate).length > 0) {
+      let tem = [];
+      auth.getAllCorporate.map((data, index) => {
+        console.log(data, "datadatadatadatassssss");
+        tem.push({
+          label: data.category,
+          value: data.corporateCategoryID,
+        });
+      });
+      setSelectCategoryBank(tem);
+    }
+  }, [auth.getAllCorporate]);
 
   return (
     <Fragment>
@@ -230,9 +335,19 @@ const UserLogin = () => {
                   <Row className="mt-3">
                     <Col lg={3} md={3} sm={12}>
                       <TextField
-                        placeholder="Name"
-                        name="Name"
-                        value={userLoginHistory.Name.value}
+                        placeholder="FirstName"
+                        name="FirstName"
+                        value={userLoginHistory.FirstName.value}
+                        onChange={userLoginValidation}
+                        labelClass="d-none"
+                        className="UserHistory-textField-fontsize"
+                      />
+                    </Col>
+                    <Col lg={3} md={3} sm={12}>
+                      <TextField
+                        placeholder="LastName"
+                        name="LastName"
+                        value={userLoginHistory.LastName.value}
                         onChange={userLoginValidation}
                         labelClass="d-none"
                         className="UserHistory-textField-fontsize"
@@ -259,15 +374,24 @@ const UserLogin = () => {
                         className="UserHistory-textField-fontsize"
                       />
                     </Col>
+                  </Row>
 
+                  <Row className="mt-3">
                     <Col lg={3} md={3} sm={12}>
                       <Select
+                        name="corporateCategoryID"
+                        isSearchable={true}
                         placeholder="Category"
+                        options={selectCategoryBank}
+                        value={selectCategoryBankValue}
+                        onChange={selectCategoryOnchangeHandler}
                         className="UserHistory-textField-fontsize"
                       />
                     </Col>
+
+                    <Col lg={9} md={9} sm={12} />
                   </Row>
-                  <Row className="mt-3">
+                  <Row className="mt-1">
                     <Col
                       lg={12}
                       md={12}
@@ -288,12 +412,18 @@ const UserLogin = () => {
                   </Row>
                   <Row className="mt-3">
                     <Col lg={12} md={12} sm={12}>
-                      <Table
-                        column={userColumns}
-                        rows={userCustomerData}
-                        pagination={false}
-                        className="UserHistory-table"
-                      />
+                      {auth.Spinner === true ? (
+                        <span className="customer-login-user-spinner">
+                          <Spin size="large" />
+                        </span>
+                      ) : (
+                        <Table
+                          column={userColumns}
+                          rows={rows}
+                          pagination={false}
+                          className="UserHistory-table"
+                        />
+                      )}
                     </Col>
                   </Row>
                 </CustomPaper>

@@ -4,10 +4,14 @@ const initialState = {
   UserDetails: null,
   isLoggedIn: false,
   Loading: false,
+  Spinner: false,
   ResponseMessage: "",
   isSignUp: false,
   SessionExpeireResponseMessage: "",
   UserRoleslist: [],
+  userCorporateLogin: [],
+  bankUserLoginHistory: [],
+  getAllCorporate: [],
   roles: null,
   Token: "",
   Refresh: "",
@@ -94,6 +98,80 @@ const authReducer = (state = initialState, action) => {
         ...state,
         Loading: false,
         UserRoleslist: [],
+        ResponseMessage: action.message,
+      };
+
+    case actions.GET_CORPORATE_USER_LOGIN_INIT:
+      return {
+        ...state,
+        Loading: true,
+        Spinner: true,
+      };
+
+    case actions.GET_CORPORATE_USER_LOGIN_SUCCESS:
+      console.log("logogogog", action.response);
+      return {
+        ...state,
+        Loading: false,
+        Spinner: false,
+        userCorporateLogin: action.response,
+        ResponseMessage: action.message,
+      };
+
+    case actions.GET_CORPORATE_USER_LOGIN_FAIL:
+      return {
+        ...state,
+        Loading: false,
+        Spinner: false,
+        userCorporateLogin: [],
+        ResponseMessage: action.message,
+      };
+
+    case actions.GET_ALL_CORPORATE_CATEGORIES_INIT:
+      return {
+        ...state,
+        Loading: true,
+      };
+
+    case actions.GET_ALL_CORPORATE_CATEGORIES_SUCCESS:
+      return {
+        ...state,
+        Loading: false,
+        getAllCorporate: action.response,
+        ResponseMessage: action.message,
+      };
+
+    case actions.GET_ALL_CORPORATE_CATEGORIES_FAIL:
+      return {
+        ...state,
+        Loading: false,
+        getAllCorporate: [],
+        ResponseMessage: action.message,
+      };
+
+    case actions.GET_BANK_USER_LOGIN_INIT:
+      return {
+        ...state,
+        Loading: true,
+        Spinner: true,
+      };
+
+    case actions.GET_BANK_USER_LOGIN_SUCCESS:
+      console.log("logogogog", action.response);
+      return {
+        ...state,
+        Loading: false,
+        Spinner: false,
+        bankUserLoginHistory: action.response,
+        ResponseMessage: action.message,
+      };
+
+    case actions.GET_BANK_USER_LOGIN_FAIL:
+      return {
+        ...state,
+        Loading: false,
+        Spinner: false,
+        getAllCorporate: [],
         ResponseMessage: action.message,
       };
 
