@@ -59,6 +59,10 @@ const Sidebar2 = () => {
     navigate("/AdminDashboard/tradeCount");
   };
 
+  const navigateToCategoryManagement = () => {
+    navigate("/AdminDashboard/categorymanagement");
+  };
+
   const navigateToCounter = () => {
     navigate("/AdminDashboard/counterLimit");
   };
@@ -138,6 +142,14 @@ const Sidebar2 = () => {
                     >
                       Trade Count
                     </Menu.Item>
+
+                    <Menu.Item
+                      className="menu-items-sidebar"
+                      key="9"
+                      onClick={navigateToCategoryManagement}
+                    >
+                      Category Management
+                    </Menu.Item>
                   </SubMenu>
                   <SubMenu
                     key="sub2"
@@ -147,7 +159,7 @@ const Sidebar2 = () => {
                   >
                     <Menu.Item
                       className="menu-items-sidebar"
-                      key="9"
+                      key="10"
                       onClick={navigateToReport}
                     >
                       Non-Banking Assets
@@ -155,7 +167,7 @@ const Sidebar2 = () => {
 
                     <Menu.Item
                       className="menu-items-sidebar"
-                      key="10"
+                      key="11"
                       onClick={navigateToCounter}
                     >
                       Counter Party Limit
