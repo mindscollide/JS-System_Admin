@@ -73,7 +73,7 @@ const AdminLogin = () => {
   const loginValidateHandler = (e) => {
     e.preventDefault();
     if (loginCredentials.UserName !== "" && loginCredentials.Password !== "") {
-      dispatch(logIn(loginCredentials, navigate));
+      dispatch(logIn(navigate, loginCredentials));
     } else {
       setOpen({
         ...open,

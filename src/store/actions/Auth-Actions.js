@@ -8,6 +8,8 @@ import {
   customerCorporateHistory,
   getCorporateCategory,
   userBankLoginHistory,
+  companySearchLoginHistory,
+  bankSearchLoginHistory,
 } from "../../commen/apis/Api_config";
 import { authenticationAPI } from "../../commen/apis/Api_ends_points";
 
@@ -92,7 +94,7 @@ const rolesFail = (response, message) => {
 };
 
 //signIn API Function
-const logIn = (UserData, navigate) => {
+const logIn = (navigate, UserData) => {
   console.log("logincredentials", UserData);
   var min = 10000;
   var max = 90000;
@@ -136,6 +138,8 @@ const logIn = (UserData, navigate) => {
                   "userID",
                   response.data.responseResult.userID
                 );
+                localStorage.setItem("defaultOpenKey ", "sub1");
+                localStorage.setItem("defaultSelectedKey", "3");
                 localStorage.setItem(
                   "firstName",
                   response.data.responseResult.firstName
@@ -154,11 +158,11 @@ const logIn = (UserData, navigate) => {
                 );
                 localStorage.setItem(
                   "token",
-                  response.data.responseResult.token
+                  JSON.stringify(response.data.responseResult.token)
                 );
                 localStorage.setItem(
                   "refreshToken",
-                  response.data.responseResult.refreshToken
+                  JSON.stringify(response.data.responseResult.refreshToken)
                 );
                 navigate("/AdminDashboard/PropertyType");
                 dispatch(loginsuccess("Successfully Logged In"));
@@ -275,7 +279,7 @@ const logIn = (UserData, navigate) => {
 };
 
 // signUp API Function
-const signUp = (UserData, navigate) => {
+const signUp = (navigate, UserData) => {
   let Data = {
     LoginID: UserData.LoginID,
     FirstName: UserData.FirstName,
@@ -565,8 +569,8 @@ const corporateLoginFail = (response, message) => {
   };
 };
 
-const customerCorporateLogin = (newData) => {
-  let token = localStorage.getItem("token");
+const customerCorporateLogin = (navigate, newData) => {
+  let token = JSON.parse(localStorage.getItem("token"));
 
   return (dispatch) => {
     dispatch(corporateLoginInit());
@@ -583,8 +587,8 @@ const customerCorporateLogin = (newData) => {
     })
       .then(async (response) => {
         if (response.data.responseCode === 417) {
-          await dispatch(RefreshToken());
-          dispatch(customerCorporateLogin(newData));
+          await dispatch(RefreshToken(navigate));
+          dispatch(customerCorporateLogin(navigate, newData));
         } else if (response.data.responseCode === 200) {
           if (response.data.responseResult.isExecuted === true) {
             if (
@@ -662,8 +666,8 @@ const getCategoriesFail = (message) => {
   };
 };
 
-const getAllCategoriesCorporate = () => {
-  let token = localStorage.getItem("token");
+const getAllCategoriesCorporate = (navigate) => {
+  let token = JSON.parse(localStorage.getItem("token"));
   return (dispatch) => {
     dispatch(getCategoriesInit());
     let form = new FormData();
@@ -679,8 +683,8 @@ const getAllCategoriesCorporate = () => {
       .then(async (response) => {
         console.log("CorporateCategoryCorporateCategory", response);
         if (response.data.responseCode === 417) {
-          await dispatch(RefreshToken());
-          dispatch(getAllCategoriesCorporate());
+          await dispatch(RefreshToken(navigate));
+          dispatch(getAllCategoriesCorporate(navigate));
         } else if (response.data.responseCode === 200) {
           if (response.data.responseResult.isExecuted === true) {
             if (
@@ -751,8 +755,8 @@ const bankUserFail = (message) => {
   };
 };
 
-const bankUserLogin = (newData) => {
-  let token = localStorage.getItem("token");
+const bankUserLogin = (navigate, newData) => {
+  let token = JSON.parse(localStorage.getItem("token"));
 
   return (dispatch) => {
     dispatch(bankUserInit());
@@ -769,8 +773,8 @@ const bankUserLogin = (newData) => {
     })
       .then(async (response) => {
         if (response.data.responseCode === 417) {
-          await dispatch(RefreshToken());
-          dispatch(bankUserLogin(newData));
+          await dispatch(RefreshToken(navigate));
+          dispatch(bankUserLogin(navigate, newData));
         } else if (response.data.responseCode === 200) {
           if (response.data.responseResult.isExecuted === true) {
             if (
@@ -824,6 +828,198 @@ const bankUserLogin = (newData) => {
   };
 };
 
+//Search Company User Login Hisory
+const searchCompanyInit = () => {
+  return {
+    type: actions.SEARCH_COMPANY_USER_LOGIN_INIT,
+  };
+};
+
+const searchCompanySuccess = (response, message) => {
+  return {
+    type: actions.SEARCH_COMPANY_USER_LOGIN_SUCCESS,
+    response: response,
+    message: message,
+  };
+};
+
+const serachCompanyFail = (message) => {
+  return {
+    type: actions.SEARCH_COMPANY_USER_LOGIN_FAIL,
+    message: message,
+  };
+};
+
+const searchCompanyLogin = (navigate, searchCompanyData) => {
+  let token = JSON.parse(localStorage.getItem("token"));
+
+  return (dispatch) => {
+    dispatch(searchCompanyInit());
+    let form = new FormData();
+    form.append("RequestMethod", companySearchLoginHistory.RequestMethod);
+    form.append("RequestData", JSON.stringify(searchCompanyData));
+    axios({
+      method: "post",
+      url: authenticationAPI,
+      data: form,
+      headers: {
+        _token: token,
+      },
+    })
+      .then(async (response) => {
+        if (response.data.responseCode === 417) {
+          await dispatch(RefreshToken(navigate));
+          dispatch(searchCompanyLogin(navigate, searchCompanyData));
+        } else if (response.data.responseCode === 200) {
+          if (response.data.responseResult.isExecuted === true) {
+            if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "ERM_AuthService_CommonManager_SearchCompanyUsersLoginHistory_01".toLowerCase()
+                )
+            ) {
+              dispatch(
+                searchCompanySuccess(
+                  response.data.responseResult.corporateUserLoginHistory,
+                  "Record Found"
+                )
+              );
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "ERM_AuthService_CommonManager_SearchCompanyUsersLoginHistory_02".toLowerCase()
+                )
+            ) {
+              dispatch(serachCompanyFail("No Record found"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "ERM_AuthService_CommonManager_SearchCompanyUsersLoginHistory_03".toLowerCase()
+                )
+            ) {
+              dispatch(serachCompanyFail("Invalid Role"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "ERM_AuthService_CommonManager_SearchCompanyUsersLoginHistory_04".toLowerCase()
+                )
+            ) {
+              dispatch(
+                serachCompanyFail("Exception No Corporate Customer Found")
+              );
+            }
+          } else {
+            dispatch(serachCompanyFail("Something went wrong"));
+          }
+        } else {
+          dispatch(serachCompanyFail("Something went wrong"));
+        }
+      })
+      .catch((response) => {
+        dispatch(serachCompanyFail("Something went wrong"));
+      });
+  };
+};
+
+// Search Bank User Login History
+const searchBankInit = () => {
+  return {
+    type: actions.SEARCH_BANK_USER_LOGIN_INIT,
+  };
+};
+
+const searchBankSuccess = (response, message) => {
+  return {
+    type: actions.SEARCH_BANK_USER_LOGIN_SUCCESS,
+    response: response,
+    message: message,
+  };
+};
+
+const serachBankFail = (message) => {
+  return {
+    type: actions.SEARCH_BANK_USER_LOGIN_FAIL,
+    message: message,
+  };
+};
+
+const searchBankLogin = (navigate, seacrhBankData) => {
+  let token = JSON.parse(localStorage.getItem("token"));
+
+  return (dispatch) => {
+    dispatch(searchBankInit());
+    let form = new FormData();
+    form.append("RequestMethod", bankSearchLoginHistory.RequestMethod);
+    form.append("RequestData", JSON.stringify(seacrhBankData));
+    axios({
+      method: "post",
+      url: authenticationAPI,
+      data: form,
+      headers: {
+        _token: token,
+      },
+    })
+      .then(async (response) => {
+        if (response.data.responseCode === 417) {
+          await dispatch(RefreshToken(navigate));
+          dispatch(searchBankLogin(navigate, seacrhBankData));
+        } else if (response.data.responseCode === 200) {
+          if (response.data.responseResult.isExecuted === true) {
+            if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "ERM_AuthService_CommonManager_SearchBankUsersLoginHistory_01".toLowerCase()
+                )
+            ) {
+              dispatch(
+                searchBankSuccess(
+                  response.data.responseResult.corporateUserLoginHistory,
+                  "Record Found"
+                )
+              );
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "ERM_AuthService_CommonManager_SearchBankUsersLoginHistory_02".toLowerCase()
+                )
+            ) {
+              dispatch(serachBankFail("No Record found"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "ERM_AuthService_CommonManager_SearchBankUsersLoginHistory_03".toLowerCase()
+                )
+            ) {
+              dispatch(serachBankFail("Invalid Role"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "ERM_AuthService_CommonManager_SearchBankUsersLoginHistory_04".toLowerCase()
+                )
+            ) {
+              dispatch(serachBankFail("Exception No Corporate Customer Found"));
+            }
+          } else {
+            dispatch(serachBankFail("Something went wrong"));
+          }
+        } else {
+          dispatch(serachBankFail("Something went wrong"));
+        }
+      })
+      .catch((response) => {
+        dispatch(serachBankFail("Something went wrong"));
+      });
+  };
+};
+
 export {
   logIn,
   signUp,
@@ -833,4 +1029,6 @@ export {
   customerCorporateLogin,
   getAllCategoriesCorporate,
   bankUserLogin,
+  searchCompanyLogin,
+  searchBankLogin,
 };

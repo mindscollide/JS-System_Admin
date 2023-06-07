@@ -11,13 +11,17 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   customerCorporateLogin,
   getAllCategoriesCorporate,
+  searchCompanyLogin,
 } from "../../../../store/actions/Auth-Actions";
 import { Spin } from "antd";
+import { useNavigate } from "react-router-dom";
 import Select from "react-select";
+import moment from "moment";
 import DatePicker from "react-multi-date-picker";
 import "./LoginHistory.css";
 
 const LoginHistory = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { auth } = useSelector((state) => state);
   console.log(auth, "aaaa");
@@ -44,14 +48,14 @@ const LoginHistory = () => {
 
   // dispatch getALLCategoryDropdown API
   useEffect(() => {
-    dispatch(getAllCategoriesCorporate());
+    dispatch(getAllCategoriesCorporate(navigate));
   }, []);
 
   useEffect(() => {
     let newData = {
       CorporateID: 1,
     };
-    dispatch(customerCorporateLogin(newData));
+    dispatch(customerCorporateLogin(navigate, newData));
   }, []);
 
   // state for LoginHistory fields
@@ -67,7 +71,7 @@ const LoginHistory = () => {
       errorStatus: false,
     },
 
-    Contact: {
+    CompanyName: {
       value: "",
       errorMessage: "",
       errorStatus: false,
@@ -86,6 +90,40 @@ const LoginHistory = () => {
     },
   });
 
+  // For search Btn Hit to check data inside table also after await we set the state empty when ever user
+  // hit the seacrh btn the fields should be empty if the value is true or not
+  const onSearchButtonHit = async () => {
+    let searchCompanyData = {
+      FirstName: loginHistoryField.FirstName.value,
+      LastName: loginHistoryField.LastName.value,
+      CompanyName: loginHistoryField.CompanyName.value,
+      Email: loginHistoryField.Email.value,
+      FromDate: "20230504",
+      ToDate: "20230525",
+      CategoryID: 0,
+    };
+    await dispatch(searchCompanyLogin(navigate, searchCompanyData));
+    setLoginHistoryField({
+      ...loginHistoryField,
+      FirstName: {
+        value: "",
+      },
+
+      LastName: {
+        value: "",
+      },
+
+      CompanyName: {
+        value: "",
+      },
+
+      Email: {
+        value: "",
+      },
+    });
+  };
+
+  // validations on textfields onChange handler
   const customerListValidation = (e) => {
     let name = e.target.name;
     let value = e.target.value;
@@ -130,23 +168,23 @@ const LoginHistory = () => {
       });
     }
 
-    if (name === "Contact" && value !== "") {
-      let valueCheck = value.replace(/[^\d]/g, "");
+    if (name === "CompanyName" && value !== "") {
+      let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
       console.log("valueCheckvalueCheck", valueCheck);
       if (valueCheck !== "") {
         setLoginHistoryField({
           ...loginHistoryField,
-          Contact: {
+          CompanyName: {
             value: valueCheck.trimStart(),
             errorMessage: "",
             errorStatus: false,
           },
         });
       }
-    } else if (name === "Contact" && value === "") {
+    } else if (name === "CompanyName" && value === "") {
       setLoginHistoryField({
         ...loginHistoryField,
-        Contact: { value: "", errorMessage: "", errorStatus: false },
+        CompanyName: { value: "", errorMessage: "", errorStatus: false },
       });
     }
 
@@ -250,41 +288,68 @@ const LoginHistory = () => {
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
+    // {
+    //   title: <label className="bottom-table-header">LogIn Date</label>,
+    //   dataIndex: "loginDate",
+    //   key: "loginDate",
+    //   width: "150px",
+    //   align: "center",
+    //   ellipsis: true,
+    //   render: (text) => <label className="issue-date-column">{text}</label>,
+    // },
+    // {
+    //   title: <label className="bottom-table-header">Logged In Time</label>,
+    //   dataIndex: "loginTime",
+    //   key: "loginTime",
+    //   width: "100px",
+    //   align: "center",
+    //   ellipsis: true,
+    //   render: (text) => <label className="issue-date-column">{text}</label>,
+    // },
+
     {
-      title: <label className="bottom-table-header">LogIn Date</label>,
-      dataIndex: "loginDate",
-      key: "loginDate",
+      title: <label className="bottom-table-header">Logged Date</label>,
+      dataIndex: "CombineLoginTimeDate",
+      key: "CombineLoginTimeDate",
       width: "150px",
       align: "center",
       ellipsis: true,
-      render: (text) => <label className="issue-date-column">{text}</label>,
+      render: (_, record) => (
+        <label className="issue-date-column">
+          {record.loginDate} {record.loginTime}
+        </label>
+      ),
     },
+    // {
+    //   title: <label className="bottom-table-header">LogOut Date</label>,
+    //   dataIndex: "logOutDate",
+    //   key: "logOutDate",
+    //   width: "200px",
+    //   align: "center",
+    //   ellipsis: true,
+    //   render: (text) => <label className="issue-date-column">{text}</label>,
+    // },
+    // {
+    //   title: <label className="bottom-table-header">Logged Out Time</label>,
+    //   dataIndex: "logOutTime",
+    //   key: "logOutTime",
+    //   width: "200px",
+    //   align: "center",
+    //   ellipsis: true,
+    //   render: (text) => <label className="issue-date-column">{text}</label>,
+    // },
     {
-      title: <label className="bottom-table-header">Logged In Time</label>,
-      dataIndex: "loginTime",
-      key: "loginTime",
-      width: "100px",
+      title: <label className="bottom-table-header">LoggedOut Date</label>,
+      dataIndex: "CombineLoginOutTimeDate",
+      key: "CombineLoginOutTimeDate",
+      width: "150px",
       align: "center",
       ellipsis: true,
-      render: (text) => <label className="issue-date-column">{text}</label>,
-    },
-    {
-      title: <label className="bottom-table-header">LogOut Date</label>,
-      dataIndex: "logOutDate",
-      key: "logOutDate",
-      width: "200px",
-      align: "center",
-      ellipsis: true,
-      render: (text) => <label className="issue-date-column">{text}</label>,
-    },
-    {
-      title: <label className="bottom-table-header">Logged Out Time</label>,
-      dataIndex: "logOutTime",
-      key: "logOutTime",
-      width: "200px",
-      align: "center",
-      ellipsis: true,
-      render: (text) => <label className="issue-date-column">{text}</label>,
+      render: (_, record) => (
+        <label className="issue-date-column">
+          {record.logOutDate} {record.logOutTime}
+        </label>
+      ),
     },
     {
       title: <label className="bottom-table-header">Total Span</label>,
@@ -306,15 +371,19 @@ const LoginHistory = () => {
     },
   ];
 
-  //onSearchBtn Hit in which they check the data on table
-  const searchButtonHit = () => {
-    let Data = {
-      email: loginHistoryField.Email.value,
-      firstName: loginHistoryField.Name.value,
-      lastName: loginHistoryField.Name.value,
-    };
-    dispatch(customerCorporateLogin(Data));
-  };
+  //this useEffect Condition is for when user hit search btn if data isn't same
+  // as in the table then table should be empty
+  useEffect(() => {
+    if (
+      auth.searchCompanyLogin.length > 0 &&
+      auth.searchCompanyLogin !== null &&
+      auth.searchCompanyLogin !== undefined
+    ) {
+      setRows(auth.searchCompanyLogin);
+    } else {
+      setRows([]);
+    }
+  }, [auth.searchCompanyLogin]);
 
   // render table inside table
   useEffect(() => {
@@ -411,9 +480,9 @@ const LoginHistory = () => {
                     </Col>
                     <Col lg={3} md={3} sm={12}>
                       <TextField
-                        placeholder="Contact"
-                        name="Contact"
-                        value={loginHistoryField.Contact.value}
+                        placeholder="Company Name"
+                        name="CompanyName"
+                        value={loginHistoryField.CompanyName.value}
                         onChange={customerListValidation}
                         labelClass="d-none"
                         className="loginHistor-textField-fontsize"
@@ -477,7 +546,7 @@ const LoginHistory = () => {
                     >
                       <Button
                         text="Search"
-                        onClick={searchButtonHit}
+                        onClick={onSearchButtonHit}
                         icon={<i className="icon-search"></i>}
                         className={"Search-HistoryLog-btn"}
                       />

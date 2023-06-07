@@ -7,36 +7,16 @@ import {
   Table,
 } from "../../../../components/elements";
 import { useDispatch, useSelector } from "react-redux";
-import ViewCustomer from "../../../../container/Admin/AdminModal/View-CustomerList-Modal/ViewCustomer";
 import { validateEmail } from "../../../../commen/functions/emailValidation";
-import {
-  getAllCorporateUserApi,
-  searchUserCorporateApi,
-} from "../../../../store/actions/System-Admin";
 import { useNavigate } from "react-router-dom";
-import { getAllCategoriesCorporate } from "../../../../store/actions/Auth-Actions";
 import Select from "react-select";
 import { Spin } from "antd";
-import "./Customerlist.css";
+import "./UserList.css";
 import { useEffect } from "react";
 
-const Customerlist = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { systemReducer, auth } = useSelector((state) => state);
-  console.log(systemReducer, "systemAdminsystemAdmin");
-  // state for modal customer List View
-  const [customerViewModal, setCustomerViewModal] = useState(false);
-
-  // state for category dropdown
-  const [selectAllCategory, setSelectAllCategory] = useState([]);
-  const [selectAllCategoryValue, setSelectAllCategoryValue] = useState([]);
-
-  // state for table rows
-  const [rows, setRows] = useState([]);
-
+const Userlist = () => {
   //state for customer list fields
-  const [customerListFields, setCustomerListFields] = useState({
+  const [userListFields, setUserListFields] = useState({
     FirstName: {
       value: "",
       errorMessage: "",
@@ -67,44 +47,6 @@ const Customerlist = () => {
     },
   });
 
-  // dispatch getALLCategoryDropdown API
-  useEffect(() => {
-    dispatch(getAllCategoriesCorporate(navigate));
-  }, []);
-
-  // dispatch API in useEffect for customer list table
-  useEffect(() => {
-    let newCorporateData = {
-      CorporateID: 1,
-    };
-    dispatch(getAllCorporateUserApi(navigate, newCorporateData));
-  }, []);
-
-  //ON CHANGE HANDLER FOR CATEGORY DROPDOWN
-  const selectAllCategoryOnchangeHandler = async (selectedCategory) => {
-    console.log(selectedCategory, "selectedOptionselectedOption");
-    setSelectAllCategoryValue(selectedCategory);
-    setCustomerListFields({
-      ...customerListFields,
-      corporateCategoryID: {
-        value: selectedCategory.value,
-        label: selectedCategory.label,
-      },
-    });
-  };
-
-  // Hit on Search Btn
-  const seacrhButtonHit = async () => {
-    let corporateSearchData = {
-      FirstName: customerListFields.FirstName.value,
-      LastName: customerListFields.LastName.value,
-      Email: customerListFields.Email.value,
-      CompanyName: customerListFields.companyName.value,
-      CategoryID: 0,
-    };
-    await dispatch(searchUserCorporateApi(navigate, corporateSearchData));
-  };
-
   // validation for customer List
   const customerListValidation = (e) => {
     let name = e.target.name;
@@ -114,8 +56,8 @@ const Customerlist = () => {
       let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
       console.log("valueCheckvalueCheck", valueCheck);
       if (valueCheck !== "") {
-        setCustomerListFields({
-          ...customerListFields,
+        setUserListFields({
+          ...userListFields,
           FirstName: {
             value: valueCheck.trimStart(),
             errorMessage: "",
@@ -124,8 +66,8 @@ const Customerlist = () => {
         });
       }
     } else if (name === "FirstName" && value === "") {
-      setCustomerListFields({
-        ...customerListFields,
+      setUserListFields({
+        ...userListFields,
         FirstName: { value: "", errorMessage: "", errorStatus: false },
       });
     }
@@ -134,8 +76,8 @@ const Customerlist = () => {
       let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
       console.log("valueCheckvalueCheck", valueCheck);
       if (valueCheck !== "") {
-        setCustomerListFields({
-          ...customerListFields,
+        setUserListFields({
+          ...userListFields,
           LastName: {
             value: valueCheck.trimStart(),
             errorMessage: "",
@@ -144,8 +86,8 @@ const Customerlist = () => {
         });
       }
     } else if (name === "LastName" && value === "") {
-      setCustomerListFields({
-        ...customerListFields,
+      setUserListFields({
+        ...userListFields,
         LastName: { value: "", errorMessage: "", errorStatus: false },
       });
     }
@@ -154,8 +96,8 @@ const Customerlist = () => {
       let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
       console.log("valueCheckvalueCheck", valueCheck);
       if (valueCheck !== "") {
-        setCustomerListFields({
-          ...customerListFields,
+        setUserListFields({
+          ...userListFields,
           companyName: {
             value: valueCheck.trimStart(),
             errorMessage: "",
@@ -164,8 +106,8 @@ const Customerlist = () => {
         });
       }
     } else if (name === "companyName" && value === "") {
-      setCustomerListFields({
-        ...customerListFields,
+      setUserListFields({
+        ...userListFields,
         companyName: { value: "", errorMessage: "", errorStatus: false },
       });
     }
@@ -173,8 +115,8 @@ const Customerlist = () => {
     if (name === "Email" && value !== "") {
       console.log("valuevalueemailvaluevalueemail", value);
       if (value !== "") {
-        setCustomerListFields({
-          ...customerListFields,
+        setUserListFields({
+          ...userListFields,
           Email: {
             value: value.trimStart(),
             errorMessage: "",
@@ -183,8 +125,8 @@ const Customerlist = () => {
         });
       }
     } else if (name === "Email" && value === "") {
-      setCustomerListFields({
-        ...customerListFields,
+      setUserListFields({
+        ...userListFields,
         Email: {
           value: "",
           errorMessage: "",
@@ -196,8 +138,8 @@ const Customerlist = () => {
 
   //email validation handler
   const handlerEmail = () => {
-    if (customerListFields.Email.value !== "") {
-      if (validateEmail(customerListFields.Email.value)) {
+    if (userListFields.Email.value !== "") {
+      if (validateEmail(userListFields.Email.value)) {
         alert("Email verified");
       } else {
         alert("Email Not Verified");
@@ -207,8 +149,8 @@ const Customerlist = () => {
 
   // reset value on reset Button Hit
   const resetBtnHandler = () => {
-    setCustomerListFields({
-      ...customerListFields,
+    setUserListFields({
+      ...userListFields,
       FirstName: {
         value: "",
       },
@@ -222,65 +164,7 @@ const Customerlist = () => {
         value: "",
       },
     });
-    setSelectAllCategoryValue([]);
-
-    let corporateSearchData = {
-      FirstName: "",
-      LastName: "",
-      Email: "",
-      CompanyName: "",
-      CategoryID: 0,
-    };
-    dispatch(searchUserCorporateApi(navigate, corporateSearchData));
   };
-
-  //open view customer list modal
-  const openViewModal = () => {
-    setCustomerViewModal(true);
-  };
-
-  //this useEffect Condition is for when user hit search btn if data isn't same
-  // as in the table then table should be empty
-  useEffect(() => {
-    if (
-      systemReducer.searchCorporate.length > 0 &&
-      systemReducer.searchCorporate !== null &&
-      systemReducer.searchCorporate !== undefined
-    ) {
-      setRows(systemReducer.searchCorporate);
-    } else {
-      setRows([]);
-    }
-  }, [systemReducer.searchCorporate]);
-
-  //useEffect to render data in table from Api
-  useEffect(() => {
-    if (
-      systemReducer.allCorporateUser.length > 0 &&
-      systemReducer.allCorporateUser !== null &&
-      systemReducer.allCorporateUser !== undefined
-    ) {
-      setRows(systemReducer.allCorporateUser);
-    } else {
-      setRows([]);
-    }
-  }, [systemReducer.allCorporateUser]);
-  console.log("allcorporateee", rows);
-
-  // for category Corporate in select drop down
-  useEffect(() => {
-    if (Object.keys(auth.getAllCorporate).length > 0) {
-      let tem = [];
-      auth.getAllCorporate.map((data, index) => {
-        console.log(data, "datadatadatadatassssss");
-        tem.push({
-          label: data.category,
-          value: data.corporateCategoryID,
-        });
-      });
-      setSelectAllCategory(tem);
-    }
-  }, [auth.getAllCorporate]);
 
   //Table columns for customer List
   const columns = [
@@ -289,11 +173,7 @@ const Customerlist = () => {
       dataIndex: "email",
       key: "email",
       width: "150px",
-      render: (text) => (
-        <label className="table-columns" onClick={openViewModal}>
-          {text}
-        </label>
-      ),
+      render: (text) => <label className="User-table-columns">{text}</label>,
     },
     {
       title: <label className="bottom-table-header">First Name</label>,
@@ -342,46 +222,46 @@ const Customerlist = () => {
 
   return (
     <Fragment>
-      <Container className="customer-List-container">
+      <Container className="user-List-container">
         <Row>
           <Col>
             <Row>
               <Col lg={12} md={12} sm={12}>
-                <span className="customer-List-label">Customer List</span>
+                <span className="user-List-label">User List</span>
               </Col>
             </Row>
             <Row className="mt-3">
               <Col lg={11} md={11} sm={12}>
-                <CustomPaper className="customer-List-paper">
+                <CustomPaper className="user-List-paper">
                   <Row className="mt-3">
                     <Col lg={2} md={2} sm={12}>
                       <TextField
                         placeholder="First Name"
                         name="FirstName"
-                        value={customerListFields.FirstName.value}
+                        value={userListFields.FirstName.value}
                         onChange={customerListValidation}
                         labelClass="d-none"
-                        className="textfields-customer-list-fontsize"
+                        className="textfields-User-list-fontsize"
                       />
                     </Col>
                     <Col lg={2} md={2} sm={12}>
                       <TextField
                         placeholder="Last Name"
                         name="LastName"
-                        value={customerListFields.LastName.value}
+                        value={userListFields.LastName.value}
                         onChange={customerListValidation}
                         labelClass="d-none"
-                        className="textfields-customer-list-fontsize"
+                        className="textfields-User-list-fontsize"
                       />
                     </Col>
                     <Col lg={2} md={2} sm={12}>
                       <TextField
                         placeholder="Company Name"
                         name="companyName"
-                        value={customerListFields.companyName.value}
+                        value={userListFields.companyName.value}
                         onChange={customerListValidation}
                         labelClass="d-none"
-                        className="textfields-customer-list-fontsize"
+                        className="textfields-User-list-fontsize"
                       />
                     </Col>
                     <Col lg={3} md={3} sm={12}>
@@ -389,21 +269,17 @@ const Customerlist = () => {
                         placeholder="Email"
                         name="Email"
                         onBlur={handlerEmail}
-                        value={customerListFields.Email.value}
+                        value={userListFields.Email.value}
                         onChange={customerListValidation}
                         labelClass="d-none"
-                        className="textfields-customer-list-fontsize"
+                        className="textfields-User-list-fontsize"
                       />
                     </Col>
                     <Col lg={3} md={3} sm={12}>
                       <Select
                         name="corporateCategoryID"
-                        options={selectAllCategory}
-                        value={selectAllCategoryValue}
-                        isSearchable={true}
-                        onChange={selectAllCategoryOnchangeHandler}
                         placeholder="Select"
-                        className="select-customer-list-fontsize"
+                        className="select-user-list-fontsize"
                       />
                     </Col>
                   </Row>
@@ -413,17 +289,16 @@ const Customerlist = () => {
                       lg={12}
                       md={12}
                       sm={12}
-                      className="customer-list-col-fields"
+                      className="user-list-col-fields"
                     >
                       <Button
                         icon={<i className="icon-search icon-check-space"></i>}
-                        className="Search-btn"
-                        onClick={seacrhButtonHit}
+                        className="User-Search-btn"
                         text="Search"
                       />
                       <Button
                         icon={<i className="icon-refresh icon-check-space"></i>}
-                        className="Reset-btn"
+                        className="User-Reset-btn"
                         onClick={resetBtnHandler}
                         text="Reset"
                       />
@@ -431,18 +306,12 @@ const Customerlist = () => {
                   </Row>
                   <Row className="mt-3">
                     <Col lg={12} md={12} sm={12}>
-                      {systemReducer.Spinner === true ? (
-                        <span className="customer-list-user-spinner">
-                          <Spin size="large" />
-                        </span>
-                      ) : (
-                        <Table
-                          column={columns}
-                          rows={rows}
-                          pagination={false}
-                          className="CustomerList-table"
-                        />
-                      )}
+                      <Table
+                        column={columns}
+                        //   rows={rows}
+                        pagination={false}
+                        className="User-List-table"
+                      />
                     </Col>
                   </Row>
                 </CustomPaper>
@@ -451,17 +320,8 @@ const Customerlist = () => {
           </Col>
         </Row>
       </Container>
-
-      {customerViewModal ? (
-        <>
-          <ViewCustomer
-            viewCustomerModal={customerViewModal}
-            setViewCustomerModal={setCustomerViewModal}
-          />
-        </>
-      ) : null}
     </Fragment>
   );
 };
 
-export default Customerlist;
+export default Userlist;

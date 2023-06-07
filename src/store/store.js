@@ -2,12 +2,13 @@ import { applyMiddleware, combineReducers } from "redux";
 import thunk from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
 
-import { authReducer } from "./reducers";
+import { authReducer, systemReducer } from "./reducers";
 import { configureStore } from "@reduxjs/toolkit";
 import * as actions from "./action_types";
 
 const AppReducer = combineReducers({
   auth: authReducer,
+  systemReducer: systemReducer,
 });
 
 const rootReducer = (state, action) => {

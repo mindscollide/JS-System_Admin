@@ -12,6 +12,8 @@ const initialState = {
   userCorporateLogin: [],
   bankUserLoginHistory: [],
   getAllCorporate: [],
+  searchCompanyLogin: [],
+  searchBankLogin: [],
   roles: null,
   Token: "",
   Refresh: "",
@@ -172,6 +174,56 @@ const authReducer = (state = initialState, action) => {
         Loading: false,
         Spinner: false,
         getAllCorporate: [],
+        ResponseMessage: action.message,
+      };
+
+    case actions.SEARCH_COMPANY_USER_LOGIN_INIT:
+      return {
+        ...state,
+        Spinner: true,
+        Loading: true,
+      };
+
+    case actions.SEARCH_COMPANY_USER_LOGIN_SUCCESS:
+      return {
+        ...state,
+        Loading: false,
+        Spinner: false,
+        searchCompanyLogin: action.response,
+        ResponseMessage: action.message,
+      };
+
+    case actions.SEARCH_COMPANY_USER_LOGIN_FAIL:
+      return {
+        ...state,
+        Loading: false,
+        Spinner: false,
+        searchCompanyLogin: [],
+        ResponseMessage: action.message,
+      };
+
+    case actions.SEARCH_BANK_USER_LOGIN_INIT:
+      return {
+        ...state,
+        Spinner: true,
+        Loading: true,
+      };
+
+    case actions.SEARCH_BANK_USER_LOGIN_SUCCESS:
+      return {
+        ...state,
+        Loading: false,
+        Spinner: false,
+        searchBankLogin: action.response,
+        ResponseMessage: action.message,
+      };
+
+    case actions.SEARCH_BANK_USER_LOGIN_FAIL:
+      return {
+        ...state,
+        Loading: false,
+        Spinner: false,
+        searchBankLogin: action.response,
         ResponseMessage: action.message,
       };
 

@@ -29,6 +29,26 @@ const userBankLoginHistory = {
   RequestMethod: "ServiceManager.GetBankUsersLoginHistory",
 };
 
+// search company Users Login History Api
+const companySearchLoginHistory = {
+  RequestMethod: "ServiceManager.SearchCompanyUsersLoginHistory",
+};
+
+// search Bank Users Login History API
+const bankSearchLoginHistory = {
+  RequestMethod: "ServiceManager.SearchBankUsersLoginHistory",
+};
+
+// get All Corporate User Api System Admin API
+const getAllCorporateUserSysAdmin = {
+  RequestMethod: "ServiceManager.GetAllCorporateUsers",
+};
+
+// for search coporate User API in system Admin
+const searchCorporateUsersSysAdmin = {
+  RequestMethod: "ServiceManager.SearchCorporateUsers",
+};
+
 export {
   authenticationLogIn,
   authenticationSignUp,
@@ -37,4 +57,8 @@ export {
   customerCorporateHistory,
   getCorporateCategory,
   userBankLoginHistory,
+  companySearchLoginHistory,
+  bankSearchLoginHistory,
+  getAllCorporateUserSysAdmin,
+  searchCorporateUsersSysAdmin,
 };

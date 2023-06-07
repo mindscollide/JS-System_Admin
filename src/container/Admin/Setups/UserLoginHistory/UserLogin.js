@@ -10,13 +10,16 @@ import { validateEmail } from "../../../../commen/functions/emailValidation";
 import {
   bankUserLogin,
   getAllCategoriesCorporate,
+  searchBankLogin,
 } from "../../../../store/actions/Auth-Actions";
 import Select from "react-select";
+import { useNavigate } from "react-router-dom";
 import { Spin } from "antd";
 import "./UserLogin.css";
 import { useSelector, useDispatch } from "react-redux";
 
 const UserLogin = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { auth } = useSelector((state) => state);
   // state for set data from api in rows
@@ -25,11 +28,6 @@ const UserLogin = () => {
   // state for category dropdown
   const [selectCategoryBank, setSelectCategoryBank] = useState([]);
   const [selectCategoryBankValue, setSelectCategoryBankValue] = useState([]);
-
-  // dispatch getALLCategoryDropdown API
-  useEffect(() => {
-    dispatch(getAllCategoriesCorporate());
-  }, []);
 
   // state for LoginHistory fields
   const [userLoginHistory, setUserLoginHistory] = useState({
@@ -49,7 +47,7 @@ const UserLogin = () => {
       errorStatus: false,
     },
 
-    Contact: {
+    BankName: {
       value: "",
       errorMessage: "",
       errorStatus: false,
@@ -106,23 +104,23 @@ const UserLogin = () => {
       });
     }
 
-    if (name === "Contact" && value !== "") {
-      let valueCheck = value.replace(/[^\d]/g, "");
+    if (name === "BankName" && value !== "") {
+      let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
       console.log("valueCheckvalueCheck", valueCheck);
       if (valueCheck !== "") {
         setUserLoginHistory({
           ...userLoginHistory,
-          Contact: {
+          BankName: {
             value: valueCheck.trimStart(),
             errorMessage: "",
             errorStatus: false,
           },
         });
       }
-    } else if (name === "Contact" && value === "") {
+    } else if (name === "BankName" && value === "") {
       setUserLoginHistory({
         ...userLoginHistory,
-        Contact: { value: "", errorMessage: "", errorStatus: false },
+        BankName: { value: "", errorMessage: "", errorStatus: false },
       });
     }
 
@@ -150,6 +148,36 @@ const UserLogin = () => {
     }
   };
 
+  // api hit on seacrh btn
+  const searchButtonHit = async () => {
+    let seacrhBankData = {
+      FirstName: userLoginHistory.FirstName.value,
+      LastName: userLoginHistory.LastName.value,
+      BankName: userLoginHistory.BankName.value,
+      Email: userLoginHistory.Email.value,
+      FromDate: "20230504",
+      ToDate: "20230525",
+    };
+    await dispatch(searchBankLogin(navigate, seacrhBankData));
+    setUserLoginHistory({
+      ...userLoginHistory,
+      FirstName: {
+        value: "",
+      },
+      LastName: {
+        value: "",
+      },
+
+      BankName: {
+        value: "",
+      },
+
+      Email: {
+        value: "",
+      },
+    });
+  };
+
   //ON CHANGE HANDLER FOR CATEGORY DROPDOWN
   const selectCategoryOnchangeHandler = async (selectedCategory) => {
     console.log(selectedCategory, "selectedOptionselectedOption");
@@ -168,7 +196,7 @@ const UserLogin = () => {
     let newData = {
       BankID: 1,
     };
-    dispatch(bankUserLogin(newData));
+    dispatch(bankUserLogin(navigate, newData));
   }, []);
 
   //email validation handler
@@ -234,41 +262,67 @@ const UserLogin = () => {
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
+    // {
+    //   title: <label className="bottom-table-header">LogIn Date</label>,
+    //   dataIndex: "loginDate",
+    //   key: "loginDate",
+    //   width: "150px",
+    //   align: "center",
+    //   ellipsis: true,
+    //   render: (text) => <label className="issue-date-column">{text}</label>,
+    // },
+    // {
+    //   title: <label className="bottom-table-header">Logged In Time</label>,
+    //   dataIndex: "loginTime",
+    //   key: "loginTime",
+    //   align: "center",
+    //   width: "150px",
+    //   ellipsis: true,
+    //   render: (text) => <label className="issue-date-column">{text}</label>,
+    // },
     {
-      title: <label className="bottom-table-header">LogIn Date</label>,
-      dataIndex: "loginDate",
-      key: "loginDate",
+      title: <label className="bottom-table-header">LoggedIn Date</label>,
+      dataIndex: "CombineLoginInTimeDate",
+      key: "CombineLoginInTimeDate",
       width: "150px",
       align: "center",
       ellipsis: true,
-      render: (text) => <label className="issue-date-column">{text}</label>,
+      render: (_, record) => (
+        <label className="issue-date-column">
+          {record.loginDate} {record.loginTime}
+        </label>
+      ),
     },
+    // {
+    //   title: <label className="bottom-table-header">LogOut Date</label>,
+    //   dataIndex: "logOutDate",
+    //   key: "logOutDate",
+    //   width: "200px",
+    //   align: "center",
+    //   ellipsis: true,
+    //   render: (text) => <label className="issue-date-column">{text}</label>,
+    // },
+    // {
+    //   title: <label className="bottom-table-header">Logged Out Time</label>,
+    //   dataIndex: "logOutTime",
+    //   key: "logOutTime",
+    //   width: "200px",
+    //   align: "center",
+    //   ellipsis: true,
+    //   render: (text) => <label className="issue-date-column">{text}</label>,
+    // },
     {
-      title: <label className="bottom-table-header">Logged In Time</label>,
-      dataIndex: "loginTime",
-      key: "loginTime",
-      align: "center",
+      title: <label className="bottom-table-header">LoggOut Date</label>,
+      dataIndex: "CombineLoggedOutTimeDate",
+      key: "CombineLoggedOutTimeDate",
       width: "150px",
-      ellipsis: true,
-      render: (text) => <label className="issue-date-column">{text}</label>,
-    },
-    {
-      title: <label className="bottom-table-header">LogOut Date</label>,
-      dataIndex: "logOutDate",
-      key: "logOutDate",
-      width: "200px",
       align: "center",
       ellipsis: true,
-      render: (text) => <label className="issue-date-column">{text}</label>,
-    },
-    {
-      title: <label className="bottom-table-header">Logged Out Time</label>,
-      dataIndex: "logOutTime",
-      key: "logOutTime",
-      width: "200px",
-      align: "center",
-      ellipsis: true,
-      render: (text) => <label className="issue-date-column">{text}</label>,
+      render: (_, record) => (
+        <label className="issue-date-column">
+          {record.logOutDate} {record.logOutTime}
+        </label>
+      ),
     },
     {
       title: <label className="bottom-table-header">Total Span</label>,
@@ -291,12 +345,30 @@ const UserLogin = () => {
     },
   ];
 
+  // dispatch getALLCategoryDropdown API
+  useEffect(() => {
+    dispatch(getAllCategoriesCorporate(navigate));
+  }, []);
+
+  //this useEffect Condition is for when user hit search btn if data is same or not
+  useEffect(() => {
+    if (
+      auth.searchBankLogin.length > 0 &&
+      auth.searchBankLogin !== null &&
+      auth.searchBankLogin !== undefined
+    ) {
+      setRows(auth.searchBankLogin);
+    } else {
+      setRows([]);
+    }
+  }, [auth.searchBankLogin]);
+
   // render table inside table
   useEffect(() => {
     if (
+      auth.bankUserLoginHistory.length > 0 &&
       auth.bankUserLoginHistory !== null &&
-      auth.bankUserLoginHistory !== undefined &&
-      auth.bankUserLoginHistory.length > 0
+      auth.bankUserLoginHistory !== undefined
     ) {
       setRows(auth.bankUserLoginHistory);
     } else {
@@ -335,7 +407,7 @@ const UserLogin = () => {
                   <Row className="mt-3">
                     <Col lg={3} md={3} sm={12}>
                       <TextField
-                        placeholder="FirstName"
+                        placeholder="First Name"
                         name="FirstName"
                         value={userLoginHistory.FirstName.value}
                         onChange={userLoginValidation}
@@ -345,7 +417,7 @@ const UserLogin = () => {
                     </Col>
                     <Col lg={3} md={3} sm={12}>
                       <TextField
-                        placeholder="LastName"
+                        placeholder="Last Name"
                         name="LastName"
                         value={userLoginHistory.LastName.value}
                         onChange={userLoginValidation}
@@ -355,9 +427,9 @@ const UserLogin = () => {
                     </Col>
                     <Col lg={3} md={3} sm={12}>
                       <TextField
-                        placeholder="Contact"
-                        name="Contact"
-                        value={userLoginHistory.Contact.value}
+                        placeholder="Bank Name"
+                        name="BankName"
+                        value={userLoginHistory.BankName.value}
                         onChange={userLoginValidation}
                         labelClass="d-none"
                         className="UserHistory-textField-fontsize"
@@ -400,6 +472,7 @@ const UserLogin = () => {
                     >
                       <Button
                         text="Search"
+                        onClick={searchButtonHit}
                         icon={<i className="icon-search"></i>}
                         className={"Search-UserHistory-btn"}
                       />

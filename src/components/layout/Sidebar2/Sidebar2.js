@@ -53,12 +53,6 @@ const Sidebar2 = () => {
     navigate("/AdminDashboard/RejectionReason");
   };
 
-  const navigateToReport = () => {
-    localStorage.setItem("defaultOpenKey ", "sub2");
-    localStorage.setItem("defaultSelectedKey", "10");
-    navigate("/AdminDashboard/AssetBanking");
-  };
-
   const navigateToLoginHistory = () => {
     localStorage.setItem("defaultOpenKey ", "sub1");
     localStorage.setItem("defaultSelectedKey", "6");
@@ -83,15 +77,27 @@ const Sidebar2 = () => {
     navigate("/AdminDashboard/customerList");
   };
 
-  const navigateToCounter = () => {
+  const navigateToUserList = () => {
+    localStorage.setItem("defaultOpenKey ", "sub1");
+    localStorage.setItem("defaultSelectedKey", "10");
+    navigate("/AdminDashboard/Userlist");
+  };
+
+  const navigateToReport = () => {
     localStorage.setItem("defaultOpenKey ", "sub2");
     localStorage.setItem("defaultSelectedKey", "11");
+    navigate("/AdminDashboard/AssetBanking");
+  };
+
+  const navigateToCounter = () => {
+    localStorage.setItem("defaultOpenKey ", "sub2");
+    localStorage.setItem("defaultSelectedKey", "12");
     navigate("/AdminDashboard/counterLimit");
   };
 
   const navigateToVolMeter = () => {
     localStorage.setItem("defaultOpenKey ", "sub2");
-    localStorage.setItem("defaultSelectedKey", "12");
+    localStorage.setItem("defaultSelectedKey", "13");
     navigate("/AdminDashboard/volMeter");
   };
 
@@ -103,7 +109,7 @@ const Sidebar2 = () => {
   return (
     <Fragment>
       <Row className="sidebar-row">
-        <Col sm={4} className="js-sidebar">
+        <Col lg={12} md={12} sm={12} className="js-sidebar">
           <Layout>
             <Sider
               width={250}
@@ -176,7 +182,15 @@ const Sidebar2 = () => {
                       key="9"
                       onClick={navigateToCustomerList}
                     >
-                      Customer List
+                      Customer User List
+                    </Menu.Item>
+
+                    <Menu.Item
+                      className="menu-items-sidebar"
+                      key="10"
+                      onClick={navigateToUserList}
+                    >
+                      User List
                     </Menu.Item>
                   </SubMenu>
                   <SubMenu
@@ -187,7 +201,7 @@ const Sidebar2 = () => {
                   >
                     <Menu.Item
                       className="menu-items-sidebar"
-                      key="10"
+                      key="11"
                       onClick={navigateToReport}
                     >
                       Non-Banking Assets
@@ -195,7 +209,7 @@ const Sidebar2 = () => {
 
                     <Menu.Item
                       className="menu-items-sidebar"
-                      key="11"
+                      key="12"
                       onClick={navigateToCounter}
                     >
                       Counter Party Limit

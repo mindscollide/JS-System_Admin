@@ -1,13 +1,8 @@
-.sidebar-row {
-  margin: 0% !important;
-  padding: 0% !important;
-}
-
 .new_sidebar {
   display: flex;
   text-align: left !important;
   min-height: 50vh;
-  width: 100vh !important;
+  width: 100% !important;
   padding: 0;
   justify-content: start;
   gap: 0px;
