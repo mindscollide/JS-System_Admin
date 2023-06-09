@@ -10,6 +10,8 @@ import {
   userBankLoginHistory,
   companySearchLoginHistory,
   bankSearchLoginHistory,
+  getAllUserStatusERMAdmin,
+  getAllCorporatesApiERM,
 } from "../../commen/apis/Api_config";
 import { authenticationAPI } from "../../commen/apis/Api_ends_points";
 
@@ -1020,6 +1022,183 @@ const searchBankLogin = (navigate, seacrhBankData) => {
   };
 };
 
+// get all User Status API in System Admin ERM
+const getAllStatusInit = () => {
+  return {
+    type: actions.GET_ALL_USER_STATUS_API_INIT,
+  };
+};
+
+const getAllStatusSuccess = (response, message) => {
+  return {
+    type: actions.GET_ALL_USER_STATUS_API_SUCCESS,
+    response: response,
+    message: message,
+  };
+};
+
+const getAllStatusFail = (message) => {
+  return {
+    type: actions.GET_ALL_USER_STATUS_API_FAIL,
+    message: message,
+  };
+};
+
+const getStatusApi = (navigate) => {
+  let token = JSON.parse(localStorage.getItem("token"));
+  return (dispatch) => {
+    dispatch(getAllStatusInit());
+    let form = new FormData();
+    form.append("RequestMethod", getAllUserStatusERMAdmin.RequestMethod);
+    form.append("RequestData", JSON.stringify());
+    axios({
+      method: "POST",
+      url: authenticationAPI,
+      data: form,
+      headers: {
+        _token: token,
+      },
+    })
+      .then(async (response) => {
+        console.log("UserRoleListUserRoleList", response);
+        if (response.data.responseCode === 417) {
+          await dispatch(RefreshToken(navigate));
+          dispatch(getStatusApi(navigate));
+        } else if (response.data.responseCode === 200) {
+          if (response.data.responseResult.isExecuted === true) {
+            if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "ERM_AuthService_CommonManager_GetAllUserStatus_01".toLowerCase()
+                )
+            ) {
+              console.log("UserRoleListUserRoleList", response);
+              dispatch(
+                getAllStatusSuccess(
+                  response.data.responseResult.status,
+                  "Record found"
+                )
+              );
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "ERM_AuthService_CommonManager_GetAllUserStatus_02".toLowerCase()
+                )
+            ) {
+              dispatch(getAllStatusFail("No Record Found"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "ERM_AuthService_CommonManager_GetAllUserStatus_03".toLowerCase()
+                )
+            ) {
+              dispatch(getAllStatusFail("Exception No Status available"));
+            }
+          } else {
+            dispatch(getAllStatusFail("Something went wrong"));
+            console.log("There's no User Role");
+          }
+        } else {
+          dispatch(getAllStatusFail("Something went wrong"));
+          console.log("There's no User Role");
+        }
+      })
+      .catch((response) => {
+        dispatch(getAllStatusFail("something went wrong"));
+      });
+  };
+};
+
+// For Get All Corporate Api
+const categoryCompanyInit = () => {
+  return {
+    type: actions.GET_ALL_CORPORATES_COMPANY_INIT,
+  };
+};
+
+const categoryCompanySuccess = (response, message) => {
+  return {
+    type: actions.GET_ALL_CORPORATES_COMPANY_SUCCESS,
+    response: response,
+    message: message,
+  };
+};
+
+const categoryCompanyFail = (message) => {
+  return {
+    type: actions.GET_ALL_CORPORATES_COMPANY_FAIL,
+    message: message,
+  };
+};
+
+const getAllCorporateCompany = (navigate) => {
+  let token = JSON.parse(localStorage.getItem("token"));
+  return (dispatch) => {
+    dispatch(categoryCompanyInit());
+    let form = new FormData();
+    form.append("RequestMethod", getAllCorporatesApiERM.RequestMethod);
+    form.append("RequestData", JSON.stringify());
+    axios({
+      method: "POST",
+      url: authenticationAPI,
+      data: form,
+      headers: {
+        _token: token,
+      },
+    })
+      .then(async (response) => {
+        console.log("CorporateCategoryCorporateCategory", response);
+        if (response.data.responseCode === 417) {
+          await dispatch(RefreshToken(navigate));
+          dispatch(getAllCorporateCompany(navigate));
+        } else if (response.data.responseCode === 200) {
+          if (response.data.responseResult.isExecuted === true) {
+            if (
+              response.data.responseResult.responseMessage.toLowerCase() ===
+              "ERM_AuthService_CommonManager_GetAllCorporates_01".toLowerCase()
+            ) {
+              console.log("UserRoleListUserRoleList", response);
+              dispatch(
+                categoryCompanySuccess(
+                  response.data.responseResult.corporates,
+                  "Record found"
+                )
+              );
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "ERM_AuthService_CommonManager_GetAllCorporates_02".toLowerCase()
+                )
+            ) {
+              dispatch(categoryCompanyFail("No Record Found"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "ERM_AuthService_CommonManager_GetAllCorporates_03".toLowerCase()
+                )
+            ) {
+              dispatch(categoryCompanyFail("Exception Something went wrong"));
+            }
+          } else {
+            dispatch(categoryCompanyFail("Something went wrong"));
+            console.log("There's no corporates category");
+          }
+        } else {
+          dispatch(categoryCompanyFail("Something went wrong"));
+          console.log("There's no corporates category");
+        }
+      })
+      .catch((response) => {
+        dispatch(categoryCompanyFail("something went wrong"));
+      });
+  };
+};
+
 export {
   logIn,
   signUp,
@@ -1031,4 +1210,6 @@ export {
   bankUserLogin,
   searchCompanyLogin,
   searchBankLogin,
+  getStatusApi,
+  getAllCorporateCompany,
 };

@@ -10,20 +10,56 @@ import {
 import "./ViewCustomer.css";
 import Select from "react-select";
 
-const ViewCustomer = ({ viewCustomerModal, setViewCustomerModal }) => {
-  const Name = useRef(null);
-  const selectShield = useRef(null);
-  const fieldOneTwoThree = useRef(null);
+const ViewCustomer = ({
+  viewCustomerModal,
+  setViewCustomerModal,
+  selectCategoryChangeHandler,
+  selectCategory,
+  modalViewCustomerList,
+  companySelectOption,
+  setModalViewCustomerList,
+  companyDropdownOnchange,
+  companySelectValue,
+}) => {
+  const firstName = useRef(null);
+  const lastName = useRef(null);
+  const corporateID = useRef(null);
 
   // for enable viewCustomerFields state
-  const [enableName, setEnableName] = useState(true);
-  const [enableSelectShield, setEnableSelectShield] = useState(true);
-  const [enableOneTwoField, setEnableOneTwoField] = useState(true);
+  const [enableFirstName, setEnableFirstName] = useState(true);
+  const [enableLastName, setEnableLastName] = useState(true);
+  const [enableSelectCompanyName, setEnableSelectCompanyName] = useState(true);
 
   //state for view modal Customer List
   const [viewCustomer, setViewCustomer] = useState({
     Name: {
       value: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+
+    firstName: {
+      value: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+
+    lastName: {
+      value: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+
+    Category: {
+      value: 0,
+      label: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+
+    corporateID: {
+      value: "",
+      label: "",
       errorMessage: "",
       errorStatus: false,
     },
@@ -39,29 +75,52 @@ const ViewCustomer = ({ viewCustomerModal, setViewCustomerModal }) => {
   const closeViewModal = () => {
     setViewCustomerModal(false);
   };
-
+  console.log(
+    modalViewCustomerList,
+    "modalViewCustomerListmodalViewCustomerList"
+  );
   // validation for customer List
   const customerViewModalValidation = (e) => {
     let name = e.target.name;
     let value = e.target.value;
 
-    if (name === "Name" && value !== "") {
+    if (name === "firstName" && value !== "") {
       let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
       console.log("valueCheckvalueCheck", valueCheck);
       if (valueCheck !== "") {
         setViewCustomer({
           ...viewCustomer,
-          Name: {
+          firstName: {
             value: valueCheck.trimStart(),
             errorMessage: "",
             errorStatus: false,
           },
         });
       }
-    } else if (name === "Name" && value === "") {
+    } else if (name === "firstName" && value === "") {
       setViewCustomer({
         ...viewCustomer,
-        Name: { value: "", errorMessage: "", errorStatus: false },
+        firstName: { value: "", errorMessage: "", errorStatus: false },
+      });
+    }
+
+    if (name === "lastName" && value !== "") {
+      let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
+      console.log("valueCheckvalueCheck", valueCheck);
+      if (valueCheck !== "") {
+        setViewCustomer({
+          ...viewCustomer,
+          lastName: {
+            value: valueCheck.trimStart(),
+            errorMessage: "",
+            errorStatus: false,
+          },
+        });
+      }
+    } else if (name === "lastName" && value === "") {
+      setViewCustomer({
+        ...viewCustomer,
+        lastName: { value: "", errorMessage: "", errorStatus: false },
       });
     }
 
@@ -88,12 +147,12 @@ const ViewCustomer = ({ viewCustomerModal, setViewCustomerModal }) => {
 
   // for enable Name field
   const nameEnableHandler = () => {
-    setEnableName(false);
-    setEnableOneTwoField(false);
-    setEnableSelectShield(false);
-    Name.current.focus();
-    fieldOneTwoThree.current.focus();
-    enableSelectShield.current.focus();
+    setEnableFirstName(false);
+    setEnableLastName(false);
+    setEnableSelectCompanyName(false);
+    firstName.current.focus();
+    lastName.current.focus();
+    corporateID.current.focus();
   };
   return (
     <Fragment>
@@ -153,7 +212,8 @@ const ViewCustomer = ({ viewCustomerModal, setViewCustomerModal }) => {
                     <Row className="mt-3">
                       <Col lg={12} md={12} sm={12}>
                         <TextField
-                          placeholder="aunnaqvi123@gmail.com"
+                          value={modalViewCustomerList.Email}
+                          // placeholder="aunnaqvi123@gmail.com"
                           disable={true}
                           className="disable-field-Name"
                           labelClass="d-none"
@@ -164,35 +224,67 @@ const ViewCustomer = ({ viewCustomerModal, setViewCustomerModal }) => {
                     <Row className="mt-3">
                       <Col lg={6} md={6} sm={12}>
                         <TextField
-                          disable={enableName ? true : false}
-                          ref={Name}
+                          disable={enableFirstName ? true : false}
+                          ref={firstName}
                           placeholder="muhammad.ahmed"
-                          name="Name"
+                          name="firstName"
                           className={
-                            enableName
+                            enableFirstName
                               ? `${"disable-field-Name"}`
                               : `${"Textfield-Name"}`
                           }
-                          value={viewCustomer.Name.value}
+                          value={modalViewCustomerList.FirstName}
+                          // value={viewCustomer.firstName.value}
                           onChange={customerViewModalValidation}
                           labelClass="d-none"
                         />
                       </Col>
+
                       <Col lg={6} md={6} sm={12}>
-                        <Select
-                          isDisabled={enableSelectShield ? true : false}
-                          ref={selectShield}
-                          name="selectShield"
-                          placeholder="Shield"
+                        <TextField
+                          disable={enableLastName ? true : false}
+                          ref={lastName}
+                          placeholder="muhammad.ahmed"
+                          name="lastName"
+                          className={
+                            enableLastName
+                              ? `${"disable-field-Name"}`
+                              : `${"Textfield-Name"}`
+                          }
+                          value={modalViewCustomerList.LastName}
+                          onChange={customerViewModalValidation}
+                          labelClass="d-none"
                         />
                       </Col>
                     </Row>
 
                     <Row className="mt-3">
                       <Col lg={6} md={6} sm={12}>
-                        <Select placeholder="Shield" isDisabled={true} />
+                        <Select
+                          isDisabled={enableSelectCompanyName ? true : false}
+                          ref={corporateID}
+                          name="corporateID"
+                          onChange={companyDropdownOnchange}
+                          options={companySelectOption}
+                          value={{
+                            value: modalViewCustomerList.companySelect.value,
+                            label: modalViewCustomerList.companySelect.label,
+                          }}
+                          placeholder="Company Name"
+                        />
                       </Col>
                       <Col lg={6} md={6} sm={12}>
+                        <Select
+                          isDisabled={true}
+                          name="selectShield"
+                          placeholder="Category"
+                          value={modalViewCustomerList.selectCategory}
+                          options={selectCategory}
+                          onChange={selectCategoryChangeHandler}
+                        />
+                      </Col>
+
+                      {/* <Col lg={6} md={6} sm={12}>
                         <TextField
                           disable={enableOneTwoField ? true : false}
                           ref={fieldOneTwoThree}
@@ -207,6 +299,11 @@ const ViewCustomer = ({ viewCustomerModal, setViewCustomerModal }) => {
                           onChange={customerViewModalValidation}
                           labelClass="d-none"
                         />
+                      </Col> */}
+                    </Row>
+                    <Row className="mt-3">
+                      <Col lg={6} md={6} sm={12}>
+                        <Select isDisabled={true} placeholder="Status" />
                       </Col>
                     </Row>
                   </Col>

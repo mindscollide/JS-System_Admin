@@ -49,6 +49,16 @@ const searchCorporateUsersSysAdmin = {
   RequestMethod: "ServiceManager.SearchCorporateUsers",
 };
 
+// for get All User status API ERM system Admin
+const getAllUserStatusERMAdmin = {
+  RequestMethod: "ServiceManager.GetAllUserStatus",
+};
+
+//get all corporate in company dropdown
+const getAllCorporatesApiERM = {
+  RequestMethod: "ServiceManager.GetAllCorporates",
+};
+
 export {
   authenticationLogIn,
   authenticationSignUp,
@@ -61,4 +71,6 @@ export {
   bankSearchLoginHistory,
   getAllCorporateUserSysAdmin,
   searchCorporateUsersSysAdmin,
+  getAllUserStatusERMAdmin,
+  getAllCorporatesApiERM,
 };

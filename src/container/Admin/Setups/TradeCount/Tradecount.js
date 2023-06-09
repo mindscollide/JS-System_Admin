@@ -39,6 +39,18 @@ const TradeCount = () => {
       errorStatus: false,
     },
 
+    firstName: {
+      value: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+
+    lastName: {
+      value: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+
     companyName: {
       value: "",
       errorMessage: "",
@@ -111,6 +123,46 @@ const TradeCount = () => {
       setUserTradeCount({
         ...userTradeCount,
         Name: { value: "", errorMessage: "", errorStatus: false },
+      });
+    }
+
+    if (name === "firstName" && value !== "") {
+      let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
+      console.log("valueCheckvalueCheck", valueCheck);
+      if (valueCheck !== "") {
+        setUserTradeCount({
+          ...userTradeCount,
+          firstName: {
+            value: valueCheck.trimStart(),
+            errorMessage: "",
+            errorStatus: false,
+          },
+        });
+      }
+    } else if (name === "firstName" && value === "") {
+      setUserTradeCount({
+        ...userTradeCount,
+        firstName: { value: "", errorMessage: "", errorStatus: false },
+      });
+    }
+
+    if (name === "lastName" && value !== "") {
+      let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
+      console.log("valueCheckvalueCheck", valueCheck);
+      if (valueCheck !== "") {
+        setUserTradeCount({
+          ...userTradeCount,
+          lastName: {
+            value: valueCheck.trimStart(),
+            errorMessage: "",
+            errorStatus: false,
+          },
+        });
+      }
+    } else if (name === "lastName" && value === "") {
+      setUserTradeCount({
+        ...userTradeCount,
+        lastName: { value: "", errorMessage: "", errorStatus: false },
       });
     }
 
@@ -295,15 +347,15 @@ const TradeCount = () => {
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
-    {
-      title: <label className="bottom-table-header">Rate quoted</label>,
-      dataIndex: "rateQuoted",
-      key: "rateQuoted",
-      width: "100px",
-      align: "center",
-      ellipsis: true,
-      render: (text) => <label className="issue-date-column">{text}</label>,
-    },
+    // {
+    //   title: <label className="bottom-table-header">Rate quoted</label>,
+    //   dataIndex: "rateQuoted",
+    //   key: "rateQuoted",
+    //   width: "100px",
+    //   align: "center",
+    //   ellipsis: true,
+    //   render: (text) => <label className="issue-date-column">{text}</label>,
+    // },
     {
       title: <label className="bottom-table-header">Rate done</label>,
       dataIndex: "rateDone",
@@ -393,9 +445,19 @@ const TradeCount = () => {
                     </Col>
                     <Col lg={2} md={2} sm={12}>
                       <TextField
-                        placeholder="Name"
-                        name="Name"
-                        value={userTradeCount.Name.value}
+                        placeholder="First Name"
+                        name="firstName"
+                        value={userTradeCount.firstName.value}
+                        onChange={userTradeValidation}
+                        labelClass="d-none"
+                        className="tradeCount-textField-fontsize"
+                      />
+                    </Col>
+                    <Col lg={2} md={2} sm={12}>
+                      <TextField
+                        placeholder="Last Name"
+                        name="lastName"
+                        value={userTradeCount.lastName.value}
                         onChange={userTradeValidation}
                         labelClass="d-none"
                         className="tradeCount-textField-fontsize"
@@ -432,6 +494,9 @@ const TradeCount = () => {
                         className="tradeCount-textField-fontsize"
                       />
                     </Col>
+                  </Row>
+
+                  <Row className="mt-3">
                     <Col lg={2} md={2} sm={12}>
                       <TextField
                         placeholder="Security Type"
@@ -442,9 +507,6 @@ const TradeCount = () => {
                         className="tradeCount-textField-fontsize"
                       />
                     </Col>
-                  </Row>
-
-                  <Row className="mt-3">
                     <Col lg={2} md={2} sm={12}>
                       <TextField
                         placeholder="Position"

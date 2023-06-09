@@ -14,7 +14,12 @@ import {
   searchUserCorporateApi,
 } from "../../../../store/actions/System-Admin";
 import { useNavigate } from "react-router-dom";
-import { getAllCategoriesCorporate } from "../../../../store/actions/Auth-Actions";
+
+import {
+  getAllCategoriesCorporate,
+  getAllCorporateCompany,
+} from "../../../../store/actions/Auth-Actions";
+
 import Select from "react-select";
 import { Spin } from "antd";
 import "./Customerlist.css";
@@ -31,6 +36,10 @@ const Customerlist = () => {
   // state for category dropdown
   const [selectAllCategory, setSelectAllCategory] = useState([]);
   const [selectAllCategoryValue, setSelectAllCategoryValue] = useState([]);
+
+  // state for company select dropdown
+  const [selectCompany, setSelectCompany] = useState([]);
+  const [selectCompanyValue, setSelectCompanyValue] = useState([]);
 
   // state for table rows
   const [rows, setRows] = useState([]);
@@ -65,11 +74,54 @@ const Customerlist = () => {
       errorMessage: "",
       errorStatus: false,
     },
+
+    corporateID: {
+      value: "",
+      label: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
   });
 
-  // dispatch getALLCategoryDropdown API
+  // state for View Customer List Modal
+  const [modalViewCustomerList, setModalViewCustomerList] = useState({
+    Email: "",
+    FirstName: "",
+    LastName: "",
+    selectCategory: {
+      value: 0,
+      label: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+
+    companySelect: {
+      value: 0,
+      label: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+    statusId: 0,
+  });
+  console.log("modalViewCustomerList", modalViewCustomerList);
+  // onChange handle view customer modal in which we passing the props on modal
+  const selectCategoryViewModalHandler = (selectedViewCategory) => {
+    console.log("SelectModalCategory", selectedViewCategory);
+    setModalViewCustomerList({
+      ...modalViewCustomerList,
+      selectCategory: {
+        value: selectedViewCategory.value,
+        label: selectedViewCategory.label,
+        errorMessage: "",
+        errorStatus: false,
+      },
+    });
+  };
+
+  // dispatch getALLCategoryDropdown API and getAllCompanyCorporate
   useEffect(() => {
     dispatch(getAllCategoriesCorporate(navigate));
+    dispatch(getAllCorporateCompany(navigate));
   }, []);
 
   // dispatch API in useEffect for customer list table
@@ -89,6 +141,26 @@ const Customerlist = () => {
       corporateCategoryID: {
         value: selectedCategory.value,
         label: selectedCategory.label,
+      },
+    });
+  };
+
+  // on change handler for company category
+  const selectAllCorporateCategoryOnchangeHandler = async (selectedCompany) => {
+    console.log(selectedCompany, "selectedCompanyselectedCompany");
+    setSelectCompanyValue(selectedCompany);
+    await setModalViewCustomerList({
+      ...modalViewCustomerList,
+      companySelect: {
+        value: selectedCompany.value,
+        label: selectedCompany.label,
+      },
+    });
+    setCustomerListFields({
+      ...customerListFields,
+      corporateID: {
+        value: selectedCompany.value,
+        label: selectedCompany.label,
       },
     });
   };
@@ -239,6 +311,52 @@ const Customerlist = () => {
     setCustomerViewModal(true);
   };
 
+  // Open View Customer Modal in which it take status and Category value in dropdown
+  const openViewCustomerModal = async (record) => {
+    let companyNew;
+    console.log(record, "recordddedddd");
+
+    // if (record !== null && record !== undefined) {
+    //   setModalViewCustomerList(record);
+    // }
+    try {
+      if (Object.keys(auth.allCorporateCompany).length > 0) {
+        await auth.allCorporateCompany.map((data, index) => {
+          console.log(data, record, "openViewCustomerModal");
+          if (data.corporateName === record.company) {
+            companyNew = {
+              label: data.corporateName,
+              value: data.corporateID,
+            };
+          }
+        });
+      }
+    } catch {
+      console.log("error on company Corporate select");
+    }
+
+    try {
+      if (Object.keys(companyNew).length > 0) {
+        console.log(companyNew, record, "openViewCustomerModal");
+        await setModalViewCustomerList({
+          ...modalViewCustomerList,
+          Email: record.email,
+          FirstName: record.firstName,
+          LastName: record.lastName,
+          companySelect: {
+            value: companyNew.value,
+            label: companyNew.label,
+          },
+          statusId: record.statusId,
+        });
+      }
+    } catch {
+      console.log("error on company Corporate select");
+    }
+
+    setCustomerViewModal(true);
+  };
+
   //this useEffect Condition is for when user hit search btn if data isn't same
   // as in the table then table should be empty
   useEffect(() => {
@@ -282,6 +400,21 @@ const Customerlist = () => {
     }
   }, [auth.getAllCorporate]);
 
+  // for corporate company select drop down
+  useEffect(() => {
+    if (Object.keys(auth.allCorporateCompany).length > 0) {
+      let tem = [];
+      auth.allCorporateCompany.map((data, index) => {
+        console.log(data, "datadatadatadatassssss");
+        tem.push({
+          label: data.corporateName,
+          value: data.corporateID,
+        });
+      });
+      setSelectCompany(tem);
+    }
+  }, [auth.allCorporateCompany]);
+
   //Table columns for customer List
   const columns = [
     {
@@ -289,11 +422,19 @@ const Customerlist = () => {
       dataIndex: "email",
       key: "email",
       width: "150px",
-      render: (text) => (
-        <label className="table-columns" onClick={openViewModal}>
-          {text}
-        </label>
-      ),
+      render: (text, record) => {
+        console.log(record, "recordrecord");
+        return (
+          <label
+            className="table-columns"
+            onClick={() => {
+              openViewCustomerModal(record);
+            }}
+          >
+            {text}
+          </label>
+        );
+      },
     },
     {
       title: <label className="bottom-table-header">First Name</label>,
@@ -457,6 +598,13 @@ const Customerlist = () => {
           <ViewCustomer
             viewCustomerModal={customerViewModal}
             setViewCustomerModal={setCustomerViewModal}
+            selectCategoryChangeHandler={selectCategoryViewModalHandler}
+            selectCategory={selectAllCategory}
+            modalViewCustomerList={modalViewCustomerList}
+            setModalViewCustomerList={setModalViewCustomerList}
+            companyDropdownOnchange={selectAllCorporateCategoryOnchangeHandler}
+            companySelectOption={selectCompany}
+            companySelectValue={selectCompanyValue}
           />
         </>
       ) : null}

@@ -12,8 +12,10 @@ const initialState = {
   userCorporateLogin: [],
   bankUserLoginHistory: [],
   getAllCorporate: [],
+  allCorporateCompany: [],
   searchCompanyLogin: [],
   searchBankLogin: [],
+  allUserStatus: [],
   roles: null,
   Token: "",
   Refresh: "",
@@ -224,6 +226,50 @@ const authReducer = (state = initialState, action) => {
         Loading: false,
         Spinner: false,
         searchBankLogin: action.response,
+        ResponseMessage: action.message,
+      };
+
+    case actions.GET_ALL_USER_STATUS_API_INIT:
+      return {
+        ...state,
+        Loading: true,
+      };
+
+    case actions.GET_ALL_USER_STATUS_API_SUCCESS:
+      return {
+        ...state,
+        Loading: false,
+        allUserStatus: action.response,
+        ResponseMessage: action.message,
+      };
+
+    case actions.GET_ALL_USER_STATUS_API_FAIL:
+      return {
+        ...state,
+        Loading: false,
+        allUserStatus: [],
+        ResponseMessage: action.message,
+      };
+
+    case actions.GET_ALL_CORPORATES_COMPANY_INIT:
+      return {
+        ...state,
+        Loading: true,
+      };
+
+    case actions.GET_ALL_CORPORATES_COMPANY_SUCCESS:
+      return {
+        ...state,
+        Loading: false,
+        allCorporateCompany: action.response,
+        ResponseMessage: action.message,
+      };
+
+    case actions.GET_ALL_CORPORATES_COMPANY_FAIL:
+      return {
+        ...state,
+        Loading: false,
+        allCorporateCompany: [],
         ResponseMessage: action.message,
       };
 
