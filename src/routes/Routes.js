@@ -17,6 +17,7 @@ import CounterLimit from "../container/Admin/Reports/CounterParty/CounterLimit";
 import AdminLogin from "../container/AdminLogin/Login/AdminLogin";
 import SignUpRequest from "../container/AdminLogin/SignUp-Request/SignupRequest";
 import SignUp from "../container/AdminLogin/SignUp/SignUp";
+import CategoryManagement from "../container/Admin/Setups/CategoryManagement/CategoryManagement";
 
 export const router = createHashRouter(
   createRoutesFromElements(
@@ -34,6 +35,7 @@ export const router = createHashRouter(
         <Route path="userLogin" element={<UserLogin />} />
         <Route path="tradeCount" element={<TradeCount />} />
         <Route path="counterLimit" element={<CounterLimit />} />
+        <Route path="categorymanagement" element={<CategoryManagement />} />
       </Route>
     </>
   )
