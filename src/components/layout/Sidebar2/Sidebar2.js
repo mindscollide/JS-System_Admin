@@ -85,19 +85,25 @@ const Sidebar2 = () => {
 
   const navigateToReport = () => {
     localStorage.setItem("defaultOpenKey ", "sub2");
-    localStorage.setItem("defaultSelectedKey", "11");
+    localStorage.setItem("defaultSelectedKey", "12");
     navigate("/AdminDashboard/AssetBanking");
+  };
+
+  const navigateToCategoryManagement = () => {
+    navigate("/AdminDashboard/categorymanagement");
+    localStorage.setItem("defaultOpenKey ", "sub1");
+    localStorage.setItem("defaultSelectedKey", "11");
   };
 
   const navigateToCounter = () => {
     localStorage.setItem("defaultOpenKey ", "sub2");
-    localStorage.setItem("defaultSelectedKey", "12");
+    localStorage.setItem("defaultSelectedKey", "13");
     navigate("/AdminDashboard/counterLimit");
   };
 
   const navigateToVolMeter = () => {
     localStorage.setItem("defaultOpenKey ", "sub2");
-    localStorage.setItem("defaultSelectedKey", "13");
+    localStorage.setItem("defaultSelectedKey", "14");
     navigate("/AdminDashboard/volMeter");
   };
 
@@ -176,7 +182,6 @@ const Sidebar2 = () => {
                     >
                       Trade Count
                     </Menu.Item>
-
                     <Menu.Item
                       className="menu-items-sidebar"
                       key="9"
@@ -192,6 +197,13 @@ const Sidebar2 = () => {
                     >
                       User List
                     </Menu.Item>
+                    <Menu.Item
+                      className="menu-items-sidebar"
+                      key="11"
+                      onClick={navigateToCategoryManagement}
+                    >
+                      Category Management
+                    </Menu.Item>
                   </SubMenu>
                   <SubMenu
                     key="sub2"
@@ -201,7 +213,7 @@ const Sidebar2 = () => {
                   >
                     <Menu.Item
                       className="menu-items-sidebar"
-                      key="11"
+                      key="12"
                       onClick={navigateToReport}
                     >
                       Non-Banking Assets
@@ -209,7 +221,7 @@ const Sidebar2 = () => {
 
                     <Menu.Item
                       className="menu-items-sidebar"
-                      key="12"
+                      key="13"
                       onClick={navigateToCounter}
                     >
                       Counter Party Limit
@@ -217,7 +229,7 @@ const Sidebar2 = () => {
 
                     <Menu.Item
                       className="menu-items-sidebar"
-                      key="12"
+                      key="14"
                       onClick={navigateToVolMeter}
                     >
                       Vol Meter

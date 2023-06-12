@@ -20,6 +20,7 @@ import Userlist from "../container/Admin/Setups/UserList/UserList";
 import AdminLogin from "../container/AdminLogin/Login/AdminLogin";
 import SignUpRequest from "../container/AdminLogin/SignUp-Request/SignupRequest";
 import SignUp from "../container/AdminLogin/SignUp/SignUp";
+import CategoryManagement from "../container/Admin/Setups/CategoryManagement/CategoryManagement";
 
 export const router = createHashRouter(
   createRoutesFromElements(
@@ -40,6 +41,7 @@ export const router = createHashRouter(
         <Route path="volMeter" element={<VolMeter />} />
         <Route path="customerList" element={<Customerlist />} />
         <Route path="Userlist" element={<Userlist />} />
+        <Route path="categorymanagement" element={<CategoryManagement />} />
       </Route>
     </>
   )
