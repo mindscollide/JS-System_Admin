@@ -54,10 +54,10 @@ const PropertyType = () => {
           <Row>
             <Col lg={12} md={12} sm={12}>
               <Row>
-                <Col lg={11} md={11} sm={12}>
+                <Col lg={12} md={12} sm={12}>
                   <Paper className="paper_sizing mt-3">
                     <Row>
-                      <Col lg={3} md={3} sm={3}>
+                      <Col lg={3} md={3} sm={12}>
                         <Row>
                           <Col lg={12} md={12} sm={12}>
                             <span className="Form_heading">First name</span>
@@ -103,7 +103,7 @@ const PropertyType = () => {
                           </Col>
                         </Row>
                       </Col>
-                      <Col lg={9} md={9} sm={9}>
+                      <Col lg={9} md={9} sm={12}>
                         <Row>
                           <Col lg={12} md={12} sm={12}>
                             <TextField

@@ -49,13 +49,18 @@
 
 .Upload-Excel-btn {
   font-size: 14px;
+  font-weight: 500;
   border-top-right-radius: 0px;
   border-bottom-left-radius: 0px;
   border-top-left-radius: 8px;
   border-bottom-right-radius: 8px;
   padding: 6px 18px !important;
-  border-color: #019308 !important;
-  background-color: #019308 !important;
+  background: linear-gradient(to bottom, #feac78 0%, #e97225 100%) !important;
+  border: none !important;
+}
+
+.Upload-Excel-btn:hover {
+  background: linear-gradient(to bottom, #5b67cd 0%, #2a38af 100%) !important;
 }
 
 .counterLimit-company-text {

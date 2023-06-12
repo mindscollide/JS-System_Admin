@@ -30,52 +30,92 @@ const Sidebar2 = () => {
   const { SubMenu } = Menu;
   const { Sider } = Layout;
   const navigate = useNavigate();
+  let defaultOpenKey = localStorage.getItem("defaultOpenKey ");
+  let defaultSelectedKey = localStorage.getItem("defaultSelectedKey");
+  console.log("defaultOpenKey", defaultOpenKey);
+  console.log("defaultSelectedKey", defaultSelectedKey);
 
   const navigateToProperty = () => {
+    localStorage.setItem("defaultOpenKey ", "sub1");
+    localStorage.setItem("defaultSelectedKey", "3");
     navigate("/AdminDashboard/PropertyType");
   };
 
   const navigateToApproval = () => {
+    localStorage.setItem("defaultOpenKey ", "sub1");
+    localStorage.setItem("defaultSelectedKey", "4");
     navigate("/AdminDashboard/ApprovalReason");
   };
 
   const navigateToRejection = () => {
+    localStorage.setItem("defaultOpenKey ", "sub1");
+    localStorage.setItem("defaultSelectedKey", "5");
     navigate("/AdminDashboard/RejectionReason");
   };
 
-  const navigateToReport = () => {
-    navigate("/AdminDashboard/AssetBanking");
-  };
-
   const navigateToLoginHistory = () => {
+    localStorage.setItem("defaultOpenKey ", "sub1");
+    localStorage.setItem("defaultSelectedKey", "6");
     navigate("/AdminDashboard/loginHistory");
   };
 
   const navigateToUserLogin = () => {
+    localStorage.setItem("defaultOpenKey ", "sub1");
+    localStorage.setItem("defaultSelectedKey", "7");
     navigate("/AdminDashboard/userLogin");
   };
 
   const navigateToTrade = () => {
+    localStorage.setItem("defaultOpenKey ", "sub1");
+    localStorage.setItem("defaultSelectedKey", "8");
     navigate("/AdminDashboard/tradeCount");
+  };
+
+  const navigateToCustomerList = () => {
+    localStorage.setItem("defaultOpenKey ", "sub1");
+    localStorage.setItem("defaultSelectedKey", "9");
+    navigate("/AdminDashboard/customerList");
+  };
+
+  const navigateToUserList = () => {
+    localStorage.setItem("defaultOpenKey ", "sub1");
+    localStorage.setItem("defaultSelectedKey", "10");
+    navigate("/AdminDashboard/Userlist");
+  };
+
+  const navigateToReport = () => {
+    localStorage.setItem("defaultOpenKey ", "sub2");
+    localStorage.setItem("defaultSelectedKey", "12");
+    navigate("/AdminDashboard/AssetBanking");
   };
 
   const navigateToCategoryManagement = () => {
     navigate("/AdminDashboard/categorymanagement");
+    localStorage.setItem("defaultOpenKey ", "sub1");
+    localStorage.setItem("defaultSelectedKey", "11");
   };
 
   const navigateToCounter = () => {
+    localStorage.setItem("defaultOpenKey ", "sub2");
+    localStorage.setItem("defaultSelectedKey", "13");
     navigate("/AdminDashboard/counterLimit");
   };
 
+  const navigateToVolMeter = () => {
+    localStorage.setItem("defaultOpenKey ", "sub2");
+    localStorage.setItem("defaultSelectedKey", "14");
+    navigate("/AdminDashboard/volMeter");
+  };
+
   //this will change the route on page refresh
-  useEffect(() => {
-    navigate("/AdminDashboard/PropertyType");
-  }, []);
+  // useEffect(() => {
+  //   navigate("/AdminDashboard/PropertyType");
+  // }, []);
 
   return (
     <Fragment>
       <Row className="sidebar-row">
-        <Col sm={4} className="js-sidebar">
+        <Col lg={12} md={12} sm={12} className="js-sidebar">
           <Layout>
             <Sider
               width={250}
@@ -86,8 +126,8 @@ const Sidebar2 = () => {
               <span className="menuMain">
                 <Menu
                   theme="light"
-                  defaultOpenKeys={["sub1"]}
-                  defaultSelectedKeys={["3"]}
+                  defaultOpenKeys={[defaultOpenKey]}
+                  defaultSelectedKeys={[defaultSelectedKey]}
                   mode="inline"
                   className="Menu-sidebar-class"
                 >
@@ -124,7 +164,7 @@ const Sidebar2 = () => {
                       key="6"
                       onClick={navigateToLoginHistory}
                     >
-                      Login History
+                      Customer Login History
                     </Menu.Item>
 
                     <Menu.Item
@@ -132,7 +172,7 @@ const Sidebar2 = () => {
                       key="7"
                       onClick={navigateToUserLogin}
                     >
-                      User Login
+                      User Login History
                     </Menu.Item>
 
                     <Menu.Item
@@ -142,10 +182,24 @@ const Sidebar2 = () => {
                     >
                       Trade Count
                     </Menu.Item>
-
                     <Menu.Item
                       className="menu-items-sidebar"
                       key="9"
+                      onClick={navigateToCustomerList}
+                    >
+                      Customer User List
+                    </Menu.Item>
+
+                    <Menu.Item
+                      className="menu-items-sidebar"
+                      key="10"
+                      onClick={navigateToUserList}
+                    >
+                      User List
+                    </Menu.Item>
+                    <Menu.Item
+                      className="menu-items-sidebar"
+                      key="11"
                       onClick={navigateToCategoryManagement}
                     >
                       Category Management
@@ -159,7 +213,7 @@ const Sidebar2 = () => {
                   >
                     <Menu.Item
                       className="menu-items-sidebar"
-                      key="10"
+                      key="12"
                       onClick={navigateToReport}
                     >
                       Non-Banking Assets
@@ -167,10 +221,18 @@ const Sidebar2 = () => {
 
                     <Menu.Item
                       className="menu-items-sidebar"
-                      key="11"
+                      key="13"
                       onClick={navigateToCounter}
                     >
                       Counter Party Limit
+                    </Menu.Item>
+
+                    <Menu.Item
+                      className="menu-items-sidebar"
+                      key="14"
+                      onClick={navigateToVolMeter}
+                    >
+                      Vol Meter
                     </Menu.Item>
                   </SubMenu>
                 </Menu>

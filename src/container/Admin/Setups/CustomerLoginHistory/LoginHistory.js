@@ -7,30 +7,59 @@ import {
   Table,
 } from "../../../../components/elements";
 import { validateEmail } from "../../../../commen/functions/emailValidation";
+import { useDispatch, useSelector } from "react-redux";
 import {
-  bankUserLogin,
+  customerCorporateLogin,
   getAllCategoriesCorporate,
-  searchBankLogin,
+  searchCompanyLogin,
 } from "../../../../store/actions/Auth-Actions";
-import Select from "react-select";
-import { useNavigate } from "react-router-dom";
 import { Spin } from "antd";
-import "./UserLogin.css";
-import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import Select from "react-select";
+import moment from "moment";
+import DatePicker from "react-multi-date-picker";
+import "./LoginHistory.css";
 
-const UserLogin = () => {
+const LoginHistory = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { auth } = useSelector((state) => state);
-  // state for set data from api in rows
+  console.log(auth, "aaaa");
+  // state for row in which table data set
   const [rows, setRows] = useState([]);
 
   // state for category dropdown
-  const [selectCategoryBank, setSelectCategoryBank] = useState([]);
-  const [selectCategoryBankValue, setSelectCategoryBankValue] = useState([]);
+  const [selectCategory, setSelectCategory] = useState([]);
+  const [selectCategoryValue, setSelectCategoryValue] = useState([]);
+
+  //start date state of multi datepicker
+  const [startDateProps, setStartDateProps] = useState({
+    value: new Date(),
+    format: "MM-DD-YYYY",
+    onChange: (date) => console.log(date.format()),
+  });
+
+  //end date state of multi datepicker
+  const [endDateProps, setEndDateProps] = useState({
+    value: new Date(),
+    format: "MM-DD-YYYY",
+    onChange: (date) => console.log(date.format()),
+  });
+
+  // dispatch getALLCategoryDropdown API
+  useEffect(() => {
+    dispatch(getAllCategoriesCorporate(navigate));
+  }, []);
+
+  useEffect(() => {
+    let newData = {
+      CorporateID: 1,
+    };
+    dispatch(customerCorporateLogin(navigate, newData));
+  }, []);
 
   // state for LoginHistory fields
-  const [userLoginHistory, setUserLoginHistory] = useState({
+  const [loginHistoryField, setLoginHistoryField] = useState({
     FirstName: {
       value: "",
       errorMessage: "",
@@ -41,13 +70,8 @@ const UserLogin = () => {
       errorMessage: "",
       errorStatus: false,
     },
-    corporateCategoryID: {
-      value: "",
-      errorMessage: "",
-      errorStatus: false,
-    },
 
-    BankName: {
+    CompanyName: {
       value: "",
       errorMessage: "",
       errorStatus: false,
@@ -58,117 +82,38 @@ const UserLogin = () => {
       errorMessage: "",
       errorStatus: false,
     },
+
+    corporateCategoryID: {
+      value: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
   });
 
-  const userLoginValidation = (e) => {
-    let name = e.target.name;
-    let value = e.target.value;
-
-    if (name === "FirstName" && value !== "") {
-      let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
-      console.log("valueCheckvalueCheck", valueCheck);
-      if (valueCheck !== "") {
-        setUserLoginHistory({
-          ...userLoginHistory,
-          FirstName: {
-            value: valueCheck.trimStart(),
-            errorMessage: "",
-            errorStatus: false,
-          },
-        });
-      }
-    } else if (name === "FirstName" && value === "") {
-      setUserLoginHistory({
-        ...userLoginHistory,
-        FirstName: { value: "", errorMessage: "", errorStatus: false },
-      });
-    }
-
-    if (name === "LastName" && value !== "") {
-      let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
-      console.log("valueCheckvalueCheck", valueCheck);
-      if (valueCheck !== "") {
-        setUserLoginHistory({
-          ...userLoginHistory,
-          LastName: {
-            value: valueCheck.trimStart(),
-            errorMessage: "",
-            errorStatus: false,
-          },
-        });
-      }
-    } else if (name === "LastName" && value === "") {
-      setUserLoginHistory({
-        ...userLoginHistory,
-        LastName: { value: "", errorMessage: "", errorStatus: false },
-      });
-    }
-
-    if (name === "BankName" && value !== "") {
-      let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
-      console.log("valueCheckvalueCheck", valueCheck);
-      if (valueCheck !== "") {
-        setUserLoginHistory({
-          ...userLoginHistory,
-          BankName: {
-            value: valueCheck.trimStart(),
-            errorMessage: "",
-            errorStatus: false,
-          },
-        });
-      }
-    } else if (name === "BankName" && value === "") {
-      setUserLoginHistory({
-        ...userLoginHistory,
-        BankName: { value: "", errorMessage: "", errorStatus: false },
-      });
-    }
-
-    if (name === "Email" && value !== "") {
-      console.log("valuevalueemailvaluevalueemail", value);
-      if (value !== "") {
-        setUserLoginHistory({
-          ...userLoginHistory,
-          Email: {
-            value: value.trimStart(),
-            errorMessage: "",
-            errorStatus: false,
-          },
-        });
-      }
-    } else if (name === "Email" && value === "") {
-      setUserLoginHistory({
-        ...userLoginHistory,
-        Email: {
-          value: "",
-          errorMessage: "",
-          errorStatus: true,
-        },
-      });
-    }
-  };
-
-  // api hit on seacrh btn
-  const searchButtonHit = async () => {
-    let seacrhBankData = {
-      FirstName: userLoginHistory.FirstName.value,
-      LastName: userLoginHistory.LastName.value,
-      BankName: userLoginHistory.BankName.value,
-      Email: userLoginHistory.Email.value,
+  // For search Btn Hit to check data inside table also after await we set the state empty when ever user
+  // hit the seacrh btn the fields should be empty if the value is true or not
+  const onSearchButtonHit = async () => {
+    let searchCompanyData = {
+      FirstName: loginHistoryField.FirstName.value,
+      LastName: loginHistoryField.LastName.value,
+      CompanyName: loginHistoryField.CompanyName.value,
+      Email: loginHistoryField.Email.value,
       FromDate: "20230504",
       ToDate: "20230525",
+      CategoryID: 0,
     };
-    await dispatch(searchBankLogin(navigate, seacrhBankData));
-    setUserLoginHistory({
-      ...userLoginHistory,
+    await dispatch(searchCompanyLogin(navigate, searchCompanyData));
+    setLoginHistoryField({
+      ...loginHistoryField,
       FirstName: {
         value: "",
       },
+
       LastName: {
         value: "",
       },
 
-      BankName: {
+      CompanyName: {
         value: "",
       },
 
@@ -178,12 +123,101 @@ const UserLogin = () => {
     });
   };
 
+  // validations on textfields onChange handler
+  const customerListValidation = (e) => {
+    let name = e.target.name;
+    let value = e.target.value;
+
+    if (name === "FirstName" && value !== "") {
+      let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
+      console.log("valueCheckvalueCheck", valueCheck);
+      if (valueCheck !== "") {
+        setLoginHistoryField({
+          ...loginHistoryField,
+          FirstName: {
+            value: valueCheck.trimStart(),
+            errorMessage: "",
+            errorStatus: false,
+          },
+        });
+      }
+    } else if (name === "FirstName" && value === "") {
+      setLoginHistoryField({
+        ...loginHistoryField,
+        FirstName: { value: "", errorMessage: "", errorStatus: false },
+      });
+    }
+
+    if (name === "LastName" && value !== "") {
+      let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
+      console.log("valueCheckvalueCheck", valueCheck);
+      if (valueCheck !== "") {
+        setLoginHistoryField({
+          ...loginHistoryField,
+          LastName: {
+            value: valueCheck.trimStart(),
+            errorMessage: "",
+            errorStatus: false,
+          },
+        });
+      }
+    } else if (name === "LastName" && value === "") {
+      setLoginHistoryField({
+        ...loginHistoryField,
+        LastName: { value: "", errorMessage: "", errorStatus: false },
+      });
+    }
+
+    if (name === "CompanyName" && value !== "") {
+      let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
+      console.log("valueCheckvalueCheck", valueCheck);
+      if (valueCheck !== "") {
+        setLoginHistoryField({
+          ...loginHistoryField,
+          CompanyName: {
+            value: valueCheck.trimStart(),
+            errorMessage: "",
+            errorStatus: false,
+          },
+        });
+      }
+    } else if (name === "CompanyName" && value === "") {
+      setLoginHistoryField({
+        ...loginHistoryField,
+        CompanyName: { value: "", errorMessage: "", errorStatus: false },
+      });
+    }
+
+    if (name === "Email" && value !== "") {
+      console.log("valuevalueemailvaluevalueemail", value);
+      if (value !== "") {
+        setLoginHistoryField({
+          ...loginHistoryField,
+          Email: {
+            value: value.trimStart(),
+            errorMessage: "",
+            errorStatus: false,
+          },
+        });
+      }
+    } else if (name === "Email" && value === "") {
+      setLoginHistoryField({
+        ...loginHistoryField,
+        Email: {
+          value: "",
+          errorMessage: "",
+          errorStatus: true,
+        },
+      });
+    }
+  };
+
   //ON CHANGE HANDLER FOR CATEGORY DROPDOWN
   const selectCategoryOnchangeHandler = async (selectedCategory) => {
     console.log(selectedCategory, "selectedOptionselectedOption");
-    setSelectCategoryBankValue(selectedCategory);
-    setUserLoginHistory({
-      ...userLoginHistory,
+    setSelectCategoryValue(selectedCategory);
+    setLoginHistoryField({
+      ...loginHistoryField,
       corporateCategoryID: {
         value: selectedCategory.value,
         label: selectedCategory.label,
@@ -191,18 +225,10 @@ const UserLogin = () => {
     });
   };
 
-  // useEffect for render data inside bank user login table
-  useEffect(() => {
-    let newData = {
-      BankID: 1,
-    };
-    dispatch(bankUserLogin(navigate, newData));
-  }, []);
-
   //email validation handler
   const handlerEmail = () => {
-    if (userLoginHistory.Email.value !== "") {
-      if (validateEmail(userLoginHistory.Email.value)) {
+    if (loginHistoryField.Email.value !== "") {
+      if (validateEmail(loginHistoryField.Email.value)) {
         alert("Email verified");
       } else {
         alert("Email Not Verified");
@@ -211,12 +237,12 @@ const UserLogin = () => {
   };
 
   // column for LoginHistory
-  const userColumns = [
+  const columns = [
     {
       title: <label className="bottom-table-header">Email</label>,
       dataIndex: "email",
       key: "email",
-      width: "250px",
+      width: "150px",
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
     {
@@ -231,8 +257,8 @@ const UserLogin = () => {
       title: <label className="bottom-table-header">Last Name</label>,
       dataIndex: "lastName",
       key: "lastName",
-      width: "150px",
       align: "center",
+      width: "150px",
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
     {
@@ -275,15 +301,16 @@ const UserLogin = () => {
     //   title: <label className="bottom-table-header">Logged In Time</label>,
     //   dataIndex: "loginTime",
     //   key: "loginTime",
+    //   width: "100px",
     //   align: "center",
-    //   width: "150px",
     //   ellipsis: true,
     //   render: (text) => <label className="issue-date-column">{text}</label>,
     // },
+
     {
-      title: <label className="bottom-table-header">LoggedIn Date</label>,
-      dataIndex: "CombineLoginInTimeDate",
-      key: "CombineLoginInTimeDate",
+      title: <label className="bottom-table-header">Logged Date</label>,
+      dataIndex: "CombineLoginTimeDate",
+      key: "CombineLoginTimeDate",
       width: "150px",
       align: "center",
       ellipsis: true,
@@ -312,9 +339,9 @@ const UserLogin = () => {
     //   render: (text) => <label className="issue-date-column">{text}</label>,
     // },
     {
-      title: <label className="bottom-table-header">LoggOut Date</label>,
-      dataIndex: "CombineLoggedOutTimeDate",
-      key: "CombineLoggedOutTimeDate",
+      title: <label className="bottom-table-header">LoggedOut Date</label>,
+      dataIndex: "CombineLoginOutTimeDate",
+      key: "CombineLoginOutTimeDate",
       width: "150px",
       align: "center",
       ellipsis: true,
@@ -333,48 +360,45 @@ const UserLogin = () => {
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
-
     {
       title: <label className="bottom-table-header">Interface</label>,
       dataIndex: "interface",
       key: "interface",
-      width: "150px",
+      width: "200px",
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
   ];
 
-  // dispatch getALLCategoryDropdown API
-  useEffect(() => {
-    dispatch(getAllCategoriesCorporate(navigate));
-  }, []);
-
-  //this useEffect Condition is for when user hit search btn if data is same or not
+  //this useEffect Condition is for when user hit search btn if data isn't same
+  // as in the table then table should be empty
   useEffect(() => {
     if (
-      auth.searchBankLogin.length > 0 &&
-      auth.searchBankLogin !== null &&
-      auth.searchBankLogin !== undefined
+      auth.searchCompanyLogin.length > 0 &&
+      auth.searchCompanyLogin !== null &&
+      auth.searchCompanyLogin !== undefined
     ) {
-      setRows(auth.searchBankLogin);
+      setRows(auth.searchCompanyLogin);
     } else {
       setRows([]);
     }
-  }, [auth.searchBankLogin]);
+  }, [auth.searchCompanyLogin]);
 
   // render table inside table
   useEffect(() => {
     if (
-      auth.bankUserLoginHistory.length > 0 &&
-      auth.bankUserLoginHistory !== null &&
-      auth.bankUserLoginHistory !== undefined
+      auth.userCorporateLogin !== null &&
+      auth.userCorporateLogin !== undefined &&
+      auth.userCorporateLogin.length > 0
     ) {
-      setRows(auth.bankUserLoginHistory);
+      setRows(auth.userCorporateLogin);
     } else {
       setRows([]);
     }
-  }, [auth.bankUserLoginHistory]);
+  }, [auth.userCorporateLogin]);
+
+  console.log("roewwwww", rows);
 
   // for category Corporate in select drop down
   useEffect(() => {
@@ -387,83 +411,133 @@ const UserLogin = () => {
           value: data.corporateCategoryID,
         });
       });
-      setSelectCategoryBank(tem);
+      setSelectCategory(tem);
     }
   }, [auth.getAllCorporate]);
 
+  // data for Columns loginHistory
+  const customerData = [
+    {
+      key: "1",
+      email: "muhammad.ahmed",
+      name: "muhammad.ahmed",
+      company: "Shield",
+      ipaddress: "39.57.197.237",
+      loginTime: "16/04/2023 0:34:00",
+      logoutTime: "15/05/2023 03:20:45",
+      totalSpan: "0 hrs 3 mins 13 secs (62 ms)",
+      interface: "Web",
+    },
+    {
+      key: "1",
+      email: "muhammad.ahmed",
+      name: "muhammad.ahmed",
+      company: "Shield",
+      ipaddress: "39.57.197.237",
+      loginTime: "16/04/2023 0:34:00",
+      logoutTime: "15/05/2023 03:20:45",
+      totalSpan: "0 hrs 3 mins 13 secs (62 ms)",
+      interface: "Web",
+    },
+  ];
+
   return (
     <Fragment>
-      <Container className="UserHistory-container">
+      <Container className="LoginHistory-container">
         <Row>
           <Col>
             <Row>
               <Col lg={12} md={12} sm={12}>
-                <span className="UserHistory-label">User Login History</span>
+                <span className="LoginHistory-label">
+                  Customer Login History
+                </span>
               </Col>
             </Row>
             <Row className="mt-3">
               <Col lg={11} md={11} sm={12}>
-                <CustomPaper className="UserHistory-paper">
+                <CustomPaper className="LoginHistory-paper">
                   <Row className="mt-3">
                     <Col lg={3} md={3} sm={12}>
                       <TextField
-                        placeholder="First Name"
+                        placeholder="FirstName"
                         name="FirstName"
-                        value={userLoginHistory.FirstName.value}
-                        onChange={userLoginValidation}
+                        value={loginHistoryField.FirstName.value}
+                        onChange={customerListValidation}
                         labelClass="d-none"
-                        className="UserHistory-textField-fontsize"
+                        className="loginHistor-textField-fontsize"
                       />
                     </Col>
+
                     <Col lg={3} md={3} sm={12}>
                       <TextField
-                        placeholder="Last Name"
+                        placeholder="LastName"
                         name="LastName"
-                        value={userLoginHistory.LastName.value}
-                        onChange={userLoginValidation}
+                        value={loginHistoryField.LastName.value}
+                        onChange={customerListValidation}
                         labelClass="d-none"
-                        className="UserHistory-textField-fontsize"
+                        className="loginHistor-textField-fontsize"
                       />
                     </Col>
                     <Col lg={3} md={3} sm={12}>
                       <TextField
-                        placeholder="Bank Name"
-                        name="BankName"
-                        value={userLoginHistory.BankName.value}
-                        onChange={userLoginValidation}
+                        placeholder="Company Name"
+                        name="CompanyName"
+                        value={loginHistoryField.CompanyName.value}
+                        onChange={customerListValidation}
                         labelClass="d-none"
-                        className="UserHistory-textField-fontsize"
+                        className="loginHistor-textField-fontsize"
                       />
                     </Col>
                     <Col lg={3} md={3} sm={12}>
                       <TextField
                         placeholder="Email"
                         name="Email"
-                        value={userLoginHistory.Email.value}
+                        value={loginHistoryField.Email.value}
                         onBlur={handlerEmail}
-                        onChange={userLoginValidation}
+                        onChange={customerListValidation}
                         labelClass="d-none"
-                        className="UserHistory-textField-fontsize"
+                        className="loginHistor-textField-fontsize"
                       />
                     </Col>
                   </Row>
-
                   <Row className="mt-3">
                     <Col lg={3} md={3} sm={12}>
                       <Select
                         name="corporateCategoryID"
+                        options={selectCategory}
+                        value={selectCategoryValue}
                         isSearchable={true}
-                        placeholder="Category"
-                        options={selectCategoryBank}
-                        value={selectCategoryBankValue}
                         onChange={selectCategoryOnchangeHandler}
-                        className="UserHistory-textField-fontsize"
+                        placeholder="Category"
+                        className="loginHistor-textField-fontsize"
                       />
                     </Col>
+                    <Col
+                      lg={8}
+                      md={8}
+                      sm={12}
+                      className="LoginHistory-Datepicker"
+                    >
+                      <DatePicker
+                        {...startDateProps}
+                        onPropsChange={setStartDateProps}
+                        placeholder="Start date"
+                        showOtherDays={true}
+                        inputClass="LoginHistory-Datepicker-left"
+                      />
+                      <label className="LoginHistory-date-to">to</label>
 
-                    <Col lg={9} md={9} sm={12} />
+                      <DatePicker
+                        {...endDateProps}
+                        onPropsChange={setEndDateProps}
+                        placeholder="End Date"
+                        showOtherDays={true}
+                        inputClass="LoginHistory-Datepicker-right"
+                      />
+                    </Col>
+                    <Col lg={1} md={1} sm={12} />
                   </Row>
-                  <Row className="mt-1">
+                  <Row className="mt-3">
                     <Col
                       lg={12}
                       md={12}
@@ -472,9 +546,9 @@ const UserLogin = () => {
                     >
                       <Button
                         text="Search"
-                        onClick={searchButtonHit}
+                        onClick={onSearchButtonHit}
                         icon={<i className="icon-search"></i>}
-                        className={"Search-UserHistory-btn"}
+                        className={"Search-HistoryLog-btn"}
                       />
                       <Button
                         text="Downlaod Excel"
@@ -491,10 +565,10 @@ const UserLogin = () => {
                         </span>
                       ) : (
                         <Table
-                          column={userColumns}
+                          column={columns}
                           rows={rows}
                           pagination={false}
-                          className="UserHistory-table"
+                          className="LoginHistory-table"
                         />
                       )}
                     </Col>
@@ -509,4 +583,4 @@ const UserLogin = () => {
   );
 };
 
-export default UserLogin;
+export default LoginHistory;
