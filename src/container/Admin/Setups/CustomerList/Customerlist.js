@@ -5,6 +5,7 @@ import {
   TextField,
   Button,
   Table,
+  Loader,
 } from "../../../../components/elements";
 import { useDispatch, useSelector } from "react-redux";
 import ViewCustomer from "../../../../container/Admin/AdminModal/View-CustomerList-Modal/ViewCustomer";
@@ -12,6 +13,7 @@ import { validateEmail } from "../../../../commen/functions/emailValidation";
 import {
   getAllCorporateUserApi,
   searchUserCorporateApi,
+  updateCorporateAPI,
 } from "../../../../store/actions/System-Admin";
 import { useNavigate } from "react-router-dom";
 
@@ -39,7 +41,7 @@ const Customerlist = () => {
 
   // state for company select dropdown
   const [selectCompany, setSelectCompany] = useState([]);
-  const [selectCompanyValue, setSelectCompanyValue] = useState([]);
+  const [selectCompanyValue, setSelectCompanyValue] = useState();
 
   // state for table rows
   const [rows, setRows] = useState([]);
@@ -89,7 +91,7 @@ const Customerlist = () => {
     FirstName: "",
     LastName: "",
     selectCategory: {
-      value: 0,
+      value: "",
       label: "",
       errorMessage: "",
       errorStatus: false,
@@ -101,9 +103,48 @@ const Customerlist = () => {
       errorMessage: "",
       errorStatus: false,
     },
-    statusId: 0,
+    rfqTimer: {
+      value: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+    natureClient: {
+      value: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+    statusId: 1,
+    // Category: {
+    //   value: "",
+    //   errorMessage: "",
+    //   errorStatus: false,
+    // },
   });
   console.log("modalViewCustomerList", modalViewCustomerList);
+
+  // update onclick API in which data will update
+  const updateCorporateUserOnClick = () => {
+    let updateCorporateData = {
+      FirstName: modalViewCustomerList.FirstName,
+      LastName: modalViewCustomerList.LastName,
+      CorporateID: modalViewCustomerList.companySelect.value,
+      UserId: 10,
+      UserStatusId: modalViewCustomerList.statusId,
+    };
+    console.log(updateCorporateData, "updateCorporateDatadwefwefwe");
+    let newCorporateData = {
+      CorporateID: 1,
+    };
+    dispatch(
+      updateCorporateAPI(
+        navigate,
+        updateCorporateData,
+        setCustomerViewModal,
+        newCorporateData
+      )
+    );
+  };
+
   // onChange handle view customer modal in which we passing the props on modal
   const selectCategoryViewModalHandler = (selectedViewCategory) => {
     console.log("SelectModalCategory", selectedViewCategory);
@@ -122,16 +163,70 @@ const Customerlist = () => {
   useEffect(() => {
     dispatch(getAllCategoriesCorporate(navigate));
     dispatch(getAllCorporateCompany(navigate));
-  }, []);
-
-  // dispatch API in useEffect for customer list table
-  useEffect(() => {
+    // dispatch API in useEffect for customer list table
     let newCorporateData = {
       CorporateID: 1,
     };
     dispatch(getAllCorporateUserApi(navigate, newCorporateData));
   }, []);
 
+  //this useEffect Condition is for when user hit search btn if data isn't same
+  // as in the table then table should be empty
+  useEffect(() => {
+    if (
+      systemReducer.searchCorporate.length > 0 &&
+      systemReducer.searchCorporate !== null &&
+      systemReducer.searchCorporate !== undefined
+    ) {
+      setRows(systemReducer.searchCorporate);
+    } else {
+      setRows([]);
+    }
+  }, [systemReducer.searchCorporate]);
+
+  //useEffect to render data in table from Api
+  useEffect(() => {
+    if (
+      systemReducer.allCorporateUser.length > 0 &&
+      systemReducer.allCorporateUser !== null &&
+      systemReducer.allCorporateUser !== undefined
+    ) {
+      setRows(systemReducer.allCorporateUser);
+    } else {
+      setRows([]);
+    }
+  }, [systemReducer.allCorporateUser]);
+  console.log("allcorporateee", rows);
+
+  // for category Corporate in select drop down
+  useEffect(() => {
+    if (Object.keys(auth.getAllCorporate).length > 0) {
+      let tem = [];
+      auth.getAllCorporate.map((data, index) => {
+        console.log(data, "datadatadatadatassssss");
+        tem.push({
+          label: data.category,
+          value: data.corporateCategoryID,
+        });
+      });
+      setSelectAllCategory(tem);
+    }
+  }, [auth.getAllCorporate]);
+
+  // for corporate company select drop down
+  useEffect(() => {
+    if (Object.keys(auth.allCorporateCompany).length > 0) {
+      let tem = [];
+      auth.allCorporateCompany.map((data, index) => {
+        console.log(data, "datadatadatadatassssss");
+        tem.push({
+          label: data.corporateName,
+          value: data.corporateID,
+        });
+      });
+      setSelectCompany(tem);
+    }
+  }, [auth.allCorporateCompany]);
   //ON CHANGE HANDLER FOR CATEGORY DROPDOWN
   const selectAllCategoryOnchangeHandler = async (selectedCategory) => {
     console.log(selectedCategory, "selectedOptionselectedOption");
@@ -146,24 +241,48 @@ const Customerlist = () => {
   };
 
   // on change handler for company category
-  const selectAllCorporateCategoryOnchangeHandler = async (selectedCompany) => {
+  const selectAllCorporateCategoryOnchangeHandler = (selectedCompany) => {
     console.log(selectedCompany, "selectedCompanyselectedCompany");
     setSelectCompanyValue(selectedCompany);
-    await setModalViewCustomerList({
-      ...modalViewCustomerList,
-      companySelect: {
-        value: selectedCompany.value,
-        label: selectedCompany.label,
-      },
-    });
-    setCustomerListFields({
-      ...customerListFields,
-      corporateID: {
-        value: selectedCompany.value,
-        label: selectedCompany.label,
-      },
-    });
+    let data = {
+      value: selectedCompany.value,
+      label: selectedCompany.label,
+    };
+
+    let coperateDataApi = auth.allCorporateCompany;
+    try {
+      if (
+        Object.keys(coperateDataApi).length > 0 &&
+        coperateDataApi !== undefined &&
+        coperateDataApi !== null
+      ) {
+        coperateDataApi.map((corporateData, index) => {
+          console.log(corporateData, "selectedCompanyselectedCompany");
+
+          if (selectedCompany.label === corporateData.corporateName) {
+            console.log(corporateData, "selectedCompanyselectedCompany");
+
+            setModalViewCustomerList({
+              ...modalViewCustomerList,
+              companySelect: data,
+              natureClient: {
+                value: corporateData.natureofBusiness.name,
+              },
+              selectCategory: {
+                value: corporateData.corporateCategory.category,
+              },
+              rfqTimer: {
+                value: corporateData.rfqTimers[0].rfqTimer,
+              },
+            });
+          }
+        });
+      }
+    } catch {
+      console.log("error on selecting company Name");
+    }
   };
+  console.log(modalViewCustomerList, "selectedCompanyselectedCompany");
 
   // Hit on Search Btn
   const seacrhButtonHit = async () => {
@@ -316,9 +435,6 @@ const Customerlist = () => {
     let companyNew;
     console.log(record, "recordddedddd");
 
-    // if (record !== null && record !== undefined) {
-    //   setModalViewCustomerList(record);
-    // }
     try {
       if (Object.keys(auth.allCorporateCompany).length > 0) {
         await auth.allCorporateCompany.map((data, index) => {
@@ -356,64 +472,6 @@ const Customerlist = () => {
 
     setCustomerViewModal(true);
   };
-
-  //this useEffect Condition is for when user hit search btn if data isn't same
-  // as in the table then table should be empty
-  useEffect(() => {
-    if (
-      systemReducer.searchCorporate.length > 0 &&
-      systemReducer.searchCorporate !== null &&
-      systemReducer.searchCorporate !== undefined
-    ) {
-      setRows(systemReducer.searchCorporate);
-    } else {
-      setRows([]);
-    }
-  }, [systemReducer.searchCorporate]);
-
-  //useEffect to render data in table from Api
-  useEffect(() => {
-    if (
-      systemReducer.allCorporateUser.length > 0 &&
-      systemReducer.allCorporateUser !== null &&
-      systemReducer.allCorporateUser !== undefined
-    ) {
-      setRows(systemReducer.allCorporateUser);
-    } else {
-      setRows([]);
-    }
-  }, [systemReducer.allCorporateUser]);
-  console.log("allcorporateee", rows);
-
-  // for category Corporate in select drop down
-  useEffect(() => {
-    if (Object.keys(auth.getAllCorporate).length > 0) {
-      let tem = [];
-      auth.getAllCorporate.map((data, index) => {
-        console.log(data, "datadatadatadatassssss");
-        tem.push({
-          label: data.category,
-          value: data.corporateCategoryID,
-        });
-      });
-      setSelectAllCategory(tem);
-    }
-  }, [auth.getAllCorporate]);
-
-  // for corporate company select drop down
-  useEffect(() => {
-    if (Object.keys(auth.allCorporateCompany).length > 0) {
-      let tem = [];
-      auth.allCorporateCompany.map((data, index) => {
-        console.log(data, "datadatadatadatassssss");
-        tem.push({
-          label: data.corporateName,
-          value: data.corporateID,
-        });
-      });
-      setSelectCompany(tem);
-    }
-  }, [auth.allCorporateCompany]);
 
   //Table columns for customer List
   const columns = [
@@ -592,7 +650,6 @@ const Customerlist = () => {
           </Col>
         </Row>
       </Container>
-
       {customerViewModal ? (
         <>
           <ViewCustomer
@@ -604,10 +661,12 @@ const Customerlist = () => {
             setModalViewCustomerList={setModalViewCustomerList}
             companyDropdownOnchange={selectAllCorporateCategoryOnchangeHandler}
             companySelectOption={selectCompany}
+            onUpdateBtnClick={updateCorporateUserOnClick}
             companySelectValue={selectCompanyValue}
           />
         </>
       ) : null}
+      {systemReducer.Loading ? <Loader /> : null}
     </Fragment>
   );
 };

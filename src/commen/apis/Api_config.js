@@ -59,6 +59,11 @@ const getAllCorporatesApiERM = {
   RequestMethod: "ServiceManager.GetAllCorporates",
 };
 
+// update corporate User Api
+const updateCorporateApiSysAdmin = {
+  RequestMethod: "ServiceManager.UpdateCorporateUser",
+};
+
 export {
   authenticationLogIn,
   authenticationSignUp,
@@ -73,4 +78,5 @@ export {
   searchCorporateUsersSysAdmin,
   getAllUserStatusERMAdmin,
   getAllCorporatesApiERM,
+  updateCorporateApiSysAdmin,
 };

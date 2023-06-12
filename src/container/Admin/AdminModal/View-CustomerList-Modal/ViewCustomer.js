@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useRef } from "react";
+import React, { Fragment, useState, useRef, useEffect } from "react";
 import { Col, Row, Container } from "react-bootstrap";
 import {
   CustomPaper,
@@ -7,6 +7,8 @@ import {
   Table,
   Modal,
 } from "../../../../components/elements";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import "./ViewCustomer.css";
 import Select from "react-select";
 
@@ -19,10 +21,17 @@ const ViewCustomer = ({
   companySelectOption,
   setModalViewCustomerList,
   companyDropdownOnchange,
+  onUpdateBtnClick,
+  NamesValidation,
   companySelectValue,
 }) => {
-  const firstName = useRef(null);
-  const lastName = useRef(null);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { systemReducer } = useSelector((state) => state);
+  console.log(systemReducer, "systemAdminsystemAdmin");
+
+  const FirstName = useRef(null);
+  const LastName = useRef(null);
   const corporateID = useRef(null);
 
   // for enable viewCustomerFields state
@@ -38,13 +47,13 @@ const ViewCustomer = ({
       errorStatus: false,
     },
 
-    firstName: {
+    FirstName: {
       value: "",
       errorMessage: "",
       errorStatus: false,
     },
 
-    lastName: {
+    LastName: {
       value: "",
       errorMessage: "",
       errorStatus: false,
@@ -73,87 +82,35 @@ const ViewCustomer = ({
   });
   // for close modal handler
   const closeViewModal = () => {
+    setModalViewCustomerList({
+      ...modalViewCustomerList,
+      selectCategory: {
+        value: "",
+      },
+      rfqTimer: {
+        value: "",
+      },
+      natureClient: {
+        value: "",
+      },
+    });
     setViewCustomerModal(false);
   };
   console.log(
     modalViewCustomerList,
     "modalViewCustomerListmodalViewCustomerList"
   );
-  // validation for customer List
-  const customerViewModalValidation = (e) => {
-    let name = e.target.name;
-    let value = e.target.value;
-
-    if (name === "firstName" && value !== "") {
-      let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
-      console.log("valueCheckvalueCheck", valueCheck);
-      if (valueCheck !== "") {
-        setViewCustomer({
-          ...viewCustomer,
-          firstName: {
-            value: valueCheck.trimStart(),
-            errorMessage: "",
-            errorStatus: false,
-          },
-        });
-      }
-    } else if (name === "firstName" && value === "") {
-      setViewCustomer({
-        ...viewCustomer,
-        firstName: { value: "", errorMessage: "", errorStatus: false },
-      });
-    }
-
-    if (name === "lastName" && value !== "") {
-      let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
-      console.log("valueCheckvalueCheck", valueCheck);
-      if (valueCheck !== "") {
-        setViewCustomer({
-          ...viewCustomer,
-          lastName: {
-            value: valueCheck.trimStart(),
-            errorMessage: "",
-            errorStatus: false,
-          },
-        });
-      }
-    } else if (name === "lastName" && value === "") {
-      setViewCustomer({
-        ...viewCustomer,
-        lastName: { value: "", errorMessage: "", errorStatus: false },
-      });
-    }
-
-    if (name === "fieldOneTwoThree" && value !== "") {
-      let valueCheck = value.replace(/[^\d]/g, "");
-      console.log("valueCheckvalueCheck", valueCheck);
-      if (valueCheck !== "") {
-        setViewCustomer({
-          ...viewCustomer,
-          fieldOneTwoThree: {
-            value: valueCheck.trimStart(),
-            errorMessage: "",
-            errorStatus: false,
-          },
-        });
-      }
-    } else if (name === "fieldOneTwoThree" && value === "") {
-      setViewCustomer({
-        ...viewCustomer,
-        fieldOneTwoThree: { value: "", errorMessage: "", errorStatus: false },
-      });
-    }
-  };
 
   // for enable Name field
   const nameEnableHandler = () => {
     setEnableFirstName(false);
     setEnableLastName(false);
     setEnableSelectCompanyName(false);
-    firstName.current.focus();
-    lastName.current.focus();
+    FirstName.current.focus();
+    LastName.current.focus();
     corporateID.current.focus();
   };
+  console.log(modalViewCustomerList, "hahhahhahah");
   return (
     <Fragment>
       <Modal
@@ -225,9 +182,9 @@ const ViewCustomer = ({
                       <Col lg={6} md={6} sm={12}>
                         <TextField
                           disable={enableFirstName ? true : false}
-                          ref={firstName}
+                          ref={FirstName}
                           placeholder="muhammad.ahmed"
-                          name="firstName"
+                          // name="FirstName"
                           className={
                             enableFirstName
                               ? `${"disable-field-Name"}`
@@ -235,7 +192,7 @@ const ViewCustomer = ({
                           }
                           value={modalViewCustomerList.FirstName}
                           // value={viewCustomer.firstName.value}
-                          onChange={customerViewModalValidation}
+                          onChange={NamesValidation}
                           labelClass="d-none"
                         />
                       </Col>
@@ -243,16 +200,16 @@ const ViewCustomer = ({
                       <Col lg={6} md={6} sm={12}>
                         <TextField
                           disable={enableLastName ? true : false}
-                          ref={lastName}
+                          ref={LastName}
                           placeholder="muhammad.ahmed"
-                          name="lastName"
+                          // name="LastName"
                           className={
                             enableLastName
                               ? `${"disable-field-Name"}`
                               : `${"Textfield-Name"}`
                           }
                           value={modalViewCustomerList.LastName}
-                          onChange={customerViewModalValidation}
+                          onChange={NamesValidation}
                           labelClass="d-none"
                         />
                       </Col>
@@ -264,6 +221,7 @@ const ViewCustomer = ({
                           isDisabled={enableSelectCompanyName ? true : false}
                           ref={corporateID}
                           name="corporateID"
+                          className="select-company"
                           onChange={companyDropdownOnchange}
                           options={companySelectOption}
                           value={{
@@ -274,53 +232,48 @@ const ViewCustomer = ({
                         />
                       </Col>
                       <Col lg={6} md={6} sm={12}>
-                        <Select
-                          isDisabled={true}
-                          name="selectShield"
-                          placeholder="Category"
-                          value={modalViewCustomerList.selectCategory}
-                          options={selectCategory}
-                          onChange={selectCategoryChangeHandler}
-                        />
-                      </Col>
-
-                      {/* <Col lg={6} md={6} sm={12}>
                         <TextField
-                          disable={enableOneTwoField ? true : false}
-                          ref={fieldOneTwoThree}
-                          placeholder="123"
-                          name="fieldOneTwoThree"
-                          className={
-                            enableOneTwoField
-                              ? `${"disable-field-Name"}`
-                              : `${"Textfield-Name"}`
-                          }
-                          value={viewCustomer.fieldOneTwoThree.value}
-                          onChange={customerViewModalValidation}
+                          // isDisabled={true}
+                          disable={true}
+                          name="selectCategory"
+                          placeholder="Category"
                           labelClass="d-none"
+                          className="disable-field-Name"
+                          value={modalViewCustomerList.selectCategory.value}
+                          // options={selectCategory}
+                          // onChange={selectCategoryChangeHandler}
                         />
-                      </Col> */}
-                    </Row>
-                    <Row className="mt-3">
-                      <Col lg={6} md={6} sm={12}>
-                        <Select isDisabled={true} placeholder="Status" />
                       </Col>
                     </Row>
+                    {/* <Row className="mt-3">
+                      <Col lg={6} md={6} sm={12}>
+                        <TextField
+                          disable={true}
+                          name="statusID"
+                          labelClass="d-none"
+                          placeholder="Status"
+                          // value={modalViewCustomerList.statusID.value}
+                        />
+                      </Col>
+                    </Row> */}
                   </Col>
 
                   <Col lg={5} md={5} sm={12}>
                     <CustomPaper className="Viewmodal-paper">
                       <Row>
                         <Col>
-                          <span className="right-and-User-heading">Rights</span>
+                          <span className="right-and-User-heading">
+                            Other Details
+                          </span>
                         </Col>
                         <Col lg={12} md={12} sm={12} className="mt-3">
                           <label className="timer-and-Nature-business-heading">
-                            Timer
+                            Rfq Timer
                           </label>
                           <TextField
                             labelClass="d-none"
                             disable={true}
+                            value={modalViewCustomerList.rfqTimer.value}
                             className="disable-field-Name"
                             placeholder="5 minutes"
                           />
@@ -334,6 +287,7 @@ const ViewCustomer = ({
                         <Col lg={12} md={12} sm={12}>
                           <TextField
                             disable={true}
+                            value={modalViewCustomerList.natureClient.value}
                             className="disable-field-Name"
                             labelClass="d-none"
                             placeholder="Foods"
@@ -358,6 +312,7 @@ const ViewCustomer = ({
               >
                 <Button
                   text="Update"
+                  onClick={onUpdateBtnClick}
                   className="Customer-List-Update-btn"
                   icon={<i class="icon-refresh Upload-Customer-modal"></i>}
                 />

@@ -6,6 +6,7 @@ const initialState = {
   ResponseMessage: "",
   allCorporateUser: [],
   searchCorporate: [],
+  updateCorporateResponse: "",
 };
 
 const systemReducer = (state = initialState, action) => {
@@ -57,6 +58,28 @@ const systemReducer = (state = initialState, action) => {
         Loading: false,
         Spinner: false,
         searchCorporate: [],
+        ResponseMessage: action.message,
+      };
+
+    case actions.UPDATE_CORPORATE_USER_INIT:
+      return {
+        ...state,
+        Loading: true,
+      };
+
+    case actions.UPDATE_CORPORATE_USER_SUCCESS:
+      return {
+        ...state,
+        Loading: false,
+        updateCorporateResponse: action.response,
+        ResponseMessage: action.message,
+      };
+
+    case actions.UPDATE_CORPORATE_USER_FAIL:
+      return {
+        ...state,
+        Loading: false,
+        updateCorporateResponse: "",
         ResponseMessage: action.message,
       };
 

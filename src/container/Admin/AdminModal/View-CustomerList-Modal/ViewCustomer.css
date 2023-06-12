@@ -51,11 +51,14 @@
 }
 
 .disable-field-Name {
+  height: 39px !important;
   background-color: #dbdde7 !important;
+  font-size: 13px !important;
+  border-radius: 4px !important;
 }
 
 .Textfield-Name {
-  height: 40px !important;
+  height: 39px !important;
   border-radius: 4px !important;
   color: #000 !important;
   border: 1px solid #e1e1e1 !important;
@@ -95,4 +98,14 @@
 .Customer-List-Cancel-btn:hover {
   background: linear-gradient(to bottom, #5b67cd 0%, #2a38af 100%) !important;
   border: none;
+}
+
+.select-company {
+  font-size: 13px !important;
+  color: #000 !important;
+}
+
+.Upload-Customer-modal {
+  margin-right: 5px !important;
+  font-size: 17px !important;
 }
