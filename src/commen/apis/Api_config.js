@@ -64,6 +64,11 @@ const updateCorporateApiSysAdmin = {
   RequestMethod: "ServiceManager.UpdateCorporateUser",
 };
 
+// get All Bank Corporate By Bank ID Api
+const getAllBankCorporate = {
+  RequestMethod: "ServiceManager.GetAllCorporatesByBankID",
+};
+
 export {
   authenticationLogIn,
   authenticationSignUp,
@@ -79,4 +84,5 @@ export {
   getAllUserStatusERMAdmin,
   getAllCorporatesApiERM,
   updateCorporateApiSysAdmin,
+  getAllBankCorporate,
 };

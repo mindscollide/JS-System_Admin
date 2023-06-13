@@ -6,6 +6,7 @@ const initialState = {
   ResponseMessage: "",
   allCorporateUser: [],
   searchCorporate: [],
+  bankCorporates: [],
   updateCorporateResponse: "",
 };
 
@@ -80,6 +81,28 @@ const systemReducer = (state = initialState, action) => {
         ...state,
         Loading: false,
         updateCorporateResponse: "",
+        ResponseMessage: action.message,
+      };
+
+    case actions.GET_ALL_BANK_CORPORATE_INIT:
+      return {
+        ...state,
+        Loading: true,
+      };
+
+    case actions.GET_ALL_BANK_CORPORATE_SUCCESS:
+      return {
+        ...state,
+        Loading: false,
+        bankCorporates: action.response,
+        ResponseMessage: action.message,
+      };
+
+    case actions.GET_ALL_BANK_CORPORATE_FAIL:
+      return {
+        ...state,
+        Loading: false,
+        bankCorporates: [],
         ResponseMessage: action.message,
       };
 

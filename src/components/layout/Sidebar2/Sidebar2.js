@@ -137,27 +137,27 @@ const Sidebar2 = () => {
                     title="Setup"
                     className="submenu-sidebar-icons"
                   >
-                    <Menu.Item
+                    {/* <Menu.Item
                       className="menu-items-sidebar"
                       key="3"
                       onClick={navigateToProperty}
                     >
                       Property Type
-                    </Menu.Item>
-                    <Menu.Item
+                    </Menu.Item> */}
+                    {/* <Menu.Item
                       className="menu-items-sidebar"
                       key="4"
                       onClick={navigateToApproval}
                     >
                       Approval Reason
-                    </Menu.Item>
-                    <Menu.Item
+                    </Menu.Item> */}
+                    {/* <Menu.Item
                       className="menu-items-sidebar"
                       key="5"
                       onClick={navigateToRejection}
                     >
                       Rejection Reason
-                    </Menu.Item>
+                    </Menu.Item> */}
 
                     <Menu.Item
                       className="menu-items-sidebar"

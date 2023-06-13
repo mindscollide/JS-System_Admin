@@ -38,7 +38,10 @@ const Header = () => {
                 </Nav.Link>
                 <Nav.Link>
                   <span className="d-inline-block logout icn-wrapper">
-                    <i className="icon-logout icon-bell-color"></i>
+                    <i
+                      className="icon-logout icon-bell-color"
+                      onClick={() => dispatch(signOut(navigate))}
+                    ></i>
                   </span>
                 </Nav.Link>
               </Nav>
@@ -63,7 +66,7 @@ const Header = () => {
                     Help & Support
                   </label>
                 </Dropdown.Item>
-                <Dropdown.Item>
+                {/* <Dropdown.Item>
                   <Nav.Link>
                     <i className="icon-logout me-1"></i>
                     <label
@@ -73,7 +76,7 @@ const Header = () => {
                       Logout
                     </label>
                   </Nav.Link>
-                </Dropdown.Item>
+                </Dropdown.Item> */}
               </Dropdown.Menu>
             </Dropdown>
           </Container>

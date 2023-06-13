@@ -16,7 +16,7 @@ const ViewCustomer = ({
   viewCustomerModal,
   setViewCustomerModal,
   selectCategoryChangeHandler,
-  selectCategory,
+  SelectCategory,
   modalViewCustomerList,
   companySelectOption,
   setModalViewCustomerList,
@@ -84,7 +84,7 @@ const ViewCustomer = ({
   const closeViewModal = () => {
     setModalViewCustomerList({
       ...modalViewCustomerList,
-      selectCategory: {
+      SelectCategory: {
         value: "",
       },
       rfqTimer: {
@@ -183,16 +183,15 @@ const ViewCustomer = ({
                         <TextField
                           disable={enableFirstName ? true : false}
                           ref={FirstName}
+                          name="FirstName"
+                          value={modalViewCustomerList.FirstName.value}
+                          onChange={NamesValidation}
                           placeholder="muhammad.ahmed"
-                          // name="FirstName"
                           className={
                             enableFirstName
                               ? `${"disable-field-Name"}`
                               : `${"Textfield-Name"}`
                           }
-                          value={modalViewCustomerList.FirstName}
-                          // value={viewCustomer.firstName.value}
-                          onChange={NamesValidation}
                           labelClass="d-none"
                         />
                       </Col>
@@ -201,15 +200,15 @@ const ViewCustomer = ({
                         <TextField
                           disable={enableLastName ? true : false}
                           ref={LastName}
+                          name="LastName"
+                          value={modalViewCustomerList.LastName.value}
+                          onChange={NamesValidation}
                           placeholder="muhammad.ahmed"
-                          // name="LastName"
                           className={
                             enableLastName
                               ? `${"disable-field-Name"}`
                               : `${"Textfield-Name"}`
                           }
-                          value={modalViewCustomerList.LastName}
-                          onChange={NamesValidation}
                           labelClass="d-none"
                         />
                       </Col>
@@ -235,11 +234,11 @@ const ViewCustomer = ({
                         <TextField
                           // isDisabled={true}
                           disable={true}
-                          name="selectCategory"
+                          name="SelectCategory"
                           placeholder="Category"
                           labelClass="d-none"
                           className="disable-field-Name"
-                          value={modalViewCustomerList.selectCategory.value}
+                          value={modalViewCustomerList.SelectCategory.value}
                           // options={selectCategory}
                           // onChange={selectCategoryChangeHandler}
                         />
@@ -318,6 +317,7 @@ const ViewCustomer = ({
                 />
                 <Button
                   text="Discard"
+                  onClick={closeViewModal}
                   className="Customer-List-Cancel-btn"
                   icon={<i class="icon-close Upload-Customer-modal"></i>}
                 />
