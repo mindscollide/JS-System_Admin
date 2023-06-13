@@ -4,6 +4,7 @@ import {
   getAllCorporateUserSysAdmin,
   searchCorporateUsersSysAdmin,
   updateCorporateApiSysAdmin,
+  getAllBankCorporate,
 } from "../../commen/apis/Api_config";
 import { RefreshToken } from "./Auth-Actions";
 import { systemAdminAPI } from "../../commen/apis/Api_ends_points";
@@ -227,7 +228,7 @@ const updateCorporateAPI = (
   navigate,
   updateCorporateData,
   setCustomerViewModal,
-  newCorporateData
+  corporateSearchData
 ) => {
   let token = JSON.parse(localStorage.getItem("token"));
   // let data = {
@@ -255,7 +256,7 @@ const updateCorporateAPI = (
               navigate,
               updateCorporateData,
               setCustomerViewModal,
-              newCorporateData
+              corporateSearchData
             )
           );
         } else if (response.data.responseCode === 200) {
@@ -269,7 +270,7 @@ const updateCorporateAPI = (
             ) {
               dispatch(updateCorporateSuccess("Record Updated"));
               await dispatch(
-                getAllCorporateUserApi(navigate, newCorporateData)
+                searchUserCorporateApi(navigate, corporateSearchData)
               );
               setCustomerViewModal(false);
             } else if (
@@ -310,4 +311,95 @@ const updateCorporateAPI = (
   };
 };
 
-export { getAllCorporateUserApi, searchUserCorporateApi, updateCorporateAPI };
+//GET ALL BANK CORPORATE BY BANK ID
+const getBankCorporateInit = () => {
+  return {
+    type: actions.GET_ALL_BANK_CORPORATE_INIT,
+  };
+};
+
+const getBankCorporateSuccess = (response, message) => {
+  return {
+    type: actions.GET_ALL_BANK_CORPORATE_SUCCESS,
+    response: response,
+    message: message,
+  };
+};
+
+const getBankCorporateFail = (message) => {
+  return {
+    type: actions.GET_ALL_BANK_CORPORATE_FAIL,
+    message: message,
+  };
+};
+
+const bankCorporateAPI = (navigate) => {
+  let token = JSON.parse(localStorage.getItem("token"));
+
+  return async (dispatch) => {
+    dispatch(getBankCorporateInit());
+    let form = new FormData();
+    form.append("RequestMethod", getAllBankCorporate.RequestMethod);
+    form.append("RequestData", JSON.stringify());
+    await axios({
+      method: "post",
+      url: systemAdminAPI,
+      data: form,
+      headers: {
+        _token: token,
+      },
+    })
+      .then(async (response) => {
+        if (response.data.responseCode === 417) {
+          await dispatch(RefreshToken(navigate));
+          dispatch(bankCorporateAPI(navigate));
+        } else if (response.data.responseCode === 200) {
+          if (response.data.responseResult.isExecuted === true) {
+            if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_GetAllCorporatesByBankID_01".toLowerCase()
+                )
+            ) {
+              dispatch(
+                getBankCorporateSuccess(
+                  response.data.responseResult.corporates,
+                  "Record Found"
+                )
+              );
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_GetAllCorporatesByBankID_02".toLowerCase()
+                )
+            ) {
+              dispatch(getBankCorporateFail("No Record found"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_GetAllCorporatesByBankID_03".toLowerCase()
+                )
+            ) {
+              dispatch(getBankCorporateFail("Exception Something went wrong"));
+            }
+          } else {
+            dispatch(getBankCorporateFail("Something went wrong"));
+          }
+        } else {
+          dispatch(getBankCorporateFail("Something went wrong"));
+        }
+      })
+      .catch((response) => {
+        dispatch(getBankCorporateFail("Something went wrong"));
+      });
+  };
+};
+export {
+  getAllCorporateUserApi,
+  searchUserCorporateApi,
+  updateCorporateAPI,
+  bankCorporateAPI,
+};
