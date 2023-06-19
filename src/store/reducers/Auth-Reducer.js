@@ -9,13 +9,14 @@ const initialState = {
   isSignUp: false,
   SessionExpeireResponseMessage: "",
   UserRoleslist: [],
-  userCorporateLogin: [],
   bankUserLoginHistory: [],
   getAllCorporate: [],
   allCorporateCompany: [],
   searchCompanyLogin: [],
   searchBankLogin: [],
   allUserStatus: [],
+  getAllNature: [],
+  customerLoginHistory: [],
   roles: null,
   Token: "",
   Refresh: "",
@@ -102,32 +103,6 @@ const authReducer = (state = initialState, action) => {
         ...state,
         Loading: false,
         UserRoleslist: [],
-        ResponseMessage: action.message,
-      };
-
-    case actions.GET_CORPORATE_USER_LOGIN_INIT:
-      return {
-        ...state,
-        Loading: true,
-        Spinner: true,
-      };
-
-    case actions.GET_CORPORATE_USER_LOGIN_SUCCESS:
-      console.log("logogogog", action.response);
-      return {
-        ...state,
-        Loading: false,
-        Spinner: false,
-        userCorporateLogin: action.response,
-        ResponseMessage: action.message,
-      };
-
-    case actions.GET_CORPORATE_USER_LOGIN_FAIL:
-      return {
-        ...state,
-        Loading: false,
-        Spinner: false,
-        userCorporateLogin: [],
         ResponseMessage: action.message,
       };
 
@@ -270,6 +245,52 @@ const authReducer = (state = initialState, action) => {
         ...state,
         Loading: false,
         allCorporateCompany: [],
+        ResponseMessage: action.message,
+      };
+
+    case actions.GET_ALL_NATURE_BUSINESS_INIT:
+      return {
+        ...state,
+        Loading: true,
+      };
+
+    case actions.GET_ALL_NATURE_BUSINESS_SUCCESS:
+      return {
+        ...state,
+        Loading: false,
+        getAllNature: action.response,
+        ResponseMessage: action.message,
+      };
+
+    case actions.GET_ALL_NATURE_BUSINESS_FAIL:
+      return {
+        ...state,
+        Loading: false,
+        getAllNature: [],
+        ResponseMessage: action.message,
+      };
+
+    case actions.GET_ALL_CORPORATE_LOGIN_HISTORY_INIT:
+      return {
+        ...state,
+        Loading: true,
+        Spinner: true,
+      };
+
+    case actions.GET_ALL_CORPORATE_LOGIN_HISTORY_SUCCESS:
+      return {
+        ...state,
+        Loading: false,
+        Spinner: false,
+        customerLoginHistory: action.response,
+        ResponseMessage: action.message,
+      };
+
+    case actions.GET_ALL_CORPORATE_LOGIN_HISTORY_FAIL:
+      return {
+        ...state,
+        Spinner: false,
+        customerLoginHistory: [],
         ResponseMessage: action.message,
       };
 

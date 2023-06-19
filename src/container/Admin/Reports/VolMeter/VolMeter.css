@@ -10,6 +10,8 @@
 .volMeter-paper {
   border-radius: 4px;
   padding: 3px 10px !important;
+  width: 100% !important;
+  overflow: hidden !important;
   background-color: #ffffff !important;
 }
 

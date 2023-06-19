@@ -1,0 +1,213 @@
+.LoginHistory-container {
+  width: 100% !important;
+  /* margin: 0 50px 0 0 !important; */
+}
+
+.LoginHistory-label {
+  display: flex;
+  justify-content: start;
+  font-size: 18px;
+  color: #004990;
+  font-weight: 600;
+}
+
+.LoginHistory-paper {
+  border-radius: 4px;
+  width: 100% !important;
+  overflow: hidden !important;
+  padding: 3px 10px !important;
+  background-color: #ffffff !important;
+}
+
+.col-search-download-btn {
+  display: flex;
+  justify-content: center !important;
+  gap: 10px !important;
+}
+
+.Search-HistoryLog-btn {
+  font-size: 14px;
+  border-top-right-radius: 0px;
+  border-bottom-left-radius: 0px;
+  border-top-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  padding: 6px 12px !important;
+  border-color: #6873a9;
+  background-color: #6873a9 !important;
+}
+
+.Download-Excel-btn {
+  font-size: 14px;
+  border-top-right-radius: 0px;
+  border-bottom-left-radius: 0px;
+  border-top-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  padding: 6px 18px !important;
+  border-color: #019308 !important;
+  background-color: #019308 !important;
+}
+
+.loginHistor-textField-fontsize {
+  font-size: 13px !important;
+  height: 39px;
+}
+
+.LoginHistory-table {
+  width: 100%;
+  max-height: 50vh !important;
+  overflow: auto !important;
+  overflow-y: hidden;
+  border-radius: 0px !important;
+}
+
+.LoginHistory-table th.ant-table-cell {
+  color: #ffffff !important;
+  border-radius: 0% !important;
+  background: linear-gradient(to bottom, #5b67cd 0%, #2a38af 100%) !important;
+}
+
+.LoginHistory-table::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 20px;
+  background-color: #ffffff;
+}
+
+.LoginHistory-table::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  background: #ccc;
+  margin-left: -15px;
+}
+
+.customer-login-user-spinner {
+  height: 40vh !important;
+  align-items: center !important;
+  display: flex;
+  justify-content: center !important;
+}
+
+.LoginHistory-Datepicker {
+  margin-top: -22px;
+  /* width: 450px !important; */
+  /* align-items: center !important; */
+}
+
+.LoginHistory-Datepicker .rmdp-header-values {
+  color: #000 !important;
+  font-weight: 700 !important;
+  margin: auto;
+}
+
+.LoginHistory-Datepicker .rmdp-week-day {
+  color: #000 !important;
+  cursor: default;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.LoginHistory-Datepicker .rmdp-calendar {
+  height: max-content;
+  padding: 0px;
+}
+
+.LoginHistory-Datepicker .rmdp-day-picker {
+  padding: 0px;
+}
+
+.LoginHistory-Datepicker .rmdp-day {
+  cursor: pointer;
+  height: 30px;
+  position: relative;
+  width: 34px;
+}
+
+.LoginHistory-Datepicker .rmdp-day span {
+  border-radius: 0%;
+  bottom: 0px;
+  font-size: 13px;
+  font-weight: 500;
+  left: 0px;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+}
+
+.LoginHistory-Datepicker .rmdp-day.rmdp-selected span:not(.highlight) {
+  background-color: #2e3cb2 !important;
+  border-radius: 4px;
+  border-color: #2e3cb2 !important;
+  box-shadow: 0 0 3px #8798ad;
+  color: #fff;
+}
+
+.LoginHistory-Datepicker .rmdp-arrow {
+  border: solid #000000;
+  border-width: 0 1px 1px 0;
+  display: inline-block;
+  height: 3px;
+  margin-top: 5px;
+  padding: 3px;
+  width: 3px;
+}
+
+.LoginHistory-Datepicker-left {
+  border-top-right-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+  border-top-left-radius: 6px !important;
+  border-bottom-left-radius: 6px !important;
+  border: 1px solid #ced4da;
+  width: 100% !important;
+  height: 39px !important;
+  font-size: 13px !important;
+  font-family: "Montserrat", sans-serif !important;
+  cursor: pointer;
+}
+.LoginHistory-Datepicker-left:is(:focus, :focus-visible) {
+  outline: none !important;
+}
+
+.LoginHistory-date-to {
+  padding: 9px 13px;
+  margin-top: 23px;
+  align-items: center !important;
+  background-color: #e9ecef;
+  border: 1px solid #ced4da;
+  margin-left: 10px !important;
+  margin-right: 10px !important;
+}
+
+.LoginHistory-Datepicker-right {
+  border-top-left-radius: 0px !important;
+  border-bottom-left-radius: 0px !important;
+  border-top-right-radius: 6px !important;
+  border-bottom-right-radius: 6px !important;
+  border: 1px solid #ced4da;
+  font-size: 13px !important;
+  width: 100% !important;
+  height: 39px !important;
+  font-family: "Montserrat", sans-serif !important;
+  cursor: pointer;
+}
+
+.LoginHistory-Datepicker-right:is(:focus, :focus-visible) {
+  outline: none !important;
+}
+
+.Reset-btn-login {
+  font-size: 14px;
+  /* border-top-right-radius: 0px; */
+  /* border-bottom-left-radius: 0px; */
+  /* border-top-left-radius: 8px; */
+  /* border-bottom-right-radius: 8px; */
+  padding: 6px 18px !important;
+  border: none;
+  background: linear-gradient(to bottom, #5b67cd 0%, #2a38af 100%) !important;
+}
+
+.Icons-right {
+  margin-right: 5px;
+}
+
+.email-table-cursor:is(:hover) {
+  /* display: none !important; */
+}

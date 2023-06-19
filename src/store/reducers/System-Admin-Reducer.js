@@ -7,6 +7,7 @@ const initialState = {
   allCorporateUser: [],
   searchCorporate: [],
   bankCorporates: [],
+  corporateNameByBankId: [],
   updateCorporateResponse: "",
 };
 
@@ -88,12 +89,14 @@ const systemReducer = (state = initialState, action) => {
       return {
         ...state,
         Loading: true,
+        Spinner: true,
       };
 
     case actions.GET_ALL_BANK_CORPORATE_SUCCESS:
       return {
         ...state,
         Loading: false,
+        Spinner: false,
         bankCorporates: action.response,
         ResponseMessage: action.message,
       };
@@ -102,7 +105,30 @@ const systemReducer = (state = initialState, action) => {
       return {
         ...state,
         Loading: false,
+        Spinner: false,
         bankCorporates: [],
+        ResponseMessage: action.message,
+      };
+
+    case actions.GET_ALL_CORPORATE_NAME_BY_BANK_INIT:
+      return {
+        ...state,
+        Loading: true,
+      };
+
+    case actions.GET_ALL_CORPORATE_NAME_BY_BANK_SUCCESS:
+      return {
+        ...state,
+        Loading: false,
+        corporateNameByBankId: action.response,
+        ResponseMessage: action.message,
+      };
+
+    case actions.GET_ALL_CORPORATE_NAME_BY_BANK_FAIL:
+      return {
+        ...state,
+        Loading: false,
+        corporateNameByBankId: [],
         ResponseMessage: action.message,
       };
 

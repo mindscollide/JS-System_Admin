@@ -15,15 +15,12 @@ import Select from "react-select";
 const ViewCustomer = ({
   viewCustomerModal,
   setViewCustomerModal,
-  selectCategoryChangeHandler,
-  SelectCategory,
   modalViewCustomerList,
   companySelectOption,
   setModalViewCustomerList,
   companyDropdownOnchange,
   onUpdateBtnClick,
   NamesValidation,
-  companySelectValue,
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -133,8 +130,33 @@ const ViewCustomer = ({
                     className="d-flex justify-content-start"
                   >
                     <span className="Modal-Upload-Customer-Title">
-                      Muhammad Ahmed{" "}
-                      <span className="Active-member">Active</span>
+                      {/* Muhammad Ahmed */}
+                      <span>{modalViewCustomerList.FirstName.value}</span>
+                      {modalViewCustomerList.statusId === 1 ? (
+                        <span className="Active-member">Enabled</span>
+                      ) : modalViewCustomerList.statusId === 2 ? (
+                        <span className="colors-for-disabled-status">
+                          Disabled
+                        </span>
+                      ) : modalViewCustomerList.statusId === 3 ? (
+                        <span className="colors-for-other-status"> Locked</span>
+                      ) : modalViewCustomerList.statusId === 4 ? (
+                        <span className="colors-for-other-status"> Closed</span>
+                      ) : modalViewCustomerList.statusId === 5 ? (
+                        <span className="colors-for-other-status"> New</span>
+                      ) : modalViewCustomerList.statusId === 6 ? (
+                        <span className="colors-for-other-status">
+                          Approved
+                        </span>
+                      ) : modalViewCustomerList.statusId === 7 ? (
+                        <span className="colors-for-other-status">
+                          Declined
+                        </span>
+                      ) : modalViewCustomerList.statusId === 8 ? (
+                        <span className="colors-for-other-status">Created</span>
+                      ) : modalViewCustomerList.statusId === 9 ? (
+                        <span className="colors-for-other-status">Dormant</span>
+                      ) : null}
                     </span>
                   </Col>
                 </Row>

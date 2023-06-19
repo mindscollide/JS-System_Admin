@@ -17,6 +17,8 @@
 
 .counterLimit-paper {
   border-radius: 4px;
+  width: 100% !important;
+  overflow: hidden !important;
   padding: 3px 10px !important;
   background-color: #ffffff !important;
 }

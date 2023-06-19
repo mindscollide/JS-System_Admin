@@ -14,11 +14,6 @@ const authenticationRoleList = {
   RequestMethod: "ServiceManager.RoleList",
 };
 
-// getCorporateUsersLoginHistory in ERM in Customer Login History
-const customerCorporateHistory = {
-  RequestMethod: "ServiceManager.GetCorporateUsersLoginHistory",
-};
-
 // for get all Corporate Categories in ERM in Category dropdown
 const getCorporateCategory = {
   RequestMethod: "ServiceManager.GetAllCorporateCategories",
@@ -69,12 +64,31 @@ const getAllBankCorporate = {
   RequestMethod: "ServiceManager.GetAllCorporatesByBankID",
 };
 
+// get All Nature of Business API in ERM Auth
+const getAllNatureAPI = {
+  RequestMethod: "ServiceManager.GetAllNatureOfBussiness",
+};
+
+// get all Corporate Users Login History Api
+const getCorporateUserLoginApiERM = {
+  RequestMethod: "ServiceManager.GetCorporateUsersLoginHistory",
+};
+
+// get all Corporate Name By Bank ID
+const getCorporateNameApi = {
+  RequestMethod: "ServiceManager.GetAllCorporateNameByBankID",
+};
+
+// get all bank users in bank user list page
+const getBankUserApi = {
+  RequestMethod: "ServiceManager.GetAllBankUsers",
+};
+
 export {
   authenticationLogIn,
   authenticationSignUp,
   authenticationRefreshToken,
   authenticationRoleList,
-  customerCorporateHistory,
   getCorporateCategory,
   userBankLoginHistory,
   companySearchLoginHistory,
@@ -85,4 +99,8 @@ export {
   getAllCorporatesApiERM,
   updateCorporateApiSysAdmin,
   getAllBankCorporate,
+  getAllNatureAPI,
+  getCorporateUserLoginApiERM,
+  getCorporateNameApi,
+  getBankUserApi,
 };
