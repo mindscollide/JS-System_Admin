@@ -86,48 +86,39 @@ const CounterLimit = () => {
 
   return (
     <Fragment>
-      <Container className="counterLimit-container">
+      <section className="me-4">
         <Row>
-          <Col>
-            <Row>
-              <Col lg={12} md={12} sm={12}>
-                <span className="counterLimit-label">Counter Party Limit</span>
-              </Col>
-            </Row>
-            <Row>
-              <Col
-                lg={11}
-                md={11}
-                sm={11}
-                className="d-flex justify-content-end"
-              >
-                <Button
-                  text="Upload Counter Party Limit"
-                  icon={<i className="icon-upload-cloud eyeicon-size"></i>}
-                  className="Upload-Excel-btn"
-                />
-              </Col>
-            </Row>
-
-            <Row className="mt-3">
-              <Col lg={11} md={11} sm={12}>
-                <CustomPaper className="counterLimit-paper">
-                  <Row>
-                    <Col lg={12} md={12} sm={12}>
-                      <Table
-                        column={counterColumns}
-                        rows={counterData}
-                        pagination={false}
-                        className="counterLimit-table"
-                      />
-                    </Col>
-                  </Row>
-                </CustomPaper>
-              </Col>
-            </Row>
+          <Col lg={12} md={12} sm={12}>
+            <span className="counterLimit-label">Counter Party Limit</span>
           </Col>
         </Row>
-      </Container>
+        <Row>
+          <Col lg={12} md={12} sm={12} className="d-flex justify-content-end">
+            <Button
+              text="Upload Counter Party Limit"
+              icon={<i className="icon-upload-cloud eyeicon-size"></i>}
+              className="Upload-Excel-btn"
+            />
+          </Col>
+        </Row>
+
+        <Row className="mt-3">
+          <Col lg={12} md={12} sm={12}>
+            <CustomPaper className="counterLimit-paper">
+              <Row>
+                <Col lg={12} md={12} sm={12}>
+                  <Table
+                    column={counterColumns}
+                    rows={counterData}
+                    pagination={false}
+                    className="counterLimit-table"
+                  />
+                </Col>
+              </Row>
+            </CustomPaper>
+          </Col>
+        </Row>
+      </section>
 
       {counterPartyModal ? (
         <>

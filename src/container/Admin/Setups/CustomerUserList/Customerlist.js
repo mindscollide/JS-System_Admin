@@ -8,7 +8,7 @@ import {
   Loader,
 } from "../../../../components/elements";
 import { useDispatch, useSelector } from "react-redux";
-import ViewCustomer from "../../../../container/Admin/AdminModal/View-CustomerList-Modal/ViewCustomer";
+import ViewCustomer from "../../AdminModal/View-CustomerList-Modal/ViewCustomer";
 import { validateEmail } from "../../../../commen/functions/emailValidation";
 import {
   getAllCorporateUserApi,
@@ -82,6 +82,13 @@ const Customerlist = () => {
       errorStatus: false,
     },
 
+    corporates: {
+      value: "",
+      label: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+    bankID: 0,
     corporateID: {
       value: "",
       label: "",
@@ -109,7 +116,7 @@ const Customerlist = () => {
       errorMessage: "",
       errorStatus: false,
     },
-    statusId: 1,
+    statusId: 0,
     companySelect: {
       value: 0,
       label: "",
@@ -223,11 +230,10 @@ const Customerlist = () => {
   useEffect(() => {
     dispatch(getAllCategoriesCorporate(navigate));
     dispatch(getAllCorporateCompany(navigate));
-    // dispatch API in useEffect for customer list table
-    // let newCorporateData = {
-    //   CorporateID: 1,
-    // };
-    // dispatch(getAllCorporateUserApi(navigate, newCorporateData));
+    let bankCorporateData = {
+      BankID: 1,
+    };
+    dispatch(bankCorporateAPI(navigate, bankCorporateData));
 
     let corporateSearchData = {
       FirstName: "",
@@ -255,20 +261,6 @@ const Customerlist = () => {
   }, [systemReducer.searchCorporate]);
   console.log("allcorporateee", rows);
 
-  //useEffect to render data in table from Api
-  // useEffect(() => {
-  //   if (
-  //     systemReducer.allCorporateUser.length > 0 &&
-  //     systemReducer.allCorporateUser !== null &&
-  //     systemReducer.allCorporateUser !== undefined
-  //   ) {
-  //     setRows(systemReducer.allCorporateUser);
-  //   } else {
-  //     setRows([]);
-  //   }
-  // }, [systemReducer.allCorporateUser]);
-  // console.log("allcorporateee", rows);
-
   // for category Corporate in select drop down
   useEffect(() => {
     if (Object.keys(auth.getAllCorporate).length > 0) {
@@ -283,6 +275,21 @@ const Customerlist = () => {
       setSelectAllCategory(tem);
     }
   }, [auth.getAllCorporate]);
+
+  // for bank corporate bank id dropdown useEffect
+  useEffect(() => {
+    if (Object.keys(systemReducer.bankCorporates).length > 0) {
+      let tem = [];
+      systemReducer.bankCorporates.map((data, index) => {
+        console.log(data, "datadatadatadatassssss");
+        tem.push({
+          // value: data.corporateID,
+          label: data.corporateName,
+        });
+      });
+      setSelectBankCorporate(tem);
+    }
+  }, [systemReducer.bankCorporates]);
 
   // for corporate company select drop down
   useEffect(() => {
@@ -313,7 +320,17 @@ const Customerlist = () => {
   };
 
   //On Change handler for Corporate Bank Dropdown
-  const selectAllCorporateBankOnchangeHandler = async (selectBank) => {};
+  const selectAllCorporateBankOnchangeHandler = async (selectBank) => {
+    console.log(selectBank, "selectBankselectBank");
+    setSelectBankCorporateValue(selectBank);
+    setCustomerListFields({
+      ...customerListFields,
+      corporates: {
+        // value: selectBank.value,
+        label: selectBank.label,
+      },
+    });
+  };
 
   // on change handler for company category
   const selectAllCorporateCategoryOnchangeHandler = (selectedCompany) => {
@@ -365,7 +382,7 @@ const Customerlist = () => {
       FirstName: customerListFields.FirstName.value,
       LastName: customerListFields.LastName.value,
       Email: customerListFields.Email.value,
-      CompanyName: customerListFields.companyName.value,
+      CompanyName: customerListFields.corporates.label,
       CategoryID: 0,
     };
     await dispatch(searchUserCorporateApi(navigate, corporateSearchData));
@@ -489,6 +506,7 @@ const Customerlist = () => {
       },
     });
     setSelectAllCategoryValue([]);
+    setSelectBankCorporateValue([]);
 
     let corporateSearchData = {
       FirstName: "",
@@ -626,129 +644,124 @@ const Customerlist = () => {
 
   return (
     <Fragment>
-      <Container className="customer-List-container">
+      <section className="me-4">
         <Row>
-          <Col>
-            <Row>
-              <Col lg={12} md={12} sm={12}>
-                <span className="customer-List-label">Customer List</span>
-              </Col>
-            </Row>
-            <Row className="mt-3">
-              <Col lg={11} md={11} sm={12}>
-                <CustomPaper className="customer-List-paper">
-                  <Row className="mt-3">
-                    <Col lg={2} md={2} sm={12}>
-                      <TextField
-                        placeholder="First Name"
-                        name="FirstName"
-                        value={customerListFields.FirstName.value}
-                        onChange={customerListValidation}
-                        labelClass="d-none"
-                        className="textfields-customer-list-fontsize"
-                      />
-                    </Col>
-                    <Col lg={2} md={2} sm={12}>
-                      <TextField
-                        placeholder="Last Name"
-                        name="LastName"
-                        value={customerListFields.LastName.value}
-                        onChange={customerListValidation}
-                        labelClass="d-none"
-                        className="textfields-customer-list-fontsize"
-                      />
-                    </Col>
-                    <Col lg={2} md={2} sm={12}>
-                      <TextField
-                        placeholder="Company Name"
-                        name="companyName"
-                        value={customerListFields.companyName.value}
-                        onChange={customerListValidation}
-                        labelClass="d-none"
-                        className="textfields-customer-list-fontsize"
-                      />
-                    </Col>
-                    <Col lg={3} md={3} sm={12}>
-                      <TextField
-                        placeholder="Email"
-                        name="Email"
-                        onBlur={handlerEmail}
-                        value={customerListFields.Email.value}
-                        onChange={customerListValidation}
-                        labelClass="d-none"
-                        className="textfields-customer-list-fontsize"
-                      />
-                    </Col>
-                    <Col lg={3} md={3} sm={12}>
-                      <Select
-                        name="corporateCategoryID"
-                        options={selectAllCategory}
-                        value={selectAllCategoryValue}
-                        isSearchable={true}
-                        onChange={selectAllCategoryOnchangeHandler}
-                        placeholder="Select"
-                        className="select-customer-list-fontsize"
-                      />
-                    </Col>
-                  </Row>
-
-                  <Row className="mt-3">
-                    <Col
-                      lg={12}
-                      md={12}
-                      sm={12}
-                      className="customer-list-col-fields"
-                    >
-                      <Button
-                        icon={<i className="icon-search icon-check-space"></i>}
-                        className="Search-btn"
-                        onClick={seacrhButtonHit}
-                        text="Search"
-                      />
-                      <Button
-                        icon={<i className="icon-refresh icon-check-space"></i>}
-                        className="Reset-btn"
-                        onClick={resetBtnHandler}
-                        text="Reset"
-                      />
-                    </Col>
-                  </Row>
-                  <Row className="mt-3">
-                    <Col lg={12} md={12} sm={12}>
-                      {systemReducer.Spinner === true ? (
-                        <span className="customer-list-user-spinner">
-                          <Spin size="large" />
-                        </span>
-                      ) : (
-                        <Table
-                          column={columns}
-                          rows={rows}
-                          pagination={false}
-                          className="CustomerList-table"
-                        />
-                      )}
-                    </Col>
-                  </Row>
-                </CustomPaper>
-              </Col>
-            </Row>
+          <Col lg={12} md={12} sm={12}>
+            <span className="customer-List-label">Customer User List</span>
           </Col>
         </Row>
-      </Container>
+        <Row className="mt-3">
+          <Col lg={12} md={12} sm={12}>
+            <CustomPaper className="customer-List-paper">
+              <Row className="mt-3">
+                <Col lg={2} md={2} sm={12}>
+                  <TextField
+                    placeholder="First Name"
+                    name="FirstName"
+                    value={customerListFields.FirstName.value}
+                    onChange={customerListValidation}
+                    labelClass="d-none"
+                    className="textfields-customer-list-fontsize"
+                  />
+                </Col>
+                <Col lg={2} md={2} sm={12}>
+                  <TextField
+                    placeholder="Last Name"
+                    name="LastName"
+                    value={customerListFields.LastName.value}
+                    onChange={customerListValidation}
+                    labelClass="d-none"
+                    className="textfields-customer-list-fontsize"
+                  />
+                </Col>
+                <Col lg={2} md={2} sm={12}>
+                  <TextField
+                    placeholder="Email"
+                    name="Email"
+                    onBlur={handlerEmail}
+                    value={customerListFields.Email.value}
+                    onChange={customerListValidation}
+                    labelClass="d-none"
+                    className="textfields-customer-list-fontsize"
+                  />
+                </Col>
+                <Col lg={3} md={3} sm={12}>
+                  <Select
+                    placeholder="Select"
+                    name="corporates"
+                    options={selectBankCorporate}
+                    value={selectBankCorporateValue}
+                    isSearchable={true}
+                    onChange={selectAllCorporateBankOnchangeHandler}
+                    className="select-customer-list-fontsize"
+                  />
+                </Col>
+                <Col lg={3} md={3} sm={12}>
+                  <Select
+                    name="corporateCategoryID"
+                    options={selectAllCategory}
+                    value={selectAllCategoryValue}
+                    isSearchable={true}
+                    onChange={selectAllCategoryOnchangeHandler}
+                    placeholder="Select"
+                    className="select-customer-list-fontsize"
+                  />
+                </Col>
+              </Row>
+
+              <Row className="mt-3">
+                <Col
+                  lg={12}
+                  md={12}
+                  sm={12}
+                  className="customer-list-col-fields"
+                >
+                  <Button
+                    icon={<i className="icon-search icon-check-space"></i>}
+                    className="Search-btn"
+                    onClick={seacrhButtonHit}
+                    text="Search"
+                  />
+                  <Button
+                    icon={<i className="icon-refresh icon-check-space"></i>}
+                    className="Reset-btn"
+                    onClick={resetBtnHandler}
+                    text="Reset"
+                  />
+                </Col>
+              </Row>
+              <Row className="mt-3">
+                <Col lg={12} md={12} sm={12}>
+                  {systemReducer.Spinner === true ? (
+                    <span className="customer-list-user-spinner">
+                      <Spin size="large" />
+                    </span>
+                  ) : (
+                    <Table
+                      column={columns}
+                      rows={rows}
+                      pagination={false}
+                      className="CustomerList-table"
+                    />
+                  )}
+                </Col>
+              </Row>
+            </CustomPaper>
+          </Col>
+        </Row>
+      </section>
       {customerViewModal ? (
         <>
           <ViewCustomer
             viewCustomerModal={customerViewModal}
             setViewCustomerModal={setCustomerViewModal}
-            selectCategoryChangeHandler={selectCategoryViewModalHandler}
-            SelectCategory={selectAllCategory}
             modalViewCustomerList={modalViewCustomerList}
             setModalViewCustomerList={setModalViewCustomerList}
             companyDropdownOnchange={selectAllCorporateCategoryOnchangeHandler}
             companySelectOption={selectCompany}
             onUpdateBtnClick={updateCorporateUserOnClick}
-            companySelectValue={selectCompanyValue}
             NamesValidation={textFieldVlidationViewModal}
+            // tableColumn={columns}
           />
         </>
       ) : null}

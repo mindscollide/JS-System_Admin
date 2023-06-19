@@ -9,12 +9,13 @@ import ApprovalReason from "../container/Admin/Setups/ApprovalReason/ApprovalRea
 import RejectionReason from "../container/Admin/Setups/RejectionReason/RejectionReason";
 import AssetsBanking from "../container/Admin/Reports/Non-Banking-Assets/Assets-Banking";
 import AdminDashboard from "../container/Admin/AdminDashboard/AdminDashboard";
-import LoginHistory from "../container/Admin/Setups/CustomerLoginHistory/LoginHistory";
-import UserLogin from "../container/Admin/Setups/UserLoginHistory/UserLogin";
+import LoginHistory from "../container/Admin/Setups/CustomerUserLoginHistory/LoginHistory";
+import UserLogin from "../container/Admin/Setups/BankUserLoginHistory/UserLogin";
 import TradeCount from "../container/Admin/Setups/TradeCount/Tradecount";
 import CounterLimit from "../container/Admin/Reports/CounterParty/CounterLimit";
 import VolMeter from "../container/Admin/Reports/VolMeter/VolMeter";
-import Customerlist from "../container/Admin/Setups/CustomerList/Customerlist";
+import Customerlist from "../container/Admin/Setups/CustomerUserList/Customerlist";
+import BankList from "../container/Admin/Setups/BankUserList/BankList";
 import Userlist from "../container/Admin/Setups/UserList/UserList";
 
 import AdminLogin from "../container/AdminLogin/Login/AdminLogin";
@@ -39,6 +40,7 @@ export const router = createHashRouter(
         <Route path="tradeCount" element={<TradeCount />} />
         <Route path="counterLimit" element={<CounterLimit />} />
         <Route path="volMeter" element={<VolMeter />} />
+        <Route path="BankList" element={<BankList />} />
         <Route path="customerList" element={<Customerlist />} />
         <Route path="Userlist" element={<Userlist />} />
         <Route path="categorymanagement" element={<CategoryManagement />} />

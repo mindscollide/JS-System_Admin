@@ -65,10 +65,10 @@ const Sidebar2 = () => {
     navigate("/AdminDashboard/userLogin");
   };
 
-  const navigateToTrade = () => {
+  const navigateToBankUserList = () => {
     localStorage.setItem("defaultOpenKey ", "sub1");
     localStorage.setItem("defaultSelectedKey", "8");
-    navigate("/AdminDashboard/tradeCount");
+    navigate("/AdminDashboard/BankList");
   };
 
   const navigateToCustomerList = () => {
@@ -83,11 +83,11 @@ const Sidebar2 = () => {
     navigate("/AdminDashboard/Userlist");
   };
 
-  const navigateToReport = () => {
-    localStorage.setItem("defaultOpenKey ", "sub2");
-    localStorage.setItem("defaultSelectedKey", "12");
-    navigate("/AdminDashboard/AssetBanking");
-  };
+  // const navigateToReport = () => {
+  //   localStorage.setItem("defaultOpenKey ", "sub1");
+  //   localStorage.setItem("defaultSelectedKey", "12");
+  //   navigate("/AdminDashboard/AssetBanking");
+  // };
 
   const navigateToCategoryManagement = () => {
     navigate("/AdminDashboard/categorymanagement");
@@ -96,14 +96,14 @@ const Sidebar2 = () => {
   };
 
   const navigateToCounter = () => {
-    localStorage.setItem("defaultOpenKey ", "sub2");
-    localStorage.setItem("defaultSelectedKey", "13");
+    localStorage.setItem("defaultOpenKey ", "sub1");
+    localStorage.setItem("defaultSelectedKey", "12");
     navigate("/AdminDashboard/counterLimit");
   };
 
   const navigateToVolMeter = () => {
-    localStorage.setItem("defaultOpenKey ", "sub2");
-    localStorage.setItem("defaultSelectedKey", "14");
+    localStorage.setItem("defaultOpenKey ", "sub1");
+    localStorage.setItem("defaultSelectedKey", "13");
     navigate("/AdminDashboard/volMeter");
   };
 
@@ -113,45 +113,36 @@ const Sidebar2 = () => {
   // }, []);
 
   return (
-    <Fragment>
-      <Row className="sidebar-row">
-        <Col lg={12} md={12} sm={12} className="js-sidebar">
-          <Layout>
-            <Sider
-              width={250}
-              style={{
-                background: "#000000",
-              }}
-            >
-              <span className="menuMain">
-                <Menu
-                  theme="light"
-                  defaultOpenKeys={[defaultOpenKey]}
-                  defaultSelectedKeys={[defaultSelectedKey]}
-                  mode="inline"
-                  className="Menu-sidebar-class"
-                >
-                  <SubMenu
-                    key="sub1"
-                    icon={<i className="icon-settings menu-icons"></i>}
-                    title="Setup"
-                    className="submenu-sidebar-icons"
-                  >
-                    {/* <Menu.Item
+    <Layout>
+      <Sider width={"100%"}>
+        <Menu
+          theme="light"
+          defaultOpenKeys={[defaultOpenKey]}
+          defaultSelectedKeys={[defaultSelectedKey]}
+          mode="inline"
+          className="Menu-sidebar-class"
+        >
+          <SubMenu
+            key="sub1"
+            icon={<i className="icon-settings menu-icons"></i>}
+            title="Setup"
+            className="submenu-sidebar-icons"
+          >
+            {/* <Menu.Item
                       className="menu-items-sidebar"
                       key="3"
                       onClick={navigateToProperty}
                     >
                       Property Type
                     </Menu.Item> */}
-                    {/* <Menu.Item
+            {/* <Menu.Item
                       className="menu-items-sidebar"
                       key="4"
                       onClick={navigateToApproval}
                     >
                       Approval Reason
                     </Menu.Item> */}
-                    {/* <Menu.Item
+            {/* <Menu.Item
                       className="menu-items-sidebar"
                       key="5"
                       onClick={navigateToRejection}
@@ -159,89 +150,86 @@ const Sidebar2 = () => {
                       Rejection Reason
                     </Menu.Item> */}
 
-                    <Menu.Item
-                      className="menu-items-sidebar"
-                      key="6"
-                      onClick={navigateToLoginHistory}
-                    >
-                      Customer Login History
-                    </Menu.Item>
+            <Menu.Item
+              className="menu-items-sidebar"
+              key="6"
+              onClick={navigateToLoginHistory}
+            >
+              Customer User Login History
+            </Menu.Item>
 
-                    <Menu.Item
-                      className="menu-items-sidebar"
-                      key="7"
-                      onClick={navigateToUserLogin}
-                    >
-                      User Login History
-                    </Menu.Item>
+            <Menu.Item
+              className="menu-items-sidebar"
+              key="7"
+              onClick={navigateToUserLogin}
+            >
+              Bank User Login History
+            </Menu.Item>
 
-                    <Menu.Item
-                      className="menu-items-sidebar"
-                      key="8"
-                      onClick={navigateToTrade}
-                    >
-                      Trade Count
-                    </Menu.Item>
-                    <Menu.Item
-                      className="menu-items-sidebar"
-                      key="9"
-                      onClick={navigateToCustomerList}
-                    >
-                      Customer User List
-                    </Menu.Item>
+            <Menu.Item
+              className="menu-items-sidebar"
+              key="8"
+              onClick={navigateToBankUserList}
+            >
+              Bank User List
+            </Menu.Item>
+            <Menu.Item
+              className="menu-items-sidebar"
+              key="9"
+              onClick={navigateToCustomerList}
+            >
+              Customer User List
+            </Menu.Item>
 
-                    <Menu.Item
-                      className="menu-items-sidebar"
-                      key="10"
-                      onClick={navigateToUserList}
-                    >
-                      User List
-                    </Menu.Item>
-                    <Menu.Item
-                      className="menu-items-sidebar"
-                      key="11"
-                      onClick={navigateToCategoryManagement}
-                    >
-                      Category Management
-                    </Menu.Item>
-                  </SubMenu>
-                  <SubMenu
-                    key="sub2"
-                    icon={<i className="icon-user menu-icons"></i>}
-                    title="Reports"
-                    className="submenu-sidebar-icons"
-                  >
-                    <Menu.Item
+            <Menu.Item
+              className="menu-items-sidebar"
+              key="10"
+              onClick={navigateToUserList}
+            >
+              Customer List
+            </Menu.Item>
+            <Menu.Item
+              className="menu-items-sidebar"
+              key="11"
+              onClick={navigateToCategoryManagement}
+            >
+              Category Management
+            </Menu.Item>
+            {/* <Menu.Item
                       className="menu-items-sidebar"
                       key="12"
                       onClick={navigateToReport}
                     >
                       Non-Banking Assets
-                    </Menu.Item>
+                    </Menu.Item> */}
 
-                    <Menu.Item
-                      className="menu-items-sidebar"
-                      key="13"
-                      onClick={navigateToCounter}
-                    >
-                      Counter Party Limit
-                    </Menu.Item>
+            <Menu.Item
+              className="menu-items-sidebar"
+              key="12"
+              onClick={navigateToCounter}
+            >
+              Counter Party Limit
+            </Menu.Item>
 
-                    <Menu.Item
-                      className="menu-items-sidebar"
-                      key="14"
-                      onClick={navigateToVolMeter}
-                    >
-                      Vol Meter
-                    </Menu.Item>
-                  </SubMenu>
-                </Menu>
-              </span>
-            </Sider>
-          </Layout>
-        </Col>
-      </Row>
-    </Fragment>
+            <Menu.Item
+              className="menu-items-sidebar"
+              key="13"
+              onClick={navigateToVolMeter}
+            >
+              Vol Meter
+            </Menu.Item>
+          </SubMenu>
+          {/* <SubMenu
+                    key="sub2"
+                    icon={<i className="icon-user menu-icons"></i>}
+                    title="Reports"
+                    className="submenu-sidebar-icons"
+                  >
+                    
+                  </SubMenu> */}
+        </Menu>
+      </Sider>
+    </Layout>
   );
 };
 

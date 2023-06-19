@@ -16,6 +16,8 @@ import Select from "react-select";
 import { useNavigate } from "react-router-dom";
 import { Spin } from "antd";
 import "./UserLogin.css";
+import moment from "moment";
+import DatePicker from "react-multi-date-picker";
 import { useSelector, useDispatch } from "react-redux";
 
 const UserLogin = () => {
@@ -53,12 +55,56 @@ const UserLogin = () => {
       errorStatus: false,
     },
 
+    startDate: {
+      value: "",
+    },
+
+    endDate: {
+      value: "",
+    },
+
     Email: {
       value: "",
       errorMessage: "",
       errorStatus: false,
     },
+    BankID: {
+      value: 1,
+      errorMessage: "",
+      errorStatus: false,
+    },
   });
+
+  // useEffect for render data inside bank user login table
+  useEffect(() => {
+    let newData = {
+      BankID: userLoginHistory.BankID.value,
+    };
+    dispatch(bankUserLogin(navigate, newData));
+  }, []);
+
+  //start date state of multi datepicker
+  const changeDateStartHandler = (date) => {
+    let newDate = moment(date).format("YYYY-MM-DD");
+    setUserLoginHistory({
+      ...userLoginHistory,
+      startDate: {
+        value: newDate,
+      },
+    });
+    console.log(newDate, "changeDateStartHandler");
+  };
+
+  //end date state of multi datepicker
+  const changeDateEndHandler = (date) => {
+    let newEndDate = moment(date).format("YYYY-MM-DD");
+    setUserLoginHistory({
+      ...userLoginHistory,
+      endDate: {
+        value: newEndDate,
+      },
+    });
+  };
 
   const userLoginValidation = (e) => {
     let name = e.target.name;
@@ -153,29 +199,18 @@ const UserLogin = () => {
     let seacrhBankData = {
       FirstName: userLoginHistory.FirstName.value,
       LastName: userLoginHistory.LastName.value,
-      BankName: userLoginHistory.BankName.value,
       Email: userLoginHistory.Email.value,
-      FromDate: "20230504",
-      ToDate: "20230525",
+      BankName: userLoginHistory.BankName.value,
+      FromDate:
+        userLoginHistory.startDate.value !== ""
+          ? moment(userLoginHistory.startDate.value).format("YYYYMMDD")
+          : "",
+      ToDate:
+        userLoginHistory.endDate.value !== ""
+          ? moment(userLoginHistory.endDate.value).format("YYYYMMDD")
+          : "",
     };
     await dispatch(searchBankLogin(navigate, seacrhBankData));
-    setUserLoginHistory({
-      ...userLoginHistory,
-      FirstName: {
-        value: "",
-      },
-      LastName: {
-        value: "",
-      },
-
-      BankName: {
-        value: "",
-      },
-
-      Email: {
-        value: "",
-      },
-    });
   };
 
   //ON CHANGE HANDLER FOR CATEGORY DROPDOWN
@@ -191,23 +226,47 @@ const UserLogin = () => {
     });
   };
 
-  // useEffect for render data inside bank user login table
-  useEffect(() => {
-    let newData = {
-      BankID: 1,
-    };
-    dispatch(bankUserLogin(navigate, newData));
-  }, []);
-
   //email validation handler
   const handlerEmail = () => {
     if (userLoginHistory.Email.value !== "") {
       if (validateEmail(userLoginHistory.Email.value)) {
-        alert("Email verified");
+        console.log("valid Email");
+        // alert("Email verified");
       } else {
-        alert("Email Not Verified");
+        console.log("InValid Email");
+        // alert("Email Not Verified");
       }
     }
+  };
+
+  // reset handler
+  const resetBankhandler = () => {
+    setUserLoginHistory({
+      ...userLoginHistory,
+      FirstName: {
+        value: "",
+      },
+
+      LastName: {
+        value: "",
+      },
+
+      Email: {
+        value: "",
+      },
+
+      startDate: {
+        value: "",
+      },
+
+      endDate: {
+        value: "",
+      },
+    });
+    let newData = {
+      BankID: userLoginHistory.BankID.value,
+    };
+    dispatch(bankUserLogin(navigate, newData));
   };
 
   // column for LoginHistory
@@ -235,15 +294,15 @@ const UserLogin = () => {
       align: "center",
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
-    {
-      title: <label className="bottom-table-header">Company</label>,
-      dataIndex: "companyName",
-      key: "companyName",
-      width: "100px",
-      align: "center",
-      ellipsis: true,
-      render: (text) => <label className="issue-date-column">{text}</label>,
-    },
+    // {
+    //   title: <label className="bottom-table-header">Company</label>,
+    //   dataIndex: "companyName",
+    //   key: "companyName",
+    //   width: "100px",
+    //   align: "center",
+    //   ellipsis: true,
+    //   render: (text) => <label className="issue-date-column">{text}</label>,
+    // },
     {
       title: <label className="bottom-table-header">Bank Name</label>,
       dataIndex: "bankName",
@@ -353,9 +412,9 @@ const UserLogin = () => {
   //this useEffect Condition is for when user hit search btn if data is same or not
   useEffect(() => {
     if (
-      auth.searchBankLogin.length > 0 &&
       auth.searchBankLogin !== null &&
-      auth.searchBankLogin !== undefined
+      auth.searchBankLogin !== undefined &&
+      auth.searchBankLogin.length > 0
     ) {
       setRows(auth.searchBankLogin);
     } else {
@@ -393,118 +452,126 @@ const UserLogin = () => {
 
   return (
     <Fragment>
-      <Container className="UserHistory-container">
+      <section className="me-4">
         <Row>
-          <Col>
-            <Row>
-              <Col lg={12} md={12} sm={12}>
-                <span className="UserHistory-label">User Login History</span>
-              </Col>
-            </Row>
-            <Row className="mt-3">
-              <Col lg={11} md={11} sm={12}>
-                <CustomPaper className="UserHistory-paper">
-                  <Row className="mt-3">
-                    <Col lg={3} md={3} sm={12}>
-                      <TextField
-                        placeholder="First Name"
-                        name="FirstName"
-                        value={userLoginHistory.FirstName.value}
-                        onChange={userLoginValidation}
-                        labelClass="d-none"
-                        className="UserHistory-textField-fontsize"
-                      />
-                    </Col>
-                    <Col lg={3} md={3} sm={12}>
-                      <TextField
-                        placeholder="Last Name"
-                        name="LastName"
-                        value={userLoginHistory.LastName.value}
-                        onChange={userLoginValidation}
-                        labelClass="d-none"
-                        className="UserHistory-textField-fontsize"
-                      />
-                    </Col>
-                    <Col lg={3} md={3} sm={12}>
-                      <TextField
-                        placeholder="Bank Name"
-                        name="BankName"
-                        value={userLoginHistory.BankName.value}
-                        onChange={userLoginValidation}
-                        labelClass="d-none"
-                        className="UserHistory-textField-fontsize"
-                      />
-                    </Col>
-                    <Col lg={3} md={3} sm={12}>
-                      <TextField
-                        placeholder="Email"
-                        name="Email"
-                        value={userLoginHistory.Email.value}
-                        onBlur={handlerEmail}
-                        onChange={userLoginValidation}
-                        labelClass="d-none"
-                        className="UserHistory-textField-fontsize"
-                      />
-                    </Col>
-                  </Row>
-
-                  <Row className="mt-3">
-                    <Col lg={3} md={3} sm={12}>
-                      <Select
-                        name="corporateCategoryID"
-                        isSearchable={true}
-                        placeholder="Category"
-                        options={selectCategoryBank}
-                        value={selectCategoryBankValue}
-                        onChange={selectCategoryOnchangeHandler}
-                        className="UserHistory-textField-fontsize"
-                      />
-                    </Col>
-
-                    <Col lg={9} md={9} sm={12} />
-                  </Row>
-                  <Row className="mt-1">
-                    <Col
-                      lg={12}
-                      md={12}
-                      sm={12}
-                      className="col-search-download-btn"
-                    >
-                      <Button
-                        text="Search"
-                        onClick={searchButtonHit}
-                        icon={<i className="icon-search"></i>}
-                        className={"Search-UserHistory-btn"}
-                      />
-                      <Button
-                        text="Downlaod Excel"
-                        icon={<i className="icon-download-excel"></i>}
-                        className={"Download-Excel-btn"}
-                      />
-                    </Col>
-                  </Row>
-                  <Row className="mt-3">
-                    <Col lg={12} md={12} sm={12}>
-                      {auth.Spinner === true ? (
-                        <span className="customer-login-user-spinner">
-                          <Spin size="large" />
-                        </span>
-                      ) : (
-                        <Table
-                          column={userColumns}
-                          rows={rows}
-                          pagination={false}
-                          className="UserHistory-table"
-                        />
-                      )}
-                    </Col>
-                  </Row>
-                </CustomPaper>
-              </Col>
-            </Row>
+          <Col lg={12} md={12} sm={12}>
+            <span className="UserHistory-label"> Bank User Login History</span>
           </Col>
         </Row>
-      </Container>
+        <Row className="mt-3">
+          <Col lg={12} md={12} sm={12}>
+            <CustomPaper className="UserHistory-paper">
+              <Row className="mt-3">
+                <Col lg={4} md={4} sm={12}>
+                  <TextField
+                    placeholder="First Name"
+                    name="FirstName"
+                    value={userLoginHistory.FirstName.value}
+                    onChange={userLoginValidation}
+                    labelClass="d-none"
+                    className="UserHistory-textField-fontsize"
+                  />
+                </Col>
+                <Col lg={4} md={4} sm={12}>
+                  <TextField
+                    placeholder="Last Name"
+                    name="LastName"
+                    value={userLoginHistory.LastName.value}
+                    onChange={userLoginValidation}
+                    labelClass="d-none"
+                    className="UserHistory-textField-fontsize"
+                  />
+                </Col>
+                <Col lg={4} md={4} sm={12}>
+                  <TextField
+                    placeholder="Email"
+                    name="Email"
+                    value={userLoginHistory.Email.value}
+                    onBlur={handlerEmail}
+                    onChange={userLoginValidation}
+                    labelClass="d-none"
+                    className="UserHistory-textField-fontsize"
+                  />
+                </Col>
+              </Row>
+
+              <Row className="mt-3">
+                <Col
+                  lg={6}
+                  md={6}
+                  sm={12}
+                  className="userLoginHistory-Datepicker"
+                >
+                  <DatePicker
+                    value={userLoginHistory.startDate.value}
+                    placeholder="Start date"
+                    showOtherDays={true}
+                    onChange={(value) =>
+                      changeDateStartHandler(value?.toDate?.().toString())
+                    }
+                    inputClass="userLoginHistory-Datepicker-left"
+                  />
+                  <label className="userLoginHistory-date-to">to</label>
+
+                  <DatePicker
+                    value={userLoginHistory.endDate.value}
+                    placeholder="End Date"
+                    showOtherDays={true}
+                    onChange={(value) =>
+                      changeDateEndHandler(value?.toDate?.().toString())
+                    }
+                    inputClass="userLoginHistory-Datepicker-right"
+                  />
+                </Col>
+
+                <Col lg={9} md={9} sm={12} />
+              </Row>
+              <Row className="mt-2">
+                <Col
+                  lg={12}
+                  md={12}
+                  sm={12}
+                  className="col-search-download-btn"
+                >
+                  <Button
+                    text="Search"
+                    onClick={searchButtonHit}
+                    icon={<i className="icon-search"></i>}
+                    className={"Search-UserHistory-btn"}
+                  />
+                  <Button
+                    text="Reset"
+                    icon={<i className="icon-refresh Icons-right"></i>}
+                    onClick={resetBankhandler}
+                    className={"Reset-btn-userBankLogin"}
+                  />
+                  <Button
+                    text="Downlaod Excel"
+                    icon={<i className="icon-download-excel"></i>}
+                    className={"Download-Excel-btn"}
+                  />
+                </Col>
+              </Row>
+              <Row className="mt-3">
+                <Col lg={12} md={12} sm={12}>
+                  {auth.Spinner === true ? (
+                    <span className="customer-login-user-spinner">
+                      <Spin size="large" />
+                    </span>
+                  ) : (
+                    <Table
+                      column={userColumns}
+                      rows={rows}
+                      pagination={false}
+                      className="UserHistory-table"
+                    />
+                  )}
+                </Col>
+              </Row>
+            </CustomPaper>
+          </Col>
+        </Row>
+      </section>
     </Fragment>
   );
 };

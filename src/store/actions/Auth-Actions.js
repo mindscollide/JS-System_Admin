@@ -5,13 +5,14 @@ import {
   authenticationSignUp,
   authenticationRoleList,
   authenticationRefreshToken,
-  customerCorporateHistory,
   getCorporateCategory,
   userBankLoginHistory,
   companySearchLoginHistory,
   bankSearchLoginHistory,
   getAllUserStatusERMAdmin,
   getAllCorporatesApiERM,
+  getAllNatureAPI,
+  getCorporateUserLoginApiERM,
 } from "../../commen/apis/Api_config";
 import { authenticationAPI } from "../../commen/apis/Api_ends_points";
 
@@ -140,8 +141,12 @@ const logIn = (navigate, UserData) => {
                   "userID",
                   response.data.responseResult.userID
                 );
+                localStorage.setItem(
+                  "bankID",
+                  response.data.responseResult.bankID
+                );
                 localStorage.setItem("defaultOpenKey ", "sub1");
-                localStorage.setItem("defaultSelectedKey", "3");
+                localStorage.setItem("defaultSelectedKey", "6");
                 localStorage.setItem(
                   "firstName",
                   response.data.responseResult.firstName
@@ -166,12 +171,16 @@ const logIn = (navigate, UserData) => {
                   "refreshToken",
                   JSON.stringify(response.data.responseResult.refreshToken)
                 );
-                navigate("/AdminDashboard/PropertyType");
+                navigate("/AdminDashboard/loginHistory");
                 dispatch(loginsuccess("Successfully Logged In"));
               } else if (response.data.responseResult.roleID === 4) {
                 localStorage.setItem(
                   "userID",
                   response.data.responseResult.userID
+                );
+                localStorage.setItem(
+                  "bankID",
+                  response.data.responseResult.bankID
                 );
                 localStorage.setItem(
                   "firstName",
@@ -197,7 +206,7 @@ const logIn = (navigate, UserData) => {
                   "refreshToken",
                   response.data.responseResult.refreshToken
                 );
-                navigate("/AdminDashboard/PropertyType");
+                navigate("/AdminDashboard/loginHistory");
                 dispatch(loginsuccess("Successfully Logged In"));
               } else {
                 dispatch(
@@ -491,7 +500,8 @@ const RefreshToken = (navigate) => {
 };
 
 // signUp Api for userRole List
-const allUserRoles = () => {
+const allUserRoles = (navigate) => {
+  let token = JSON.parse(localStorage.getItem("token"));
   return (dispatch) => {
     dispatch(rolesInit());
     let form = new FormData();
@@ -503,13 +513,16 @@ const allUserRoles = () => {
     })
       .then(async (response) => {
         console.log("UserRoleListUserRoleList", response);
-        if (response.data.responseCode === 200) {
+        if (response.data.responseCode === 417) {
+          await dispatch(RefreshToken(navigate));
+          dispatch(allUserRoles(navigate));
+        } else if (response.data.responseCode === 200) {
           if (response.data.responseResult.isExecuted === true) {
             if (
               response.data.responseResult.responseMessage
                 .toLowerCase()
                 .includes(
-                  "ERM_AuthService_RoleManager_RoleList_01".toLowerCase()
+                  "ERM_AuthService_CommonManager_RoleList_01".toLowerCase()
                 )
             ) {
               console.log("UserRoleListUserRoleList", response);
@@ -520,7 +533,7 @@ const allUserRoles = () => {
               response.data.responseResult.responseMessage
                 .toLowerCase()
                 .includes(
-                  "ERM_AuthService_RoleManager_RoleList_02".toLowerCase()
+                  "ERM_AuthService_CommonManager_RoleList_02".toLowerCase()
                 )
             ) {
               dispatch(rolesFail("No Record Found"));
@@ -528,7 +541,7 @@ const allUserRoles = () => {
               response.data.responseResult.responseMessage
                 .toLowerCase()
                 .includes(
-                  "ERM_AuthService_RoleManager_RoleList_03".toLowerCase()
+                  "ERM_AuthService_CommonManager_RoleList_03".toLowerCase()
                 )
             ) {
               dispatch(rolesFail("Exception No roles available"));
@@ -544,104 +557,6 @@ const allUserRoles = () => {
       })
       .catch((response) => {
         dispatch(rolesFail("something went wrong"));
-      });
-  };
-};
-
-// corporate customer login history
-const corporateLoginInit = () => {
-  return {
-    type: actions.GET_CORPORATE_USER_LOGIN_INIT,
-  };
-};
-
-const corporateLoginSuccess = (response, message) => {
-  return {
-    type: actions.GET_CORPORATE_USER_LOGIN_SUCCESS,
-    response: response,
-    message: message,
-  };
-};
-
-const corporateLoginFail = (response, message) => {
-  return {
-    type: actions.GET_CORPORATE_USER_LOGIN_FAIL,
-    response: response,
-    message: message,
-  };
-};
-
-const customerCorporateLogin = (navigate, newData) => {
-  let token = JSON.parse(localStorage.getItem("token"));
-
-  return (dispatch) => {
-    dispatch(corporateLoginInit());
-    let form = new FormData();
-    form.append("RequestMethod", customerCorporateHistory.RequestMethod);
-    form.append("RequestData", JSON.stringify(newData));
-    axios({
-      method: "post",
-      url: authenticationAPI,
-      data: form,
-      headers: {
-        _token: token,
-      },
-    })
-      .then(async (response) => {
-        if (response.data.responseCode === 417) {
-          await dispatch(RefreshToken(navigate));
-          dispatch(customerCorporateLogin(navigate, newData));
-        } else if (response.data.responseCode === 200) {
-          if (response.data.responseResult.isExecuted === true) {
-            if (
-              response.data.responseResult.responseMessage
-                .toLowerCase()
-                .includes(
-                  "ERM_AuthService_CommonManager_GetCorporateUsersLoginHistory_01".toLowerCase()
-                )
-            ) {
-              dispatch(
-                corporateLoginSuccess(
-                  response.data.responseResult.corporateUserLoginHistory,
-                  "Record Found"
-                )
-              );
-            } else if (
-              response.data.responseResult.responseMessage
-                .toLowerCase()
-                .includes(
-                  "ERM_AuthService_CommonManager_GetCorporateUsersLoginHistory_02".toLowerCase()
-                )
-            ) {
-              dispatch(corporateLoginFail("No Record found"));
-            } else if (
-              response.data.responseResult.responseMessage
-                .toLowerCase()
-                .includes(
-                  "ERM_AuthService_CommonManager_GetCorporateUsersLoginHistory_03".toLowerCase()
-                )
-            ) {
-              dispatch(corporateLoginFail("Invalid Role"));
-            } else if (
-              response.data.responseResult.responseMessage
-                .toLowerCase()
-                .includes(
-                  "ERM_AuthService_CommonManager_GetCorporateUsersLoginHistory_04".toLowerCase()
-                )
-            ) {
-              dispatch(
-                corporateLoginFail("Exception No Corporate Customer Found")
-              );
-            }
-          } else {
-            dispatch(corporateLoginFail("Something went wrong"));
-          }
-        } else {
-          dispatch(corporateLoginFail("Something went wrong"));
-        }
-      })
-      .catch((response) => {
-        dispatch(corporateLoginFail("Something went wrong"));
       });
   };
 };
@@ -852,14 +767,14 @@ const serachCompanyFail = (message) => {
   };
 };
 
-const searchCompanyLogin = (navigate, searchCompanyData) => {
+const searchCompanyLogin = (navigate, loginSearchData) => {
   let token = JSON.parse(localStorage.getItem("token"));
 
   return (dispatch) => {
     dispatch(searchCompanyInit());
     let form = new FormData();
     form.append("RequestMethod", companySearchLoginHistory.RequestMethod);
-    form.append("RequestData", JSON.stringify(searchCompanyData));
+    form.append("RequestData", JSON.stringify(loginSearchData));
     axios({
       method: "post",
       url: authenticationAPI,
@@ -871,7 +786,7 @@ const searchCompanyLogin = (navigate, searchCompanyData) => {
       .then(async (response) => {
         if (response.data.responseCode === 417) {
           await dispatch(RefreshToken(navigate));
-          dispatch(searchCompanyLogin(navigate, searchCompanyData));
+          dispatch(searchCompanyLogin(navigate, loginSearchData));
         } else if (response.data.responseCode === 200) {
           if (response.data.responseResult.isExecuted === true) {
             if (
@@ -1199,17 +1114,205 @@ const getAllCorporateCompany = (navigate) => {
   };
 };
 
+// FOR Get all nature of business api
+const natureBusinessInit = () => {
+  return {
+    type: actions.GET_ALL_NATURE_BUSINESS_INIT,
+  };
+};
+
+const natureBusinessSuccess = (response, message) => {
+  return {
+    type: actions.GET_ALL_NATURE_BUSINESS_SUCCESS,
+    response: response,
+    message: message,
+  };
+};
+
+const natureBusinessFail = (message) => {
+  return {
+    type: actions.GET_ALL_NATURE_BUSINESS_FAIL,
+    message: message,
+  };
+};
+
+const getNatureBusiness = (navigate) => {
+  let token = JSON.parse(localStorage.getItem("token"));
+  return (dispatch) => {
+    dispatch(natureBusinessInit());
+    let form = new FormData();
+    form.append("RequestMethod", getAllNatureAPI.RequestMethod);
+    form.append("RequestData", JSON.stringify());
+    axios({
+      method: "POST",
+      url: authenticationAPI,
+      data: form,
+      headers: {
+        _token: token,
+      },
+    })
+      .then(async (response) => {
+        console.log("getAllNaturegetAllNaturegetAllNature", response);
+        if (response.data.responseCode === 417) {
+          await dispatch(RefreshToken(navigate));
+          dispatch(getNatureBusiness(navigate));
+        } else if (response.data.responseCode === 200) {
+          if (response.data.responseResult.isExecuted === true) {
+            if (
+              response.data.responseResult.responseMessage.toLowerCase() ===
+              "ERM_AuthService_CommonManager_GetAllNatureOfBussiness_01".toLowerCase()
+            ) {
+              console.log(
+                "UserRoleListUserRoleList",
+                response.data.responseResult.natureofBusinesses
+              );
+              dispatch(
+                natureBusinessSuccess(
+                  response.data.responseResult.natureofBusinesses,
+                  "Record found"
+                )
+              );
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "ERM_AuthService_CommonManager_GetAllNatureOfBussiness_02".toLowerCase()
+                )
+            ) {
+              dispatch(natureBusinessFail("No Record Found"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "ERM_AuthService_CommonManager_GetAllNatureOfBussiness_03".toLowerCase()
+                )
+            ) {
+              dispatch(natureBusinessFail("Exception Something went wrong"));
+            }
+          } else {
+            dispatch(natureBusinessFail("Something went wrong"));
+            console.log("There's no corporates category");
+          }
+        } else {
+          dispatch(natureBusinessFail("Something went wrong"));
+          console.log("There's no corporates category");
+        }
+      })
+      .catch((response) => {
+        dispatch(natureBusinessFail("something went wrong"));
+      });
+  };
+};
+
+//FOR CUSTOMER USER LOGIN HISTORY API
+
+const getCustomerLoginInit = () => {
+  return {
+    type: actions.GET_ALL_CORPORATE_LOGIN_HISTORY_INIT,
+  };
+};
+
+const getCustomerLoginSuccess = (response, message) => {
+  return {
+    type: actions.GET_ALL_CORPORATE_LOGIN_HISTORY_SUCCESS,
+    response: response,
+    message: message,
+  };
+};
+
+const getCustomerLoginFail = (message) => {
+  return {
+    type: actions.GET_ALL_CORPORATE_LOGIN_HISTORY_FAIL,
+    message: message,
+  };
+};
+
+const getCustomerLoginHistory = (navigate, loginData) => {
+  let token = JSON.parse(localStorage.getItem("token"));
+  return (dispatch) => {
+    dispatch(getCustomerLoginInit());
+    let form = new FormData();
+    form.append("RequestMethod", getCorporateUserLoginApiERM.RequestMethod);
+    form.append("RequestData", JSON.stringify(loginData));
+    axios({
+      method: "post",
+      url: authenticationAPI,
+      data: form,
+      headers: {
+        _token: token,
+      },
+    })
+      .then(async (response) => {
+        if (response.data.responseCode === 417) {
+          await dispatch(RefreshToken(navigate));
+          dispatch(getCustomerLoginHistory(navigate, loginData));
+        } else if (response.data.responseCode === 200) {
+          if (response.data.responseResult.isExecuted === true) {
+            if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "ERM_AuthService_CommonManager_GetCorporateUsersLoginHistory_01".toLowerCase()
+                )
+            ) {
+              dispatch(
+                getCustomerLoginSuccess(
+                  response.data.responseResult.corporateUserLoginHistory,
+                  "Record Found"
+                )
+              );
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "ERM_AuthService_CommonManager_GetCorporateUsersLoginHistory_02".toLowerCase()
+                )
+            ) {
+              dispatch(getCustomerLoginFail("No record found"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "ERM_AuthService_CommonManager_GetCorporateUsersLoginHistory_03".toLowerCase()
+                )
+            ) {
+              dispatch(getCustomerLoginFail("Invalid role."));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "ERM_AuthService_CommonManager_GetCorporateUsersLoginHistory_04".toLowerCase()
+                )
+            ) {
+              dispatch(
+                getCustomerLoginFail("Exception No login History Found")
+              );
+            }
+          } else {
+            dispatch(getCustomerLoginFail("Something went wrong"));
+          }
+        } else {
+          dispatch(getCustomerLoginFail("Something went wrong"));
+        }
+      })
+      .catch((response) => {
+        dispatch(getCustomerLoginFail("Something went wrong"));
+      });
+  };
+};
+
 export {
   logIn,
   signUp,
   signOut,
   RefreshToken,
   allUserRoles,
-  customerCorporateLogin,
   getAllCategoriesCorporate,
   bankUserLogin,
   searchCompanyLogin,
   searchBankLogin,
   getStatusApi,
   getAllCorporateCompany,
+  getNatureBusiness,
+  getCustomerLoginHistory,
 };
