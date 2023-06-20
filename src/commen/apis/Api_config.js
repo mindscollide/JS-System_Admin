@@ -84,6 +84,21 @@ const getBankUserApi = {
   RequestMethod: "ServiceManager.GetAllBankUsers",
 };
 
+const getallCoporatesSystem = {
+  RequestMethod: "ServiceManager.GetAllCorporateDetails",
+};
+
+const UpdateCorporateMapping = {
+  RequestMethod: "ServiceManager.UpdateCorporateCategoryMapping",
+};
+
+const Addcateogry = {
+  RequestMethod: "ServiceManager.AddCorporateCategory",
+};
+
+const UpdateCorporateCategory = {
+  RequestMethod: "ServiceManager.UpdateCorporateCategory",
+};
 export {
   authenticationLogIn,
   authenticationSignUp,
@@ -103,4 +118,8 @@ export {
   getCorporateUserLoginApiERM,
   getCorporateNameApi,
   getBankUserApi,
+  getallCoporatesSystem,
+  UpdateCorporateMapping,
+  Addcateogry,
+  UpdateCorporateCategory,
 };

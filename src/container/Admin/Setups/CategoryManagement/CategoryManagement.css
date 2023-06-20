@@ -2388,3 +2388,17 @@ thead .dropdown-menu-filter .dropdown-item label span {
   font-weight: 600 !important;
   color: #000000;
 }
+
+.customer-login-user-spinner {
+  min-height: 80vh;
+  max-height: 80vh;
+  height: 80vh;
+  position: relative;
+  max-width: 205px;
+  width: 205px;
+  flex: 0 0 auto;
+  display: flex;
+  background: #cbd8e6;
+  flex-direction: column;
+  justify-content: center;
+}
