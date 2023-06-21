@@ -17,6 +17,8 @@ const initialState = {
   allUserStatus: [],
   getAllNature: [],
   customerLoginHistory: [],
+  Corporates: [],
+  UpdatedCorporates: [],
   roles: null,
   Token: "",
   Refresh: "",
@@ -291,6 +293,48 @@ const authReducer = (state = initialState, action) => {
         ...state,
         Spinner: false,
         customerLoginHistory: [],
+        ResponseMessage: action.message,
+      };
+
+    case actions.GET_ALL_CORPORATES_INIT:
+      return {
+        ...state,
+        Loading: true,
+      };
+
+    case actions.GET_ALL_CORPORATES_SUCCESS:
+      return {
+        ...state,
+        Loading: false,
+        Corporates: action.response,
+        ResponseMessage: action.message,
+      };
+
+    case actions.GET_ALL_CORPORATES_FAIL:
+      return {
+        ...state,
+        Loading: false,
+        ResponseMessage: action.message,
+      };
+
+    case actions.UPDATE_CORPORATE_MAPPING_INIT:
+      return {
+        ...state,
+        Loading: true,
+      };
+
+    case actions.UPDATE_CORPORATE_MAPPING_SUCCESS:
+      return {
+        ...state,
+        // Loading: false,
+        UpdatedCorporates: action.response,
+        ResponseMessage: action.message,
+      };
+
+    case actions.UPDATE_CORPORATE_MAPPING_FAIL:
+      return {
+        ...state,
+        Loading: false,
         ResponseMessage: action.message,
       };
 
