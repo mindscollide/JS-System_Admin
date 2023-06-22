@@ -246,11 +246,10 @@ const CategoryManagement = () => {
     console.log("hhhhhhh", newIndex);
   };
 
-  const AfterClickAdd = () => {
+  const AfterClickAdd = async (recorde) => {
     let bankId = localStorage.getItem("bankID");
     let Userid = localStorage.getItem("userID");
     setClickadd(true);
-    setShowaddcategory(false);
     console.log(" i am clicked", adddata);
 
     let data = {
@@ -261,7 +260,11 @@ const CategoryManagement = () => {
       BankID: parseInt(bankId),
       UserId: parseInt(Userid),
     };
-    dispatch(Addcategory(navigate, data));
+    await dispatch(Addcategory(navigate, data));
+    let dataForSplice = [...addCategoryList];
+    let newIndex = addCategoryList.indexOf(recorde);
+    dataForSplice.splice(newIndex, 1);
+    setAddCategoryList(dataForSplice);
     console.log(" i am clicked");
   };
 
