@@ -2404,3 +2404,19 @@ thead .dropdown-menu-filter .dropdown-item label span {
   flex-direction: column;
   justify-content: center;
 }
+
+.errorMessage {
+  height: 0px;
+  margin-top: 0px !important;
+  font-size: 12px !important;
+  font-weight: 500;
+  color: #f16b6b;
+  visibility: visible !important;
+}
+
+.errorMessage_hidden {
+  visibility: hidden;
+  margin: 0;
+  height: 0px;
+  color: #f16b6b !important;
+}

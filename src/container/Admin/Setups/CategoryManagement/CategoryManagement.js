@@ -37,6 +37,7 @@ const CategoryManagement = () => {
 
   //For edit a Category
   const [editCategoryList, setEditCategoryList] = useState([]);
+  const [errormessege, seterrormessege] = useState(false);
   const [categoryupdate, setCategoryUpdate] = useState({
     category: {
       value: "",
@@ -590,13 +591,18 @@ const CategoryManagement = () => {
     } else if (name === "name" && value === "") {
       setadDdata({
         ...addData,
-        category: { value: "", errorMessage: "", errorStatus: false },
+        category: {
+          value: "",
+          errorMessage: "Please Fill all the fields",
+          errorStatus: false,
+        },
       });
     }
 
     if (name === "Bid" && value !== "") {
+      let valueCheck = value.replace(/^[0-9]+$/g, "");
       console.log("valuevalueemailvaluevalueemail", value);
-      if (value !== "") {
+      if (valueCheck !== "") {
         setadDdata({
           ...addData,
           bidSpread: {
@@ -611,15 +617,16 @@ const CategoryManagement = () => {
         ...addData,
         bidSpread: {
           value: "",
-          errorMessage: "",
+          errorMessage: "Please Fill all the fields",
           errorStatus: true,
         },
       });
     }
 
     if (name === "Offer" && value !== "") {
+      let valueCheck = value.replace(/^\d*$/g, "");
       console.log("valuevalueemailvaluevalueemail", value);
-      if (value !== "") {
+      if (valueCheck !== "") {
         setadDdata({
           ...addData,
           offerSpread: {
@@ -634,7 +641,7 @@ const CategoryManagement = () => {
         ...addData,
         offerSpread: {
           value: "",
-          errorMessage: "",
+          errorMessage: "Please Fill all the fields",
           errorStatus: true,
         },
       });
@@ -642,19 +649,24 @@ const CategoryManagement = () => {
   };
 
   const AfterClickAdd = async (recorde) => {
-    let bankId = localStorage.getItem("bankID");
-    let Userid = localStorage.getItem("userID");
-    console.log(" i am clicked", addData);
+    if (addData.category.value !== "") {
+      seterrormessege(false);
+      let bankId = localStorage.getItem("bankID");
+      let Userid = localStorage.getItem("userID");
+      console.log(" i am clicked", addData);
 
-    let data = {
-      Category: addData.category.value,
-      BidSpread: parseInt(addData.bidSpread.value),
-      OfferSpread: parseInt(addData.offerSpread.value),
-      AssetTypeId: 1,
-      BankID: parseInt(bankId),
-      UserId: parseInt(Userid),
-    };
-    await dispatch(Addcategory(navigate, data));
+      let data = {
+        Category: addData.category.value,
+        BidSpread: parseInt(addData.bidSpread.value),
+        OfferSpread: parseInt(addData.offerSpread.value),
+        AssetTypeId: 1,
+        BankID: parseInt(bankId),
+        UserId: parseInt(Userid),
+      };
+      await dispatch(Addcategory(navigate, data));
+    } else {
+      seterrormessege(true);
+    }
   };
 
   const CloseNewCategory = (recorde) => {
@@ -729,12 +741,20 @@ const CategoryManagement = () => {
                           autoFocus
                           maxLength={100}
                           labelClass="d-none"
-                          required={true}
                           value={addData.category.value}
                           onChange={CategoryManageState}
                         />
                       </Col>
                     </Row>
+                    <p
+                      className={
+                        errormessege && addData.category.value === ""
+                          ? "errorMessage"
+                          : "errorMessage_hidden"
+                      }
+                    >
+                      Please Fill all the credentials
+                    </p>
 
                     <Row className="mt-3">
                       <Col lg={12} md={12} sm={12}>
@@ -899,6 +919,16 @@ const CategoryManagement = () => {
                                         value={categoryupdate.category.value}
                                         onChange={HandleUpdateChange}
                                       />
+                                      <p
+                                        className={
+                                          errormessege &&
+                                          categoryupdate.category.value === ""
+                                            ? "errorMessage"
+                                            : "errorMessage_hidden"
+                                        }
+                                      >
+                                        Please Fill all the credentials
+                                      </p>
                                     </Col>
                                   </Row>
 
