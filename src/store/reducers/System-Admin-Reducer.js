@@ -8,7 +8,9 @@ const initialState = {
   searchCorporate: [],
   bankCorporates: [],
   corporateNameByBankId: [],
-  updateCorporateResponse: "",
+  counterCorporateLimit: "",
+  updateCorporateResponse: [],
+  saveValidCorporates: [],
 };
 
 const systemReducer = (state = initialState, action) => {
@@ -114,12 +116,14 @@ const systemReducer = (state = initialState, action) => {
       return {
         ...state,
         Loading: true,
+        Spinner: true,
       };
 
     case actions.GET_ALL_CORPORATE_NAME_BY_BANK_SUCCESS:
       return {
         ...state,
         Loading: false,
+        Spinner: false,
         corporateNameByBankId: action.response,
         ResponseMessage: action.message,
       };
@@ -128,7 +132,52 @@ const systemReducer = (state = initialState, action) => {
       return {
         ...state,
         Loading: false,
+        Spinner: false,
         corporateNameByBankId: [],
+        ResponseMessage: action.message,
+      };
+
+    case actions.GET_COUNTER_PARTY_LIMIT_INIT:
+      return {
+        ...state,
+        Loading: true,
+      };
+
+    case actions.GET_COUNTER_PARTY_LIMIT_SUCCESS:
+      return {
+        ...state,
+        Loading: false,
+        counterCorporateLimit: action.response,
+        ResponseMessage: action.message,
+      };
+
+    case actions.GET_COUNTER_PARTY_LIMIT_FAIL:
+      return {
+        ...state,
+        Loading: false,
+        counterCorporateLimit: "",
+        ResponseMessage: action.message,
+      };
+
+    case actions.SAVE_COUNTER_PARTY_INIT:
+      return {
+        ...state,
+        Loading: true,
+      };
+
+    case actions.SAVE_COUNTER_PARTY_SUCCESS:
+      return {
+        ...state,
+        Loading: false,
+        saveValidCorporates: action.response,
+        ResponseMessage: action.message,
+      };
+
+    case actions.SAVE_COUNTER_PARTY_FAIL:
+      return {
+        ...state,
+        Loading: false,
+        saveValidCorporates: [],
         ResponseMessage: action.message,
       };
 

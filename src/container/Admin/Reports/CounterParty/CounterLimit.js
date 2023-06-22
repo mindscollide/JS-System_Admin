@@ -1,29 +1,139 @@
 import React, { Fragment, useState } from "react";
 import { Col, Row, Container } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   CustomPaper,
-  TextField,
-  Button,
   Table,
+  Loader,
+  CustomUpload,
 } from "../../../../components/elements";
+import { counterPartyUpload } from "../../../../store/actions/Upload-Action";
+import {
+  corporateNameByBankId,
+  counterPartyLimitCorporate,
+} from "../../../../store/actions/System-Admin";
 import CounterModal from "../../AdminModal/CounterPartyModal/CounterModal";
+import CounterPartyModal from "../../AdminModal/CounterPartyUplaodModal/CounterPartyModal";
+import { Spin } from "antd";
 import "./CounterLimit.css";
+import { useEffect } from "react";
 
 const CounterLimit = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { systemReducer, uploadReducer } = useSelector((state) => state);
+  console.log(systemReducer, "systemReducersystemReducer");
+
+  // state for row in which table data set
+  const [rows, setRows] = useState([]);
+
   // modal for countery party limit state
   const [counterPartyModal, setCounterPartyModal] = useState(false);
 
+  // upload file modal for counter party
+  const [counterUploadModal, setCounterUploadModal] = useState(false);
+
+  // view Counter party modal
+  const [viewCounterModal, setViewCounterModal] = useState({
+    corporateName: {
+      value: "",
+      label: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+
+    avaliableLimit: {
+      value: "",
+      label: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+
+    instrumentName: {
+      value: "",
+      label: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+
+    weightage: {
+      value: 0,
+      errorMessage: "",
+      errorStatus: false,
+    },
+
+    instrumentAvaliableLimit: {
+      value: 0,
+      errorMessage: "",
+      errorStatus: false,
+    },
+  });
+
+  // api for view icon
+  const onViewClick = () => {};
+
   //open counterParty modal on click
-  const openCounterModal = () => {
-    setCounterPartyModal(true);
+  const openCounterModal = (record) => {
+    console.log(record, "recordrecordrecordrecordrecordrecord");
+    let newCounterData = {
+      CorporateID: JSON.parse(record.corporateID),
+    };
+    dispatch(
+      counterPartyLimitCorporate(navigate, newCounterData, setCounterPartyModal)
+    );
+    // setCounterPartyModal(true);
+  };
+
+  // dispatch corporate Name by Bank ID
+  useEffect(() => {
+    let corporateBank = {
+      BankID: 1,
+    };
+    dispatch(corporateNameByBankId(navigate, corporateBank));
+  }, []);
+
+  const handlerUploadCounterFile = (data) => {
+    const counterUploadFile = data.target.value;
+    const counteruploadedFile = data.target.files[0];
+    console.log("UploadFileUploadFile", counterUploadFile);
+    console.log("uploadedFileuploadedFile", counteruploadedFile);
+    var ext = counteruploadedFile.name.split(".").pop();
+    if (ext === "xls" || ext === "xlsx") {
+      dispatch(
+        counterPartyUpload(navigate, counteruploadedFile, setCounterUploadModal)
+      );
+    } else {
+      // alert("Invalid type");
+      console.log("Invaid Type File");
+    }
+  };
+
+  //New Api 46.	GetAllCorporateNameByBankID data Rendering
+  useEffect(() => {
+    if (
+      systemReducer.corporateNameByBankId !== null &&
+      systemReducer.corporateNameByBankId !== undefined &&
+      systemReducer.corporateNameByBankId.length > 0
+    ) {
+      setRows(systemReducer.corporateNameByBankId);
+    } else {
+      setRows([]);
+    }
+  }, [systemReducer.corporateNameByBankId]);
+  console.log("systemReducercorporateNameByBankId", rows);
+
+  //open Upload Counter party modal
+  const openUploadCounterParty = () => {
+    setCounterUploadModal(true);
   };
 
   // column for Counter Limit
   const counterColumns = [
     {
       title: <label className="bottom-table-header">Company Name</label>,
-      dataIndex: "companyName",
-      key: "companyName",
+      dataIndex: "corporateName",
+      key: "corporateName",
       align: "left",
       width: "450px",
       render: (text) => (
@@ -36,51 +146,17 @@ const CounterLimit = () => {
       key: "view",
       width: "100px",
       align: "center",
-      render: (text) => (
-        <label className="icon-eye eyeicon-counter" onClick={openCounterModal}>
-          {text}
-        </label>
-      ),
-    },
-  ];
-
-  // data for Counter Limit
-  const counterData = [
-    {
-      key: "1",
-      companyName: "Gulahmed",
-    },
-    {
-      key: "1",
-      companyName: "Engro Fertilizer",
-    },
-    {
-      key: "1",
-      companyName: "Engro Corporation",
-    },
-    {
-      key: "1",
-      companyName: "OGDC",
-    },
-    {
-      key: "1",
-      companyName: "Lucky Cemet",
-    },
-    {
-      key: "1",
-      companyName: "Lucky Tex",
-    },
-    {
-      key: "1",
-      companyName: "OGDC",
-    },
-    {
-      key: "1",
-      companyName: "Engro Corporation",
-    },
-    {
-      key: "1",
-      companyName: "Lucky Tex",
+      render: (text, record) => {
+        console.log(record, "recordrecordrecord");
+        return (
+          <label
+            className="icon-eye eyeicon-counter"
+            onClick={() => openCounterModal(record)}
+          >
+            {text}
+          </label>
+        );
+      },
     },
   ];
 
@@ -94,11 +170,13 @@ const CounterLimit = () => {
         </Row>
         <Row>
           <Col lg={12} md={12} sm={12} className="d-flex justify-content-end">
-            <Button
+            <CustomUpload change={handlerUploadCounterFile} />
+            {/* <Button
               text="Upload Counter Party Limit"
+              onClick={openUploadCounterParty}
               icon={<i className="icon-upload-cloud eyeicon-size"></i>}
               className="Upload-Excel-btn"
-            />
+            /> */}
           </Col>
         </Row>
 
@@ -107,12 +185,18 @@ const CounterLimit = () => {
             <CustomPaper className="counterLimit-paper">
               <Row>
                 <Col lg={12} md={12} sm={12}>
-                  <Table
-                    column={counterColumns}
-                    rows={counterData}
-                    pagination={false}
-                    className="counterLimit-table"
-                  />
+                  {systemReducer.Spinner === true ? (
+                    <span className="counter-Limit-user-spinner">
+                      <Spin size="large" />
+                    </span>
+                  ) : (
+                    <Table
+                      column={counterColumns}
+                      rows={rows}
+                      pagination={false}
+                      className="counterLimit-table"
+                    />
+                  )}
                 </Col>
               </Row>
             </CustomPaper>
@@ -128,6 +212,16 @@ const CounterLimit = () => {
           />
         </>
       ) : null}
+
+      {counterUploadModal ? (
+        <>
+          <CounterPartyModal
+            uploadCounterModal={counterUploadModal}
+            setUploadCounterModal={setCounterUploadModal}
+          />
+        </>
+      ) : null}
+      {systemReducer.Loading || uploadReducer.Loading ? <Loader /> : null}
     </Fragment>
   );
 };

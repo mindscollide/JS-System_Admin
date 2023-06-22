@@ -1,157 +1,103 @@
 import React, { Fragment, useState } from "react";
 import { Container, Col, Row } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   TextField,
   Button,
   Table,
   Modal,
 } from "../../../../components/elements";
+import { counterPartyLimitCorporate } from "../../../../store/actions/System-Admin";
 import { Checkbox } from "antd";
 import "./CounterModal.css";
+import { useEffect } from "react";
 
 const CounterModal = ({ ModalTitle, modalCounter, setModalCounter }) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { systemReducer, uploadReducer } = useSelector((state) => state);
+  console.log(systemReducer, "systemReducersystemReducer");
   // state for CounterModal edit user
   const [counterModalField, setCounterModalField] = useState({
-    companyName: {
+    corporateName: {
       value: "",
+      label: "",
       errorMessage: "",
       errorStatus: false,
     },
 
-    totalLimit: {
+    avaliableLimit: {
       value: "",
+      label: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+
+    instumentNameTbill: {
+      value: 0,
+      label: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+
+    instumentNamePib: {
+      value: 0,
+      label: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+
+    instumentNameSukuk: {
+      value: 0,
+      label: "",
       errorMessage: "",
       errorStatus: false,
     },
   });
-
-  // state for counterModal edit user on Instrument Allowed
-  const [instrumentAllowField, setInstrumentAllowField] = useState({
-    Tbills: {
-      value: "",
-      errorMessage: "",
-      errorStatus: false,
-    },
-    Pib: {
-      value: "",
-      errorMessage: "",
-      errorStatus: false,
-    },
-    Sukuk: {
-      value: "",
-      errorMessage: "",
-      errorStatus: false,
-    },
-  });
-
+  console.log(counterModalField, "counterModalField");
   // onchange handler for counterModal
   const counterValidationHandler = (e) => {
     let name = e.target.name;
     let value = e.target.value;
 
-    if (name === "companyName" && value !== "") {
+    if (name === "corporateName" && value !== "") {
       let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
       console.log("valueCheckvalueCheck", valueCheck);
       if (valueCheck !== "") {
         setCounterModalField({
           ...counterModalField,
-          companyName: {
+          corporateName: {
             value: valueCheck.trimStart(),
             errorMessage: "",
             errorStatus: false,
           },
         });
       }
-    } else if (name === "companyName" && value === "") {
+    } else if (name === "corporateName" && value === "") {
       setCounterModalField({
         ...counterModalField,
-        companyName: { value: "", errorMessage: "", errorStatus: false },
+        corporateName: { value: "", errorMessage: "", errorStatus: false },
       });
     }
 
-    if (name === "totalLimit" && value !== "") {
+    if (name === "avaliableLimit" && value !== "") {
       let valueCheck = value.replace(/[^\d]/g, "");
       console.log("valueCheckvalueCheck", valueCheck);
       if (valueCheck !== "") {
         setCounterModalField({
           ...counterModalField,
-          totalLimit: {
+          avaliableLimit: {
             value: valueCheck.trimStart(),
             errorMessage: "",
             errorStatus: false,
           },
         });
       }
-    } else if (name === "totalLimit" && value === "") {
+    } else if (name === "avaliableLimit" && value === "") {
       setCounterModalField({
         ...counterModalField,
-        totalLimit: { value: "", errorMessage: "", errorStatus: false },
-      });
-    }
-  };
-
-  // onChange handler for Instrument Allowed fields validation
-  const instrumentValidationHandler = (e) => {
-    let name = e.target.name;
-    let value = e.target.value;
-
-    if (name === "Tbills" && value !== "") {
-      let valueCheck = value.replace(/[^\d]/g, "");
-      console.log("valueCheckvalueCheck", valueCheck);
-      if (valueCheck !== "") {
-        setInstrumentAllowField({
-          ...instrumentAllowField,
-          Tbills: {
-            value: valueCheck.trimStart(),
-            errorMessage: "",
-            errorStatus: false,
-          },
-        });
-      }
-    } else if (name === "Tbills" && value === "") {
-      setInstrumentAllowField({
-        ...instrumentAllowField,
-        Tbills: { value: "", errorMessage: "", errorStatus: false },
-      });
-    }
-
-    if (name === "Pib" && value !== "") {
-      let valueCheck = value.replace(/[^\d]/g, "");
-      console.log("valueCheckvalueCheck", valueCheck);
-      if (valueCheck !== "") {
-        setInstrumentAllowField({
-          ...instrumentAllowField,
-          Pib: {
-            value: valueCheck.trimStart(),
-            errorMessage: "",
-            errorStatus: false,
-          },
-        });
-      }
-    } else if (name === "Pib" && value === "") {
-      setInstrumentAllowField({
-        ...instrumentAllowField,
-        Pib: { value: "", errorMessage: "", errorStatus: false },
-      });
-    }
-
-    if (name === "Sukuk" && value !== "") {
-      let valueCheck = value.replace(/[^\d]/g, "");
-      console.log("valueCheckvalueCheck", valueCheck);
-      if (valueCheck !== "") {
-        setInstrumentAllowField({
-          ...instrumentAllowField,
-          Sukuk: {
-            value: valueCheck.trimStart(),
-            errorMessage: "",
-            errorStatus: false,
-          },
-        });
-      }
-    } else if (name === "Sukuk" && value === "") {
-      setInstrumentAllowField({
-        ...instrumentAllowField,
-        Sukuk: { value: "", errorMessage: "", errorStatus: false },
+        avaliableLimit: { value: "", errorMessage: "", errorStatus: false },
       });
     }
   };
@@ -160,6 +106,31 @@ const CounterModal = ({ ModalTitle, modalCounter, setModalCounter }) => {
   const closeCounterModal = () => {
     setModalCounter(false);
   };
+  useEffect(() => {
+    if (
+      systemReducer.counterCorporateLimit !== null &&
+      systemReducer.counterCorporateLimit !== undefined
+    ) {
+      setCounterModalField({
+        ...counterModalField,
+        avaliableLimit: {
+          value: systemReducer.counterCorporateLimit.avaliableLimit,
+        },
+        corporateName: {
+          value: systemReducer.counterCorporateLimit.corporateName,
+        },
+        instumentNameTbill: {
+          value: systemReducer.counterCorporateLimit.instumentType[0].weightage,
+        },
+        instumentNamePib: {
+          value: systemReducer.counterCorporateLimit.instumentType[1].weightage,
+        },
+        instumentNameSukuk: {
+          value: systemReducer.counterCorporateLimit.instumentType[4].weightage,
+        },
+      });
+    }
+  }, [systemReducer.counterCorporateLimit]);
   return (
     <Fragment>
       <Modal
@@ -186,7 +157,7 @@ const CounterModal = ({ ModalTitle, modalCounter, setModalCounter }) => {
                 </Row>
 
                 <Row>
-                  <Col lg={8} md={8} sm={12}>
+                  <Col lg={9} md={9} sm={12}>
                     <Row>
                       <Col lg={4} md={4} sm={12}>
                         <span className="labels-modal-Counter">
@@ -196,10 +167,9 @@ const CounterModal = ({ ModalTitle, modalCounter, setModalCounter }) => {
                       </Col>
                       <Col lg={8} md={8} sm={12}>
                         <TextField
-                          name="companyName"
+                          name="corporateName"
                           disable={true}
-                          value={counterModalField.companyName.value}
-                          onChange={counterValidationHandler}
+                          value={counterModalField.corporateName.value}
                           labelClass="d-none"
                         />
                       </Col>
@@ -215,15 +185,18 @@ const CounterModal = ({ ModalTitle, modalCounter, setModalCounter }) => {
                       <Col lg={8} md={8} sm={12}>
                         <TextField
                           labelClass="d-none"
-                          name="totalLimit"
+                          name="avaliableLimit"
                           disable={true}
-                          value={counterModalField.totalLimit.value}
-                          onChange={counterValidationHandler}
+                          value={counterModalField.avaliableLimit.value}
                         />
                       </Col>
                     </Row>
+                  </Col>
+                </Row>
 
-                    <Row className="mt-3">
+                <Row className="mt-3">
+                  <Col lg={9} md={9} sm={12}>
+                    <Row>
                       <Col lg={4} md={4} sm={12}>
                         <span className="labels-modal-Counter">
                           Instrument allow
@@ -246,8 +219,7 @@ const CounterModal = ({ ModalTitle, modalCounter, setModalCounter }) => {
                               labelClass="d-none"
                               name="Tbills"
                               disable={true}
-                              onChange={instrumentValidationHandler}
-                              value={instrumentAllowField.Tbills.value}
+                              value={counterModalField.instumentNameTbill.value}
                               placeholder="Weightage"
                             />
                             <label className="percentage-icon ">%</label>
@@ -267,8 +239,7 @@ const CounterModal = ({ ModalTitle, modalCounter, setModalCounter }) => {
                             <TextField
                               name="Pib"
                               disable={true}
-                              onChange={instrumentValidationHandler}
-                              value={instrumentAllowField.Pib.value}
+                              value={counterModalField.instumentNamePib.value}
                               labelClass="d-none"
                               placeholder="Weightage"
                             />
@@ -289,8 +260,7 @@ const CounterModal = ({ ModalTitle, modalCounter, setModalCounter }) => {
                             <TextField
                               name="Sukuk"
                               disable={true}
-                              onChange={instrumentValidationHandler}
-                              value={instrumentAllowField.Sukuk.value}
+                              value={counterModalField.instumentNameSukuk.value}
                               labelClass="d-none"
                               placeholder="Weightage"
                             />

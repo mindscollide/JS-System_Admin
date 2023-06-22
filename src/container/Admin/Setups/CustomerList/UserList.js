@@ -7,14 +7,14 @@ import {
   Table,
 } from "../../../../components/elements";
 import { useDispatch, useSelector } from "react-redux";
-import { validateEmail } from "../../../../commen/functions/emailValidation";
+import CustomerListEditModal from "../../AdminModal/EditCustomerListModal/CustomerListEditModal";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import {
   getAllCategoriesCorporate,
   getNatureBusiness,
-  getAllCorporateCompany,
 } from "../../../../store/actions/Auth-Actions";
+import { corporateNameByBankId } from "../../../../store/actions/System-Admin";
 import { bankCorporateAPI } from "../../../../store/actions/System-Admin";
 import { Spin } from "antd";
 import "./UserList.css";
@@ -26,6 +26,9 @@ const Userlist = () => {
   const { systemReducer, auth } = useSelector((state) => state);
   // state for table rows
   const [rows, setRows] = useState([]);
+
+  // for edit modal in customer list
+  const [editCustomerListModal, setEditCustomerListModal] = useState(false);
 
   // state for category dropdown
   const [selectCategory, setSelectCategory] = useState([]);
@@ -50,19 +53,127 @@ const Userlist = () => {
       errorMessage: "",
       errorStatus: false,
     },
-
-    natureofBusinesses: {
-      value: "",
+    corporateNames: {
+      label: "",
       errorMessage: "",
       errorStatus: false,
     },
-
+    natureofBusinesses: {
+      value: 0,
+      errorMessage: "",
+      errorStatus: false,
+    },
+    BankID: {
+      value: 1,
+      errorMessage: "",
+      errorStatus: false,
+    },
     corporateCategoryID: {
-      value: "",
+      value: 0,
       errorMessage: "",
       errorStatus: false,
     },
   });
+
+  // this state is for edit customer list modal
+  const [editCustomerList, setEditCustomerList] = useState({
+    natureBusiness: {
+      value: 0,
+      label: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+
+    corporatesName: {
+      label: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+
+    corporatesCategory: {
+      value: 0,
+      label: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+  });
+
+  // open Edit User Modal
+  const openEditCustomerModal = async (record) => {
+    let newNature;
+    console.log(record, "recordddedddd");
+
+    try {
+      if (Object.keys(auth.getAllNature).length > 0) {
+        await auth.getAllNature.map((data, index) => {
+          console.log(data, record, "openCustomerListModal");
+          if (
+            data.pK_NatureOfBusiness ===
+            record.natureOFBussiness.natureOfBussinessID
+          ) {
+            console.log(data, "natureOfBussinessIDnatureOfBussinessID");
+            setEditCustomerList({
+              ...editCustomerList,
+              natureBusiness: {
+                value: data.pK_NatureOfBusiness,
+                label: data.name,
+                errorMessage: "",
+                errorStatus: false,
+              },
+              corporatesName: {
+                label: record.corporateName,
+              },
+              corporatesCategory: {
+                value: record.corporateCategory.categoryID,
+                label: record.corporateCategory.categoryName,
+              },
+            });
+          }
+        });
+      }
+    } catch {
+      console.log("error on select nature");
+    }
+
+    setEditCustomerListModal(true);
+  };
+  console.log(editCustomerList, "editCustomerListeditCustomerList");
+
+  // nature of business dropdown on change in edit user Modal
+  const selectNatureOfBusinessEditDropdownChangeHandler = (selectNature) => {
+    console.log(selectNature, "vlauelvalue");
+    setEditCustomerList({
+      ...editCustomerList,
+      natureBusiness: {
+        value: selectNature.value,
+        label: selectNature.label,
+        errorMessage: "",
+        errorStatus: false,
+      },
+    });
+  };
+
+  //on search of customer User list Api
+  const onHitSearchCustomerList = async () => {
+    let newData = {
+      BankID: userListFields.BankID.value,
+      CorporateName: userListFields.corporateNames.label,
+      NatureOfBussinessId: userListFields.natureofBusinesses.value,
+      AssetTypeID: 0,
+      CategoryId: userListFields.corporateCategoryID.value,
+      PageNumber: 0,
+      Length: 0,
+    };
+    await dispatch(bankCorporateAPI(navigate, newData));
+  };
+
+  // show data in bank dropdown
+  useEffect(() => {
+    let corporateBank = {
+      BankID: userListFields.BankID.value,
+    };
+    dispatch(corporateNameByBankId(navigate, corporateBank));
+  }, []);
 
   // dispatch API in for bank Corporate
   useEffect(() => {
@@ -78,7 +189,6 @@ const Userlist = () => {
     dispatch(bankCorporateAPI(navigate, Data));
     dispatch(getAllCategoriesCorporate(navigate));
     dispatch(getNatureBusiness(navigate));
-    dispatch(getAllCorporateCompany());
   }, []);
 
   // render data in table of bank Corporate API
@@ -127,18 +237,18 @@ const Userlist = () => {
 
   // for corporate company in select drop down we use bankCorporate
   useEffect(() => {
-    if (Object.keys(systemReducer.bankCorporates).length > 0) {
+    if (Object.keys(systemReducer.corporateNameByBankId).length > 0) {
       let tem = [];
-      systemReducer.bankCorporates.map((data, index) => {
-        console.log(data, "datadatadatadatassssss");
+      systemReducer.corporateNameByBankId.map((data, index) => {
+        console.log(data, "corporateNamecorporateName");
         tem.push({
-          // value: data.corporateID,
           label: data.corporateName,
+          value: data.corporateName,
         });
       });
       setSelectCorporateCompany(tem);
     }
-  }, [systemReducer.bankCorporates]);
+  }, [systemReducer.corporateNameByBankId]);
 
   //ON CHANGE HANDLER FOR CATEGORY DROPDOWN
   const selectCategoryOnchangeHandler = async (selectedCategory) => {
@@ -167,116 +277,15 @@ const Userlist = () => {
   };
 
   //ON CHANGE HANDLER FOR CORPORATE COMPANY DROPDOWN
-  const selectCorporateCompanyOnchangeHandler = async (selectedCompany) => {
+  const selectBankCompanyOnchangeHandler = async (selectedCompany) => {
     console.log(selectedCompany, "selectedNatureselectedNature");
     setSelectCorporateCompanyValue(selectedCompany);
     setUserListFields({
       ...userListFields,
-      corporates: {
-        // value: selectedNature.value,
+      corporateNames: {
         label: selectedCompany.label,
       },
     });
-  };
-
-  // validation for customer List
-  const customerListValidation = (e) => {
-    let name = e.target.name;
-    let value = e.target.value;
-
-    if (name === "corporateName" && value !== "") {
-      let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
-      console.log("valueCheckvalueCheck", valueCheck);
-      if (valueCheck !== "") {
-        setUserListFields({
-          ...userListFields,
-          corporateName: {
-            value: valueCheck.trimStart(),
-            errorMessage: "",
-            errorStatus: false,
-          },
-        });
-      }
-    } else if (name === "corporateName" && value === "") {
-      setUserListFields({
-        ...userListFields,
-        corporateName: { value: "", errorMessage: "", errorStatus: false },
-      });
-    }
-
-    if (name === "LastName" && value !== "") {
-      let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
-      console.log("valueCheckvalueCheck", valueCheck);
-      if (valueCheck !== "") {
-        setUserListFields({
-          ...userListFields,
-          LastName: {
-            value: valueCheck.trimStart(),
-            errorMessage: "",
-            errorStatus: false,
-          },
-        });
-      }
-    } else if (name === "LastName" && value === "") {
-      setUserListFields({
-        ...userListFields,
-        LastName: { value: "", errorMessage: "", errorStatus: false },
-      });
-    }
-
-    if (name === "companyName" && value !== "") {
-      let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
-      console.log("valueCheckvalueCheck", valueCheck);
-      if (valueCheck !== "") {
-        setUserListFields({
-          ...userListFields,
-          companyName: {
-            value: valueCheck.trimStart(),
-            errorMessage: "",
-            errorStatus: false,
-          },
-        });
-      }
-    } else if (name === "companyName" && value === "") {
-      setUserListFields({
-        ...userListFields,
-        companyName: { value: "", errorMessage: "", errorStatus: false },
-      });
-    }
-
-    if (name === "Email" && value !== "") {
-      console.log("valuevalueemailvaluevalueemail", value);
-      if (value !== "") {
-        setUserListFields({
-          ...userListFields,
-          Email: {
-            value: value.trimStart(),
-            errorMessage: "",
-            errorStatus: false,
-          },
-        });
-      }
-    } else if (name === "Email" && value === "") {
-      setUserListFields({
-        ...userListFields,
-        Email: {
-          value: "",
-          errorMessage: "",
-          errorStatus: true,
-        },
-      });
-    }
-  };
-
-  //email validation handler
-  const handlerEmail = () => {
-    if (userListFields.Email.value !== "") {
-      if (validateEmail(userListFields.Email.value)) {
-        alert("Email verified");
-      } else {
-        alert("Email Not Verified");
-      }
-    }
   };
 
   // reset value on reset Button Hit
@@ -296,6 +305,19 @@ const Userlist = () => {
         value: "",
       },
     });
+    let Data = {
+      BankID: 1,
+      CorporateName: "",
+      NatureOfBussinessId: 0,
+      AssetTypeID: 0,
+      CategoryId: 0,
+      PageNumber: 3,
+      Length: 5,
+    };
+    dispatch(bankCorporateAPI(navigate, Data));
+    setSelectCategoryValue([]);
+    setSelectNatureBusinessValue([]);
+    setSelectCorporateCompanyValue([]);
   };
 
   //Table columns for customer List
@@ -349,11 +371,12 @@ const Userlist = () => {
       width: "100px",
       align: "center",
       ellipsis: true,
-      render: (text) => {
+      render: (text, record) => {
+        console.log(record, "recordrecord");
         return (
           <label
             className="UserList-Edit-column"
-            // onClick={() => openUserListEditModal}
+            onClick={() => openEditCustomerModal(record)}
           >
             <i className="icon-edit edit-user-icon-color" />
           </label>
@@ -379,40 +402,9 @@ const Userlist = () => {
                     name="corporates"
                     options={selectCorporateCompany}
                     isSearchable={true}
-                    onChange={selectCorporateCompanyOnchangeHandler}
+                    onChange={selectBankCompanyOnchangeHandler}
                     value={selectCorporateCompanyValue}
-                    placeholder="Select"
-                    className="select-user-list-fontsize"
-                  />
-                </Col>
-                {/* <Col lg={2} md={2} sm={12}>
-                      <TextField
-                        placeholder="Last Name"
-                        name="LastName"
-                        value={userListFields.LastName.value}
-                        onChange={customerListValidation}
-                        labelClass="d-none"
-                        className="textfields-User-list-fontsize"
-                      />
-                    </Col> */}
-                {/* <Col lg={2} md={2} sm={12}>
-                      <TextField
-                        placeholder="Email"
-                        name="Email"
-                        onBlur={handlerEmail}
-                        value={userListFields.Email.value}
-                        onChange={customerListValidation}
-                        labelClass="d-none"
-                        className="textfields-User-list-fontsize"
-                      />
-                    </Col> */}
-                <Col lg={4} md={4} sm={12}>
-                  <Select
-                    name="natureofBusinesses"
-                    options={selectNatureBusiness}
-                    onChange={selectNatureOnchangeHandler}
-                    value={selectNatureBusinessValue}
-                    placeholder="Select"
+                    placeholder="Company"
                     className="select-user-list-fontsize"
                   />
                 </Col>
@@ -423,7 +415,18 @@ const Userlist = () => {
                     options={selectCategory}
                     onChange={selectCategoryOnchangeHandler}
                     value={selectCategoryValue}
-                    placeholder="Select"
+                    placeholder="Categories"
+                    className="select-user-list-fontsize"
+                  />
+                </Col>
+
+                <Col lg={4} md={4} sm={12}>
+                  <Select
+                    name="natureofBusinesses"
+                    options={selectNatureBusiness}
+                    onChange={selectNatureOnchangeHandler}
+                    value={selectNatureBusinessValue}
+                    placeholder="Nature Business"
                     className="select-user-list-fontsize"
                   />
                 </Col>
@@ -434,6 +437,7 @@ const Userlist = () => {
                   <Button
                     icon={<i className="icon-search icon-check-space"></i>}
                     className="User-Search-btn"
+                    onClick={onHitSearchCustomerList}
                     text="Search"
                   />
                   <Button
@@ -464,6 +468,22 @@ const Userlist = () => {
           </Col>
         </Row>
       </section>
+
+      {editCustomerListModal ? (
+        <Fragment>
+          <CustomerListEditModal
+            editCustomerModal={editCustomerListModal}
+            setEditCustomerModal={setEditCustomerListModal}
+            editCustomerList={editCustomerList}
+            setEditCustomerList={setEditCustomerList}
+            natureOfBusinessOnchange={
+              selectNatureOfBusinessEditDropdownChangeHandler
+            }
+            natureOption={selectNatureBusiness}
+            natureSelectValue={selectNatureBusinessValue}
+          />
+        </Fragment>
+      ) : null}
     </Fragment>
   );
 };

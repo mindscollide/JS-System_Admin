@@ -6,6 +6,8 @@ import {
   updateCorporateApiSysAdmin,
   getAllBankCorporate,
   getCorporateNameApi,
+  getCounterPartyLmit,
+  saveCounterPartyApi,
 } from "../../commen/apis/Api_config";
 import { RefreshToken } from "./Auth-Actions";
 import { systemAdminAPI } from "../../commen/apis/Api_ends_points";
@@ -334,14 +336,14 @@ const getBankCorporateFail = (message) => {
   };
 };
 
-const bankCorporateAPI = (navigate, bankCorporateData, Data) => {
+const bankCorporateAPI = (navigate, newData, Data) => {
   let token = JSON.parse(localStorage.getItem("token"));
 
   return async (dispatch) => {
     dispatch(getBankCorporateInit());
     let form = new FormData();
     form.append("RequestMethod", getAllBankCorporate.RequestMethod);
-    form.append("RequestData", JSON.stringify(bankCorporateData, Data));
+    form.append("RequestData", JSON.stringify(newData, Data));
     await axios({
       method: "post",
       url: systemAdminAPI,
@@ -353,7 +355,7 @@ const bankCorporateAPI = (navigate, bankCorporateData, Data) => {
       .then(async (response) => {
         if (response.data.responseCode === 417) {
           await dispatch(RefreshToken(navigate));
-          dispatch(bankCorporateAPI(navigate, bankCorporateData, Data));
+          dispatch(bankCorporateAPI(navigate, newData, Data));
         } else if (response.data.responseCode === 200) {
           if (response.data.responseResult.isExecuted === true) {
             if (
@@ -486,10 +488,216 @@ const corporateNameByBankId = (navigate, corporateBank) => {
   };
 };
 
+// GET COUNTER PARTY LIMIT API IN COUNTER PARTY PAGE
+const counterPartyInit = () => {
+  return {
+    type: actions.GET_COUNTER_PARTY_LIMIT_INIT,
+  };
+};
+
+const counterPartySuccess = (response, message) => {
+  return {
+    type: actions.GET_COUNTER_PARTY_LIMIT_SUCCESS,
+    response: response,
+    message: message,
+  };
+};
+
+const counterPartyFail = (message) => {
+  return {
+    type: actions.GET_COUNTER_PARTY_LIMIT_FAIL,
+    message: message,
+  };
+};
+
+const counterPartyLimitCorporate = (
+  navigate,
+  newCounterData,
+  setCounterPartyModal
+) => {
+  let token = JSON.parse(localStorage.getItem("token"));
+
+  return async (dispatch) => {
+    dispatch(counterPartyInit());
+    let form = new FormData();
+    form.append("RequestMethod", getCounterPartyLmit.RequestMethod);
+    form.append("RequestData", JSON.stringify(newCounterData));
+    await axios({
+      method: "post",
+      url: systemAdminAPI,
+      data: form,
+      headers: {
+        _token: token,
+      },
+    })
+      .then(async (response) => {
+        if (response.data.responseCode === 417) {
+          await dispatch(RefreshToken(navigate));
+          dispatch(counterPartyLimitCorporate(navigate));
+        } else if (response.data.responseCode === 200) {
+          if (response.data.responseResult.isExecuted === true) {
+            if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_GetCounterPartyLimitByCorporateID_01".toLowerCase()
+                )
+            ) {
+              dispatch(
+                counterPartySuccess(
+                  response.data.responseResult.counterPartyLimit,
+                  "Record Found"
+                )
+              );
+              setCounterPartyModal(true);
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_GetCounterPartyLimitByCorporateID_02".toLowerCase()
+                )
+            ) {
+              dispatch(counterPartyFail("No Record found"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_GetCounterPartyLimitByCorporateID_03".toLowerCase()
+                )
+            ) {
+              dispatch(counterPartyFail("Invalid Corporate ID"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_GetCounterPartyLimitByCorporateID_04".toLowerCase()
+                )
+            ) {
+              dispatch(counterPartyFail("Not A Valid Role"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_GetCounterPartyLimitByCorporateID_05".toLowerCase()
+                )
+            ) {
+              dispatch(counterPartyFail("Exception Something went wrong"));
+            }
+          } else {
+            dispatch(counterPartyFail("Something went wrong"));
+          }
+        } else {
+          dispatch(counterPartyFail("Something went wrong"));
+        }
+      })
+      .catch((response) => {
+        dispatch(counterPartyFail("Something went wrong"));
+      });
+  };
+};
+
+// FOR SAVE COUNTER PARTY LIMIT
+const saveCounterInit = () => {
+  return {
+    type: actions.SAVE_COUNTER_PARTY_INIT,
+  };
+};
+
+const saveCounterSuccess = (response, message) => {
+  return {
+    type: actions.SAVE_COUNTER_PARTY_SUCCESS,
+    response: response,
+    message: message,
+  };
+};
+
+const saveCounterFail = (message) => {
+  return {
+    type: actions.SAVE_COUNTER_PARTY_FAIL,
+    message: message,
+  };
+};
+
+const saveCounterParty = (navigate, Data, setUploadCounterModal) => {
+  let token = JSON.parse(localStorage.getItem("token"));
+
+  return async (dispatch) => {
+    dispatch(saveCounterInit());
+    let form = new FormData();
+    form.append("RequestMethod", saveCounterPartyApi.RequestMethod);
+    form.append("RequestData", JSON.stringify(Data));
+    await axios({
+      method: "post",
+      url: systemAdminAPI,
+      data: form,
+      headers: {
+        _token: token,
+      },
+    })
+      .then(async (response) => {
+        if (response.data.responseCode === 417) {
+          await dispatch(RefreshToken(navigate));
+          dispatch(saveCounterParty(navigate, Data));
+        } else if (response.data.responseCode === 200) {
+          if (response.data.responseResult.isExecuted === true) {
+            if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_SavecounterPartyLimit_01".toLowerCase()
+                )
+            ) {
+              dispatch(
+                saveCounterSuccess(
+                  response.data.responseResult.responseMessage,
+                  "Record Found"
+                )
+              );
+              setUploadCounterModal(false);
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_SavecounterPartyLimit_02".toLowerCase()
+                )
+            ) {
+              dispatch(saveCounterFail("No Record found"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_SavecounterPartyLimit_03".toLowerCase()
+                )
+            ) {
+              dispatch(saveCounterFail("Invalid Corporate ID"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_SavecounterPartyLimit_04".toLowerCase()
+                )
+            ) {
+              dispatch(saveCounterFail("Not A Valid Role"));
+            }
+          } else {
+            dispatch(saveCounterFail("Something went wrong"));
+          }
+        } else {
+          dispatch(saveCounterFail("Something went wrong"));
+        }
+      })
+      .catch((response) => {
+        dispatch(saveCounterFail("Something went wrong"));
+      });
+  };
+};
+
 export {
   getAllCorporateUserApi,
   searchUserCorporateApi,
   updateCorporateAPI,
   bankCorporateAPI,
   corporateNameByBankId,
+  counterPartyLimitCorporate,
+  saveCounterParty,
 };

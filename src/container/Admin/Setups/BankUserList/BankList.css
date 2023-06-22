@@ -77,28 +77,28 @@
   font-size: 13px !important;
 }
 
-.CustomerList-table {
+.BankUserList-table {
   max-width: 100vw;
-  max-height: 56vh !important;
+  max-height: 50vh !important;
   overflow: auto !important;
   overflow-y: hidden;
   border-radius: 0px !important;
 }
 
-.CustomerList-table th.ant-table-cell {
+.BankUserList-table th.ant-table-cell {
   color: #ffffff !important;
   border-radius: 0% !important;
   background: linear-gradient(to bottom, #5b67cd 0%, #2a38af 100%) !important;
 }
 
-.CustomerList-table::-webkit-scrollbar {
+.BankUserList-table::-webkit-scrollbar {
   width: 0.5rem;
   height: 0.5rem;
   border-radius: 20px;
   background-color: #ffffff;
 }
 
-.CustomerList-table::-webkit-scrollbar-thumb {
+.BankUserList-table::-webkit-scrollbar-thumb {
   border-radius: 20px;
   background: #ccc;
   margin-left: -15px;
