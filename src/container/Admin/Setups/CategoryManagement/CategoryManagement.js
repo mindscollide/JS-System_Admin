@@ -959,6 +959,7 @@ const CategoryManagement = () => {
       </Row>
 
       {auth.Loading ? <Loader /> : null}
+      {/* {AddCategory.Loading ? <Loader /> : null} */}
     </section>
   );
 };
