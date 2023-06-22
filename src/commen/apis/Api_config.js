@@ -84,6 +84,57 @@ const getBankUserApi = {
   RequestMethod: "ServiceManager.GetAllBankUsers",
 };
 
+const UpdateCorporateMapping = {
+  RequestMethod: "ServiceManager.UpdateCorporateCategoryMapping",
+};
+
+const Addcateogry = {
+  RequestMethod: "ServiceManager.AddCorporateCategory",
+};
+
+const getallCoporatesSystem = {
+  RequestMethod: "ServiceManager.GetAllCorporateDetails",
+};
+
+const UpdateCorporateCategory = {
+  RequestMethod: "ServiceManager.UpdateCorporateCategory",
+};
+
+// for update on bank user list page UpdateUserByUserID
+const updateUserByUserIDApi = {
+  RequestMethod: "ServiceManager.UpdateUserbyUserID",
+};
+
+// search bank user list API
+const searchBankListApi = {
+  RequestMethod: "ServiceManager.SearchBankUsers",
+};
+
+// download Reports coporateUserLogin History Report
+const downloadCorporateUserLogin = {
+  RequestMethod: "CorporateUsersLoginHistoryReport",
+};
+
+//DOWNLOAD REPORTS FOR BANK USER LOGIN HISTORY REPORT
+const downloadBankUserLoginHistory = {
+  RequestMethod: "BankUsersLoginHistoryReportExcel",
+};
+
+//upload counter party Limit Excel file
+const uploadCounterPartyFile = {
+  RequestMethod: "ServiceManager.CounterPartyLimitExcelUpload",
+};
+
+//GetCounterPartyLimitByCorporateID in counter party API
+const getCounterPartyLmit = {
+  RequestMethod: "ServiceManager.GetCounterPartyLimitByCorporateID",
+};
+
+//save counter party Limit API
+const saveCounterPartyApi = {
+  RequestMethod: "ServiceManager.SavecounterPartyLimit",
+};
+
 export {
   authenticationLogIn,
   authenticationSignUp,
@@ -103,4 +154,15 @@ export {
   getCorporateUserLoginApiERM,
   getCorporateNameApi,
   getBankUserApi,
+  UpdateCorporateMapping,
+  Addcateogry,
+  getallCoporatesSystem,
+  UpdateCorporateCategory,
+  downloadCorporateUserLogin,
+  downloadBankUserLoginHistory,
+  uploadCounterPartyFile,
+  getCounterPartyLmit,
+  saveCounterPartyApi,
+  updateUserByUserIDApi,
+  searchBankListApi,
 };
