@@ -593,20 +593,20 @@ const CategoryManagement = () => {
         ...addData,
         category: {
           value: "",
-          errorMessage: "Please Fill all the fields",
+          errorMessage: "",
           errorStatus: false,
         },
       });
     }
 
     if (name === "Bid" && value !== "") {
-      let valueCheck = value.replace(/^[0-9]+$/g, "");
-      console.log("valuevalueemailvaluevalueemail", value);
+      let valueCheck = value.replace(/[^0-9]+/g, "");
+      console.log("valuevalueemailvaluevalueemail", valueCheck);
       if (valueCheck !== "") {
         setadDdata({
           ...addData,
           bidSpread: {
-            value: value.trimStart(),
+            value: valueCheck.trimStart(),
             errorMessage: "",
             errorStatus: false,
           },
@@ -617,14 +617,14 @@ const CategoryManagement = () => {
         ...addData,
         bidSpread: {
           value: "",
-          errorMessage: "Please Fill all the fields",
+          errorMessage: "",
           errorStatus: true,
         },
       });
     }
 
     if (name === "Offer" && value !== "") {
-      let valueCheck = value.replace(/^\d*$/g, "");
+      let valueCheck = value.replace(/[^0-9]+/g, "");
       console.log("valuevalueemailvaluevalueemail", value);
       if (valueCheck !== "") {
         setadDdata({
@@ -641,7 +641,7 @@ const CategoryManagement = () => {
         ...addData,
         offerSpread: {
           value: "",
-          errorMessage: "Please Fill all the fields",
+          errorMessage: "",
           errorStatus: true,
         },
       });
