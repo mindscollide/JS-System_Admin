@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./CategoryManagement.css";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row, Form } from "react-bootstrap";
 import { Paper } from "@material-ui/core";
 import { TextField, Button, Loader } from "../../../../components/elements";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
@@ -705,98 +705,109 @@ const CategoryManagement = () => {
             >
               <Row>
                 <Col lg={12} md={12} sm={12}>
-                  <span className="Name_tag">
-                    Name <span className="red_steric">*</span>
-                  </span>
-                </Col>
-              </Row>
+                  <Form onSubmit={AfterClickAdd}>
+                    <Row>
+                      <Col lg={12} md={12} sm={12}>
+                        <span className="Name_tag">
+                          Name <span className="red_steric">*</span>
+                        </span>
+                      </Col>
+                    </Row>
 
-              <Row>
-                <Col lg={12} md={12} sm={12} className="CreateMeetingInput">
-                  <TextField
-                    name="name"
-                    applyClass="form-control2"
-                    ref={NameRef}
-                    type="text"
-                    autoFocus
-                    maxLength={100}
-                    labelClass="d-none"
-                    required={true}
-                    value={addData.category.value}
-                    onChange={CategoryManageState}
-                  />
-                </Col>
-              </Row>
+                    <Row>
+                      <Col
+                        lg={12}
+                        md={12}
+                        sm={12}
+                        className="CreateMeetingInput"
+                      >
+                        <TextField
+                          name="name"
+                          applyClass="form-control2"
+                          ref={NameRef}
+                          type="text"
+                          autoFocus
+                          maxLength={100}
+                          labelClass="d-none"
+                          required={true}
+                          value={addData.category.value}
+                          onChange={CategoryManageState}
+                        />
+                      </Col>
+                    </Row>
 
-              <Row className="mt-3">
-                <Col lg={12} md={12} sm={12}>
-                  <span className="Name_tag">
-                    Spread <span className="red_steric">*</span>
-                  </span>
-                </Col>
-              </Row>
+                    <Row className="mt-3">
+                      <Col lg={12} md={12} sm={12}>
+                        <span className="Name_tag">
+                          Spread <span className="red_steric">*</span>
+                        </span>
+                      </Col>
+                    </Row>
 
-              <Row className="mt-2">
-                <Col lg={6} md={6} sm={12} xs={12}>
-                  <Row>
-                    <Col lg={12} md={12} sm={12}>
-                      <span className="Name_tag">Bid</span>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col lg={12} md={12} sm={12}>
-                      <TextField
-                        name="Bid"
-                        applyClass="form-control2"
-                        type="text"
-                        maxLength={100}
-                        labelClass="d-none"
-                        required={true}
-                        value={addData.bidSpread.value}
-                        onChange={CategoryManageState}
-                      />
-                    </Col>
-                  </Row>
-                </Col>
-                <Col lg={6} md={6} sm={12} xs={12}>
-                  <Row>
-                    <Col lg={12} md={12} sm={12}>
-                      <span className="Name_tag">Offer</span>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col lg={12} md={12} sm={12}>
-                      <TextField
-                        name="Offer"
-                        applyClass="form-control2"
-                        type="text"
-                        maxLength={100}
-                        labelClass="d-none"
-                        required={true}
-                        value={addData.offerSpread.value}
-                        onChange={CategoryManageState}
-                      />
-                    </Col>
-                  </Row>
-                </Col>
-              </Row>
-              <Row className="mt-3">
-                <Col
-                  lg={12}
-                  md={12}
-                  sm={12}
-                  className="d-flex justify-content-center gap-2"
-                >
-                  <Button
-                    className="Add_button_category"
-                    text="Add"
-                    onClick={AfterClickAdd}
-                  />
-                  <Button
-                    className="Cancel_button_cateogry"
-                    text="Cancel"
-                    onClick={CloseNewCategory}
-                  />
+                    <Row className="mt-2">
+                      <Col lg={6} md={6} sm={12} xs={12}>
+                        <Row>
+                          <Col lg={12} md={12} sm={12}>
+                            <span className="Name_tag">Bid</span>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col lg={12} md={12} sm={12}>
+                            <TextField
+                              name="Bid"
+                              applyClass="form-control2"
+                              type="text"
+                              maxLength={100}
+                              labelClass="d-none"
+                              required={true}
+                              value={addData.bidSpread.value}
+                              onChange={CategoryManageState}
+                            />
+                          </Col>
+                        </Row>
+                      </Col>
+                      <Col lg={6} md={6} sm={12} xs={12}>
+                        <Row>
+                          <Col lg={12} md={12} sm={12}>
+                            <span className="Name_tag">Offer</span>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col lg={12} md={12} sm={12}>
+                            <TextField
+                              name="Offer"
+                              applyClass="form-control2"
+                              type="text"
+                              maxLength={100}
+                              labelClass="d-none"
+                              required={true}
+                              value={addData.offerSpread.value}
+                              onChange={CategoryManageState}
+                            />
+                          </Col>
+                        </Row>
+                      </Col>
+                    </Row>
+                    <Row className="mt-3">
+                      <Col
+                        lg={12}
+                        md={12}
+                        sm={12}
+                        className="d-flex justify-content-center gap-2"
+                      >
+                        <Button
+                          className="Add_button_category"
+                          text="Add"
+                          onClick={AfterClickAdd}
+                        />
+                        <Button
+                          className="Cancel_button_cateogry"
+                          text="Cancel"
+                          onClick={CloseNewCategory}
+                        />
+                      </Col>
+                    </Row>
+                  </Form>
                 </Col>
               </Row>
             </Col>
