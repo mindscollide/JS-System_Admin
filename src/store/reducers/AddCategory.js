@@ -3,7 +3,6 @@ import * as actions from "../action_types";
 const initialState = {
   Loading: false,
   ResponseMessage: "",
-  Spinner: false,
   addCategory: [],
 };
 
@@ -13,14 +12,12 @@ const AddCategory = (state = initialState, action) => {
       return {
         ...state,
         Loading: true,
-        Spinner: true,
       };
 
     case actions.ADD_CATEGORY_SUCCESS:
       return {
         ...state,
         Loading: false,
-        Spinner: false,
         addCategory: action.response,
         ResponseMessage: action.message,
       };
@@ -29,7 +26,6 @@ const AddCategory = (state = initialState, action) => {
       return {
         ...state,
         Loading: false,
-        Spinner: false,
         ResponseMessage: action.message,
       };
 
