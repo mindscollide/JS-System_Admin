@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./CategoryManagement.css";
 import { Col, Container, Row } from "react-bootstrap";
 import { Paper } from "@material-ui/core";
@@ -25,6 +25,16 @@ const CategoryManagement = () => {
   const { auth } = useSelector((state) => state);
   const [corporates, setCorporates] = useState([]);
   const { AddCategory, UpdateCategoryMap } = useSelector((state) => state);
+
+  //for Auto focus
+  const NameRef = useRef(null);
+
+  useEffect(() => {
+    if (NameRef.current) {
+      NameRef.current.focus();
+    }
+  }, []);
+
   //For edit a Category
   const [editCategoryList, setEditCategoryList] = useState([]);
   const [categoryupdate, setCategoryUpdate] = useState({
@@ -706,7 +716,9 @@ const CategoryManagement = () => {
                   <TextField
                     name="name"
                     applyClass="form-control2"
+                    ref={NameRef}
                     type="text"
+                    autoFocus
                     maxLength={100}
                     labelClass="d-none"
                     required={true}
