@@ -23,7 +23,6 @@ const CategoryManagement = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [corporates, setCorporates] = useState([]);
-  console.log(corporates, "corporatescorporatescorporates");
   const { AddCategory, UpdateCategoryMap } = useSelector((state) => state);
 
   //For Adding a Category
@@ -85,34 +84,24 @@ const CategoryManagement = () => {
   });
   const [delteCateogry, setDeltecategory] = useState([]);
   const { auth } = useSelector((state) => state);
-  console.log("useSelector", auth);
 
   useEffect(() => {
-    console.log("getAllCorporatesCategorygetAllCorporatesCategory", auth);
-
     dispatch(getAllCorporatesCategory(navigate));
   }, []);
 
   useEffect(() => {
     let corporatesData = auth.Corporates;
-    console.log("corporatesData", corporatesData);
     if (Object.keys(corporatesData).length > 0) {
-      console.log("authauth12", corporatesData);
-
       setCorporates(corporatesData);
     }
   }, [auth.Corporates]);
+
   useEffect(() => {
     let corporatesData = UpdateCategoryMap.UpdateCategory;
-    console.log("corporatesData", corporatesData);
-    if (Object.keys(UpdateCategoryMap.UpdateCategory).length > 0) {
-      console.log(
-        "authauth12 UpdateCategoryMap",
-        UpdateCategoryMap.UpdateCategory
-      );
+    if (Object.keys(corporatesData).length > 0) {
+      console.log("authauth12 UpdateCategoryMap", corporatesData);
       console.log("authauth12 UpdateCategoryMap", categoryupdate);
       let id = categoryupdate.categoryID.value;
-      console.log("authauth12 UpdateCategoryMap", id);
       const categoryIndex = corporates.findIndex(
         (store) => store.categoryID === id.toString()
       );
@@ -129,12 +118,40 @@ const CategoryManagement = () => {
         bidSpread: parseInt(categoryupdate.bidSpread.value),
         corporates: newSourceItems[categoryIndex].corporates,
       };
-      // const deletedItem = newSourceItems.splice(categoryIndex, 1);
-      // const newStores = [...corporates];
-      // setCorporates({ ...corporates, data });
-      // console.log("authauth12 UpdateCategoryMap", newSourceItems);
-      // console.log("authauth12 UpdateCategoryMap", data);
-      // setCategoryUpdate(data);
+      if (categoryIndex !== -1) {
+        newSourceItems[categoryIndex] = data;
+        setCorporates(newSourceItems);
+      }
+      setEditCategoryList([])
+      setCategoryUpdate({
+        category: {
+          value: "",
+          errorMessage: "",
+          errorStatus: false,
+        },
+        bidSpread: {
+          value: null,
+          errorMessage: "",
+          errorStatus: false,
+        },
+        offerSpread: {
+          value: null,
+          errorMessage: "",
+          errorStatus: false,
+        },
+        AssetTypeId: {
+          value: 1,
+          errorMessage: "",
+          errorStatus: false,
+        },
+        categoryID: {
+          value: 0,
+          errorMessage: "",
+          errorStatus: false,
+        },
+        BankID: 1,
+      })
+
     }
   }, [UpdateCategoryMap.UpdateCategory]);
   console.log("authauth12 UpdateCategoryMap corporates", corporates);
