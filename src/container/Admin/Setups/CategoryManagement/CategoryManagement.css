@@ -512,6 +512,7 @@ body {
   font-size: 18px;
   color: #004990;
   font-weight: 600;
+  margin-left: 2.5% !important;
 }
 .select2-container .select2-selection--single {
   height: 37px;
@@ -622,7 +623,7 @@ label.label-control {
 }
 .cat-management-wrapper {
   min-height: 80vh;
-  transition: all 0.3s ease-in;
+  /* transition: all 0.3s ease-in; */
 }
 
 .cat-management-item .cat-header .cat-spread {

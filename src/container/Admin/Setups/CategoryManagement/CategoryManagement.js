@@ -122,7 +122,7 @@ const CategoryManagement = () => {
         newSourceItems[categoryIndex] = data;
         setCorporates(newSourceItems);
       }
-      setEditCategoryList([])
+      setEditCategoryList([]);
       setCategoryUpdate({
         category: {
           value: "",
@@ -150,8 +150,7 @@ const CategoryManagement = () => {
           errorStatus: false,
         },
         BankID: 1,
-      })
-
+      });
     }
   }, [UpdateCategoryMap.UpdateCategory]);
   console.log("authauth12 UpdateCategoryMap corporates", corporates);
@@ -307,118 +306,108 @@ const CategoryManagement = () => {
   const addModal = (data, index) => {
     return (
       <Row>
-        {AddCategory.Spinner === true ? (
-          <>
-            <span className="customer-login-user-spinner m-3">
-              <Spin size="large" />
-            </span>
-          </>
-        ) : (
-          <>
-            <Col
-              lg={12}
-              md={12}
-              sm={12}
-              // key={newInstanceId}
-              className="add-cate-wrapper m-3"
-            >
+        <Col
+          lg={12}
+          md={12}
+          sm={12}
+          // key={newInstanceId}
+          className="add-cate-wrapper m-3"
+        >
+          <Row>
+            <Col lg={12} md={12} sm={12}>
+              <span className="Name_tag">
+                Name <span className="red_steric">*</span>
+              </span>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col lg={12} md={12} sm={12} className="CreateMeetingInput">
+              <TextField
+                name="name"
+                applyClass="form-control2"
+                type="text"
+                maxLength={100}
+                labelClass="d-none"
+                required={true}
+                value={adddata.category.value}
+                onChange={CategoryManageState}
+              />
+            </Col>
+          </Row>
+
+          <Row className="mt-3">
+            <Col lg={12} md={12} sm={12}>
+              <span className="Name_tag">
+                Spread <span className="red_steric">*</span>
+              </span>
+            </Col>
+          </Row>
+
+          <Row className="mt-2">
+            <Col lg={6} md={6} sm={12} xs={12}>
               <Row>
                 <Col lg={12} md={12} sm={12}>
-                  <span className="Name_tag">
-                    Name <span className="red_steric">*</span>
-                  </span>
+                  <span className="Name_tag">Bid</span>
                 </Col>
               </Row>
-
               <Row>
-                <Col lg={12} md={12} sm={12} className="CreateMeetingInput">
+                <Col lg={12} md={12} sm={12}>
                   <TextField
-                    name="name"
+                    name="Bid"
                     applyClass="form-control2"
                     type="text"
                     maxLength={100}
                     labelClass="d-none"
                     required={true}
-                    value={adddata.category.value}
+                    value={adddata.bidSpread.value}
                     onChange={CategoryManageState}
                   />
                 </Col>
               </Row>
-
-              <Row className="mt-3">
+            </Col>
+            <Col lg={6} md={6} sm={12} xs={12}>
+              <Row>
                 <Col lg={12} md={12} sm={12}>
-                  <span className="Name_tag">
-                    Spread <span className="red_steric">*</span>
-                  </span>
+                  <span className="Name_tag">Offer</span>
                 </Col>
               </Row>
-
-              <Row className="mt-2">
-                <Col lg={6} md={6} sm={12} xs={12}>
-                  <Row>
-                    <Col lg={12} md={12} sm={12}>
-                      <span className="Name_tag">Bid</span>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col lg={12} md={12} sm={12}>
-                      <TextField
-                        name="Bid"
-                        applyClass="form-control2"
-                        type="text"
-                        maxLength={100}
-                        labelClass="d-none"
-                        required={true}
-                        value={adddata.bidSpread.value}
-                        onChange={CategoryManageState}
-                      />
-                    </Col>
-                  </Row>
-                </Col>
-                <Col lg={6} md={6} sm={12} xs={12}>
-                  <Row>
-                    <Col lg={12} md={12} sm={12}>
-                      <span className="Name_tag">Offer</span>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col lg={12} md={12} sm={12}>
-                      <TextField
-                        name="Offer"
-                        applyClass="form-control2"
-                        type="text"
-                        maxLength={100}
-                        labelClass="d-none"
-                        required={true}
-                        value={adddata.offerSpread.value}
-                        onChange={CategoryManageState}
-                      />
-                    </Col>
-                  </Row>
-                </Col>
-              </Row>
-              <Row className="mt-3">
-                <Col
-                  lg={12}
-                  md={12}
-                  sm={12}
-                  className="d-flex justify-content-center gap-2"
-                >
-                  <Button
-                    className="Add_button_category"
-                    text="Add"
-                    onClick={AfterClickAdd}
-                  />
-                  <Button
-                    className="Cancel_button_cateogry"
-                    text="Cancel"
-                    onClick={CloseNewCategory}
+              <Row>
+                <Col lg={12} md={12} sm={12}>
+                  <TextField
+                    name="Offer"
+                    applyClass="form-control2"
+                    type="text"
+                    maxLength={100}
+                    labelClass="d-none"
+                    required={true}
+                    value={adddata.offerSpread.value}
+                    onChange={CategoryManageState}
                   />
                 </Col>
               </Row>
             </Col>
-          </>
-        )}
+          </Row>
+          <Row className="mt-3">
+            <Col
+              lg={12}
+              md={12}
+              sm={12}
+              className="d-flex justify-content-center gap-2"
+            >
+              <Button
+                className="Add_button_category"
+                text="Add"
+                onClick={AfterClickAdd}
+              />
+              <Button
+                className="Cancel_button_cateogry"
+                text="Cancel"
+                onClick={CloseNewCategory}
+              />
+            </Col>
+          </Row>
+        </Col>
       </Row>
     );
   };
@@ -426,7 +415,7 @@ const CategoryManagement = () => {
     console.log("showCardsshowCards", data);
     if (Object.keys(data).length > 0) {
       return (
-        <Droppable droppableId={data.categoryID} direction="horizontal">
+        <Droppable droppableId={data.categoryID}>
           {(provided) => (
             <Row style={{ height: "80vh" }}>
               {console.log("authauth1234 ClientsClients", data)}
@@ -447,6 +436,7 @@ const CategoryManagement = () => {
                           key={Clients.corporateID}
                           draggableId={Clients.corporateID}
                           index={index}
+                          type="column"
                         >
                           {(provided) => (
                             <Col
@@ -491,7 +481,6 @@ const CategoryManagement = () => {
                   )}
                 </>
               </Col>
-              {provided.placeholder}
             </Row>
           )}
         </Droppable>
@@ -653,332 +642,321 @@ const CategoryManagement = () => {
     dispatch(UpdateMapCategory(navigate, data, setEditCategoryList));
   };
   return (
-    <Container className="Property-container">
-      {/* <!-- Body container Begin --> */}
-      <Row className="container-fluid page-gutter overflow-hidden cat-management-container">
-        {/* <!--row Page Heading Begin--> */}
-        <Row className="row m-0 row-page-heading mb-3">
-          <Col className="p-0" lg={12} sm={12} md={12}>
-            <div className="d-flex">
-              <div className="PageHeading">Category Management</div>
-            </div>
-          </Col>
-        </Row>
-        {/* <!--row Page Heading end--> */}
+    <section className="Property-container">
+      <Row>
+        <Col lg={11} sm={11} md={11} className="m-0">
+          <span className="PageHeading">Category Management</span>
+        </Col>
+        <Col lg={1} md={1} sm={1}></Col>
+      </Row>
 
-        {/* <!--row  Begin--> */}
+      {/* <!--row  Begin--> */}
 
-        <Row className="cat-management-wrapper d-flex" id="catManagementItem">
-          <Col lg={12} md={12} sm={12} className="Content_container">
-            <Button
-              icon={<i className="icon-arrow-left"></i>}
-              className="leftarrow"
-              onClick={SlideLeft}
-            />
-            <DragDropContext onDragEnd={handleDragEnd}>
-              <Droppable
-                droppableId="ROOT"
-                type="group"
-                direction="horizontal"
-                // direction="vertical"
-              >
-                {/* <!-- cat-item --> */}
-                {(outerProvided) => (
-                  <Col
-                    lg={12}
-                    md={12}
-                    sm={12}
-                    className="Scroller-x-resolution "
-                    id="Slider"
-                    ref={outerProvided.innerRef}
-                    {...outerProvided.droppableProps}
-                  >
-                    {corporates.map((data, index) => {
-                      console.log("datadatadata", data);
-                      return (
-                        <>
-                          {checkForEdit(data.categoryID) ? (
-                            <Row>
-                              {UpdateCategoryMap.Spinner === true ? (
-                                <>
-                                  <span className="customer-login-user-spinner m-3">
-                                    <Spin size="large" />
-                                  </span>
-                                </>
-                              ) : (
-                                <>
-                                  <Col
-                                    lg={12}
-                                    md={12}
-                                    sm={12}
-                                    className="add-cate-wrapper m-3"
-                                  >
-                                    <Row>
-                                      <Col lg={12} md={12} sm={12}>
-                                        <span className="Name_tag">
-                                          Name
-                                          <span className="red_steric">*</span>
-                                        </span>
-                                      </Col>
-                                    </Row>
-
-                                    <Row>
-                                      <Col
-                                        lg={12}
-                                        md={12}
-                                        sm={12}
-                                        className="CreateMeetingInput"
-                                      >
-                                        <TextField
-                                          name="nameUpdate"
-                                          applyClass="form-control2"
-                                          type="text"
-                                          maxLength={100}
-                                          labelClass="d-none"
-                                          required={true}
-                                          value={categoryupdate.category.value}
-                                          onChange={HandleUpdateChange}
-                                        />
-                                      </Col>
-                                    </Row>
-
-                                    <Row className="mt-3">
-                                      <Col lg={12} md={12} sm={12}>
-                                        <span className="Name_tag">
-                                          Spread{" "}
-                                          <span className="red_steric">*</span>
-                                        </span>
-                                      </Col>
-                                    </Row>
-
-                                    <Row className="mt-2">
-                                      <Col lg={6} md={6} sm={12} xs={12}>
-                                        <Row>
-                                          <Col lg={12} md={12} sm={12}>
-                                            <span className="Name_tag">
-                                              Bid
-                                            </span>
-                                          </Col>
-                                        </Row>
-                                        <Row>
-                                          <Col lg={12} md={12} sm={12}>
-                                            <TextField
-                                              name="Bidupdated"
-                                              applyClass="form-control2"
-                                              type="text"
-                                              maxLength={100}
-                                              labelClass="d-none"
-                                              required={true}
-                                              value={
-                                                categoryupdate.bidSpread.value
-                                              }
-                                              onChange={HandleUpdateChange}
-                                            />
-                                          </Col>
-                                        </Row>
-                                      </Col>
-                                      <Col lg={6} md={6} sm={12} xs={12}>
-                                        <Row>
-                                          <Col lg={12} md={12} sm={12}>
-                                            <span className="Name_tag">
-                                              Offer
-                                            </span>
-                                          </Col>
-                                        </Row>
-                                        <Row>
-                                          <Col lg={12} md={12} sm={12}>
-                                            <TextField
-                                              name="Offerupdate"
-                                              applyClass="form-control2"
-                                              type="text"
-                                              maxLength={100}
-                                              labelClass="d-none"
-                                              required={true}
-                                              value={
-                                                categoryupdate.offerSpread.value
-                                              }
-                                              onChange={HandleUpdateChange}
-                                            />
-                                          </Col>
-                                        </Row>
-                                      </Col>
-                                    </Row>
-                                    <Row className="mt-3">
-                                      <Col
-                                        lg={12}
-                                        md={12}
-                                        sm={12}
-                                        className="d-flex justify-content-center gap-2"
-                                      >
-                                        <Button
-                                          className="Update_button_category"
-                                          text="Update"
-                                          onClick={UpdateCategory}
-                                        />
-                                        <Button
-                                          className="Cancel_button_cateogry"
-                                          text="Cancel"
-                                          onClick={() =>
-                                            CloseUpdateCategory(
-                                              data.corporateID
-                                            )
-                                          }
-                                        />
-                                      </Col>
-                                    </Row>
-                                  </Col>
-                                </>
-                              )}
-                            </Row>
-                          ) : (
-                            <Draggable
-                              key={data.categoryID + data.corporateID}
-                              draggableId={data.categoryID + data.corporateID}
-                              index={index}
-                            >
-                              {(outerProvided) => (
+      <Row className="cat-management-wrapper d-flex" id="catManagementItem">
+        <Col lg={12} md={12} sm={12} className="Content_container">
+          <Button
+            icon={<i className="icon-arrow-left"></i>}
+            className="leftarrow"
+            onClick={SlideLeft}
+          />
+          <DragDropContext onDragEnd={handleDragEnd}>
+            <Droppable
+              droppableId="ROOT"
+              type="group"
+              direction="horizontal"
+              // direction="vertical"
+            >
+              {/* <!-- cat-item --> */}
+              {(outerProvided) => (
+                <Col
+                  lg={12}
+                  md={12}
+                  sm={12}
+                  className="Scroller-x-resolution "
+                  id="Slider"
+                  ref={outerProvided.innerRef}
+                  {...outerProvided.droppableProps}
+                >
+                  {corporates.map((data, index) => {
+                    console.log("datadatadata", data);
+                    return (
+                      <>
+                        {checkForEdit(data.categoryID) ? (
+                          <Row>
+                            {UpdateCategoryMap.Spinner === true ? (
+                              <>
+                                <span className="customer-login-user-spinner m-3">
+                                  <Spin size="large" />
+                                </span>
+                              </>
+                            ) : (
+                              <>
                                 <Col
-                                  className="cat-management-item m-3"
-                                  ref={outerProvided.innerRef}
-                                  {...outerProvided.draggableProps}
-                                  {...outerProvided.dragHandleProps}
+                                  lg={12}
+                                  md={12}
+                                  sm={12}
+                                  className="add-cate-wrapper m-3"
                                 >
-                                  <Row className="item-inner">
-                                    <Col className="cat-header">
-                                      <Row className="mt-2">
-                                        <Col
-                                          className="cat-title"
-                                          lg={6}
-                                          sm={6}
-                                          md={6}
-                                        >
-                                          {data.categoryName}
+                                  <Row>
+                                    <Col lg={12} md={12} sm={12}>
+                                      <span className="Name_tag">
+                                        Name
+                                        <span className="red_steric">*</span>
+                                      </span>
+                                    </Col>
+                                  </Row>
+
+                                  <Row>
+                                    <Col
+                                      lg={12}
+                                      md={12}
+                                      sm={12}
+                                      className="CreateMeetingInput"
+                                    >
+                                      <TextField
+                                        name="nameUpdate"
+                                        applyClass="form-control2"
+                                        type="text"
+                                        maxLength={100}
+                                        labelClass="d-none"
+                                        required={true}
+                                        value={categoryupdate.category.value}
+                                        onChange={HandleUpdateChange}
+                                      />
+                                    </Col>
+                                  </Row>
+
+                                  <Row className="mt-3">
+                                    <Col lg={12} md={12} sm={12}>
+                                      <span className="Name_tag">
+                                        Spread{" "}
+                                        <span className="red_steric">*</span>
+                                      </span>
+                                    </Col>
+                                  </Row>
+
+                                  <Row className="mt-2">
+                                    <Col lg={6} md={6} sm={12} xs={12}>
+                                      <Row>
+                                        <Col lg={12} md={12} sm={12}>
+                                          <span className="Name_tag">Bid</span>
                                         </Col>
-                                        <Col
-                                          className="d-flex justify-content-end gap-1"
-                                          lg={6}
-                                          sm={6}
-                                          md={6}
-                                        >
-                                          <span
-                                            className="edit-cat d-inline-block"
-                                            onClick={() =>
-                                              OpenEditCategory(
-                                                data.categoryID,
-                                                data
-                                              )
-                                            }
-                                          >
-                                            <i className="icon-text-edit"></i>
-                                          </span>
-                                          <span
-                                            className="add-cat d-inline-block"
-                                            onClick={() =>
-                                              OpenAddCategory(data.categoryID)
-                                            }
-                                          >
-                                            <i className="icon-add-circle"></i>
-                                          </span>
-                                          <span className="delete-cat d-inline-block">
-                                            <i className="icon-trash"></i>
-                                          </span>
-                                        </Col>
-                                        <Row>
-                                          <Col lg={12} md={12} sm={12}>
-                                            <hr className="Line" />
-                                          </Col>
-                                        </Row>
                                       </Row>
-
-                                      <Row className="mt-2">
-                                        <Col
-                                          lg={6}
-                                          sm={6}
-                                          md={6}
-                                          className="d-flex justify-content-start"
-                                        >
-                                          <Row>
-                                            <Col
-                                              lg={12}
-                                              md={12}
-                                              sm={12}
-                                              className="text-center"
-                                            >
-                                              <div className="title_bid">
-                                                Bid
-                                              </div>
-                                              <div className="rate val-highlight1">
-                                                {data.bidSpread}
-                                              </div>
-                                            </Col>
-                                          </Row>
-                                        </Col>
-
-                                        <Col
-                                          lg={6}
-                                          sm={6}
-                                          md={6}
-                                          className="d-flex justify-content-end"
-                                        >
-                                          <Row>
-                                            <Col
-                                              lg={12}
-                                              md={12}
-                                              sm={12}
-                                              className="text-center"
-                                            >
-                                              <div className="Title_offer">
-                                                offer
-                                              </div>
-                                              <div className="rate val-highlight2">
-                                                {data.offerSpread}
-                                              </div>
-                                            </Col>
-                                          </Row>
+                                      <Row>
+                                        <Col lg={12} md={12} sm={12}>
+                                          <TextField
+                                            name="Bidupdated"
+                                            applyClass="form-control2"
+                                            type="text"
+                                            maxLength={100}
+                                            labelClass="d-none"
+                                            required={true}
+                                            value={
+                                              categoryupdate.bidSpread.value
+                                            }
+                                            onChange={HandleUpdateChange}
+                                          />
                                         </Col>
                                       </Row>
                                     </Col>
-                                    <Row className="cat-item-content">
-                                      <Col
-                                        className="customer"
-                                        lg={12}
-                                        sm={12}
-                                        md={12}
-                                      >
-                                        {showCards(data)}
-                                      </Col>
-                                      {outerProvided.placeholder}
-                                    </Row>
+                                    <Col lg={6} md={6} sm={12} xs={12}>
+                                      <Row>
+                                        <Col lg={12} md={12} sm={12}>
+                                          <span className="Name_tag">
+                                            Offer
+                                          </span>
+                                        </Col>
+                                      </Row>
+                                      <Row>
+                                        <Col lg={12} md={12} sm={12}>
+                                          <TextField
+                                            name="Offerupdate"
+                                            applyClass="form-control2"
+                                            type="text"
+                                            maxLength={100}
+                                            labelClass="d-none"
+                                            required={true}
+                                            value={
+                                              categoryupdate.offerSpread.value
+                                            }
+                                            onChange={HandleUpdateChange}
+                                          />
+                                        </Col>
+                                      </Row>
+                                    </Col>
                                   </Row>
-                                  {/* {outerProvided.placeholder} */}
+                                  <Row className="mt-3">
+                                    <Col
+                                      lg={12}
+                                      md={12}
+                                      sm={12}
+                                      className="d-flex justify-content-center gap-2"
+                                    >
+                                      <Button
+                                        className="Update_button_category"
+                                        text="Update"
+                                        onClick={UpdateCategory}
+                                      />
+                                      <Button
+                                        className="Cancel_button_cateogry"
+                                        text="Cancel"
+                                        onClick={() =>
+                                          CloseUpdateCategory(data.corporateID)
+                                        }
+                                      />
+                                    </Col>
+                                  </Row>
                                 </Col>
-                              )}
-                            </Draggable>
-                          )}
+                              </>
+                            )}
+                          </Row>
+                        ) : (
+                          <Draggable
+                            key={data.categoryID + data.corporateID}
+                            draggableId={data.categoryID + data.corporateID}
+                            index={index}
+                            type="column"
+                          >
+                            {(outerProvided) => (
+                              <Col
+                                className="cat-management-item m-3"
+                                ref={outerProvided.innerRef}
+                                {...outerProvided.draggableProps}
+                                {...outerProvided.dragHandleProps}
+                              >
+                                <Row className="item-inner">
+                                  <Col className="cat-header">
+                                    <Row className="mt-2">
+                                      <Col
+                                        className="cat-title"
+                                        lg={6}
+                                        sm={6}
+                                        md={6}
+                                      >
+                                        {data.categoryName}
+                                      </Col>
+                                      <Col
+                                        className="d-flex justify-content-end gap-1"
+                                        lg={6}
+                                        sm={6}
+                                        md={6}
+                                      >
+                                        <span
+                                          className="edit-cat d-inline-block"
+                                          onClick={() =>
+                                            OpenEditCategory(
+                                              data.categoryID,
+                                              data
+                                            )
+                                          }
+                                        >
+                                          <i className="icon-text-edit"></i>
+                                        </span>
+                                        <span
+                                          className="add-cat d-inline-block"
+                                          onClick={() =>
+                                            OpenAddCategory(data.categoryID)
+                                          }
+                                        >
+                                          <i className="icon-add-circle"></i>
+                                        </span>
+                                        <span className="delete-cat d-inline-block">
+                                          <i className="icon-trash"></i>
+                                        </span>
+                                      </Col>
+                                      <Row>
+                                        <Col lg={12} md={12} sm={12}>
+                                          <hr className="Line" />
+                                        </Col>
+                                      </Row>
+                                    </Row>
 
-                          {checkForAdd(data.categoryID)
-                            ? addModal(data, index)
-                            : null}
-                        </>
-                      );
-                    })}
-                    {/* {outerProvided.placeholder} */}
-                  </Col>
-                )}
-              </Droppable>
-            </DragDropContext>
+                                    <Row className="mt-2">
+                                      <Col
+                                        lg={6}
+                                        sm={6}
+                                        md={6}
+                                        className="d-flex justify-content-start"
+                                      >
+                                        <Row>
+                                          <Col
+                                            lg={12}
+                                            md={12}
+                                            sm={12}
+                                            className="text-center"
+                                          >
+                                            <div className="title_bid">Bid</div>
+                                            <div className="rate val-highlight1">
+                                              {data.bidSpread}
+                                            </div>
+                                          </Col>
+                                        </Row>
+                                      </Col>
 
-            <Button
-              icon={<i className="icon-arrow-right"></i>}
-              className="righArrow"
-              onClick={Slideright}
-            />
-          </Col>
-        </Row>
+                                      <Col
+                                        lg={6}
+                                        sm={6}
+                                        md={6}
+                                        className="d-flex justify-content-end"
+                                      >
+                                        <Row>
+                                          <Col
+                                            lg={12}
+                                            md={12}
+                                            sm={12}
+                                            className="text-center"
+                                          >
+                                            <div className="Title_offer">
+                                              offer
+                                            </div>
+                                            <div className="rate val-highlight2">
+                                              {data.offerSpread}
+                                            </div>
+                                          </Col>
+                                        </Row>
+                                      </Col>
+                                    </Row>
+                                  </Col>
+                                  <Row className="cat-item-content">
+                                    <Col
+                                      className="customer"
+                                      lg={12}
+                                      sm={12}
+                                      md={12}
+                                    >
+                                      {showCards(data)}
+                                    </Col>
+                                    {outerProvided.placeholder}
+                                  </Row>
+                                </Row>
+                                {/* {outerProvided.placeholder} */}
+                              </Col>
+                            )}
+                          </Draggable>
+                        )}
+
+                        {checkForAdd(data.categoryID)
+                          ? addModal(data, index)
+                          : null}
+                      </>
+                    );
+                  })}
+                  {/* {outerProvided.placeholder} */}
+                </Col>
+              )}
+            </Droppable>
+          </DragDropContext>
+
+          <Button
+            icon={<i className="icon-arrow-right"></i>}
+            className="righArrow"
+            onClick={Slideright}
+          />
+        </Col>
       </Row>
 
       {auth.Loading ? <Loader /> : null}
-    </Container>
+    </section>
   );
 };
 
