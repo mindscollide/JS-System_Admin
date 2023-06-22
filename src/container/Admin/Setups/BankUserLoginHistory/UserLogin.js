@@ -5,13 +5,14 @@ import {
   TextField,
   Button,
   Table,
+  Loader,
 } from "../../../../components/elements";
 import { validateEmail } from "../../../../commen/functions/emailValidation";
 import {
   bankUserLogin,
-  getAllCategoriesCorporate,
   searchBankLogin,
 } from "../../../../store/actions/Auth-Actions";
+import { bankUserDownloadReport } from "../../../../store/actions/Download-Report";
 import Select from "react-select";
 import { useNavigate } from "react-router-dom";
 import { Spin } from "antd";
@@ -23,7 +24,7 @@ import { useSelector, useDispatch } from "react-redux";
 const UserLogin = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { auth } = useSelector((state) => state);
+  const { auth, downloadReducer } = useSelector((state) => state);
   // state for set data from api in rows
   const [rows, setRows] = useState([]);
 
@@ -211,6 +212,25 @@ const UserLogin = () => {
           : "",
     };
     await dispatch(searchBankLogin(navigate, seacrhBankData));
+  };
+
+  // api hit on download report bank user
+  const downloadExcelBankReport = () => {
+    let newReportData = {
+      FirstName: userLoginHistory.FirstName.value,
+      LastName: userLoginHistory.LastName.value,
+      Email: userLoginHistory.Email.value,
+      BankName: userLoginHistory.BankName.value,
+      FromDate:
+        userLoginHistory.startDate.value !== ""
+          ? moment(userLoginHistory.startDate.value).format("YYYYMMDD")
+          : "",
+      ToDate:
+        userLoginHistory.endDate.value !== ""
+          ? moment(userLoginHistory.endDate.value).format("YYYYMMDD")
+          : "",
+    };
+    dispatch(bankUserDownloadReport(newReportData));
   };
 
   //ON CHANGE HANDLER FOR CATEGORY DROPDOWN
@@ -404,11 +424,6 @@ const UserLogin = () => {
     },
   ];
 
-  // dispatch getALLCategoryDropdown API
-  useEffect(() => {
-    dispatch(getAllCategoriesCorporate(navigate));
-  }, []);
-
   //this useEffect Condition is for when user hit search btn if data is same or not
   useEffect(() => {
     if (
@@ -434,21 +449,6 @@ const UserLogin = () => {
       setRows([]);
     }
   }, [auth.bankUserLoginHistory]);
-
-  // for category Corporate in select drop down
-  useEffect(() => {
-    if (Object.keys(auth.getAllCorporate).length > 0) {
-      let tem = [];
-      auth.getAllCorporate.map((data, index) => {
-        console.log(data, "datadatadatadatassssss");
-        tem.push({
-          label: data.category,
-          value: data.corporateCategoryID,
-        });
-      });
-      setSelectCategoryBank(tem);
-    }
-  }, [auth.getAllCorporate]);
 
   return (
     <Fragment>
@@ -547,6 +547,7 @@ const UserLogin = () => {
                   />
                   <Button
                     text="Downlaod Excel"
+                    onClick={downloadExcelBankReport}
                     icon={<i className="icon-download-excel"></i>}
                     className={"Download-Excel-btn"}
                   />
@@ -572,6 +573,8 @@ const UserLogin = () => {
           </Col>
         </Row>
       </section>
+
+      {downloadReducer.Loading ? <Loader /> : null}
     </Fragment>
   );
 };

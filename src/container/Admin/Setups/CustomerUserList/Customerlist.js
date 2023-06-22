@@ -8,13 +8,14 @@ import {
   Loader,
 } from "../../../../components/elements";
 import { useDispatch, useSelector } from "react-redux";
-import ViewCustomer from "../../AdminModal/View-CustomerList-Modal/ViewCustomer";
+import ViewCustomer from "../../AdminModal/View-CustomerUserList-Modal/ViewCustomer";
 import { validateEmail } from "../../../../commen/functions/emailValidation";
 import {
   getAllCorporateUserApi,
   bankCorporateAPI,
   searchUserCorporateApi,
   updateCorporateAPI,
+  corporateNameByBankId, // API FOR SHOW DATA IN COMPANY DROPDOWN
 } from "../../../../store/actions/System-Admin";
 import { useNavigate } from "react-router-dom";
 
@@ -48,6 +49,10 @@ const Customerlist = () => {
   const [selectBankCorporate, setSelectBankCorporate] = useState([]);
   const [selectBankCorporateValue, setSelectBankCorporateValue] = useState([]);
 
+  // state for company dropdown by using corporateNameByBankId API
+  const [companyDropdown, setCompanyDropdown] = useState([]);
+  const [companyDropdownValue, setCompanyDropdownValue] = useState([]);
+
   // state for table rows
   const [rows, setRows] = useState([]);
 
@@ -64,7 +69,7 @@ const Customerlist = () => {
       errorStatus: false,
     },
 
-    companyName: {
+    corporateNames: {
       value: "",
       errorMessage: "",
       errorStatus: false,
@@ -88,7 +93,11 @@ const Customerlist = () => {
       errorMessage: "",
       errorStatus: false,
     },
-    bankID: 0,
+    BankID: {
+      value: 1,
+      errorMessage: "",
+      errorStatus: false,
+    },
     corporateID: {
       value: "",
       label: "",
@@ -97,9 +106,44 @@ const Customerlist = () => {
     },
   });
 
+  // show data in company name dropdown
+  useEffect(() => {
+    let corporateBank = {
+      BankID: customerListFields.BankID.value,
+    };
+    dispatch(corporateNameByBankId(navigate, corporateBank));
+  }, []);
+
+  // for corporate company in select drop down we use bankCorporate
+  useEffect(() => {
+    if (Object.keys(systemReducer.corporateNameByBankId).length > 0) {
+      let tem = [];
+      systemReducer.corporateNameByBankId.map((data, index) => {
+        console.log(data, "corporateNamecorporateName");
+        tem.push({
+          label: data.corporateName,
+          value: data.corporateName,
+        });
+      });
+      setCompanyDropdown(tem);
+    }
+  }, [systemReducer.corporateNameByBankId]);
+
+  //ON CHANGE HANDLER FOR CORPORATE COMPANY DROPDOWN
+  const selectBankCompanyOnchangeHandler = async (selectedCompany) => {
+    console.log(selectedCompany, "selectedNatureselectedNature");
+    setCompanyDropdownValue(selectedCompany);
+    setCustomerListFields({
+      ...customerListFields,
+      corporateNames: {
+        label: selectedCompany.label,
+      },
+    });
+  };
+
   // state for View Customer List Modal
   const [modalViewCustomerList, setModalViewCustomerList] = useState({
-    Email: "",
+    firstName: "",
     FirstName: {
       value: "",
       errorMessage: "",
@@ -228,12 +272,17 @@ const Customerlist = () => {
 
   // dispatch getALLCategoryDropdown API and getAllCompanyCorporate
   useEffect(() => {
+    let corporateBank = {
+      BankID: customerListFields.BankID.value,
+    };
+    dispatch(corporateNameByBankId(navigate, corporateBank));
+
     dispatch(getAllCategoriesCorporate(navigate));
     dispatch(getAllCorporateCompany(navigate));
-    let bankCorporateData = {
+    let newData = {
       BankID: 1,
     };
-    dispatch(bankCorporateAPI(navigate, bankCorporateData));
+    dispatch(bankCorporateAPI(navigate, newData));
 
     let corporateSearchData = {
       FirstName: "",
@@ -382,7 +431,7 @@ const Customerlist = () => {
       FirstName: customerListFields.FirstName.value,
       LastName: customerListFields.LastName.value,
       Email: customerListFields.Email.value,
-      CompanyName: customerListFields.corporates.label,
+      CompanyName: customerListFields.corporateNames.label,
       CategoryID: 0,
     };
     await dispatch(searchUserCorporateApi(navigate, corporateSearchData));
@@ -506,7 +555,7 @@ const Customerlist = () => {
       },
     });
     setSelectAllCategoryValue([]);
-    setSelectBankCorporateValue([]);
+    setCompanyDropdownValue([]);
 
     let corporateSearchData = {
       FirstName: "",
@@ -517,11 +566,6 @@ const Customerlist = () => {
       userID: 0,
     };
     dispatch(searchUserCorporateApi(navigate, corporateSearchData));
-  };
-
-  //open view customer list modal
-  const openViewModal = () => {
-    setCustomerViewModal(true);
   };
 
   // Open View Customer Modal in which it take status and Category value in dropdown
@@ -550,6 +594,7 @@ const Customerlist = () => {
         console.log(companyNew, record, "openViewCustomerModal");
         await setModalViewCustomerList({
           ...modalViewCustomerList,
+          firstName: record.firstName,
           Email: record.email,
           FirstName: {
             value: record.firstName,
@@ -687,12 +732,12 @@ const Customerlist = () => {
                 </Col>
                 <Col lg={3} md={3} sm={12}>
                   <Select
-                    placeholder="Select"
-                    name="corporates"
-                    options={selectBankCorporate}
-                    value={selectBankCorporateValue}
+                    placeholder="Company"
+                    name="corporateNames"
+                    options={companyDropdown}
+                    value={companyDropdownValue}
                     isSearchable={true}
-                    onChange={selectAllCorporateBankOnchangeHandler}
+                    onChange={selectBankCompanyOnchangeHandler}
                     className="select-customer-list-fontsize"
                   />
                 </Col>

@@ -15,7 +15,12 @@ import {
   getStatusApi,
 } from "../../../../store/actions/Auth-Actions";
 
-import { getUserBank } from "../../../../store/actions/Security-Admin";
+import {
+  getUserBank,
+  searchBankUserList,
+  updateByUserIdBank,
+} from "../../../../store/actions/Security-Admin";
+import BankUserListModal from "../../AdminModal/Bank-User-list-Modal/BankUserListModal";
 import Select from "react-select";
 import { Spin } from "antd";
 import "./BankList.css";
@@ -24,10 +29,8 @@ import { useEffect } from "react";
 const BankList = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { systemReducer, auth, securityReducer } = useSelector(
-    (state) => state
-  );
-  console.log(systemReducer, auth, securityReducer, "systemAdminsystemAdmin");
+  const { auth, securityReducer } = useSelector((state) => state);
+  console.log(auth, securityReducer, "systemAdminsystemAdmin");
 
   // state for table rows
   const [rows, setRows] = useState([]);
@@ -40,13 +43,32 @@ const BankList = () => {
   const [selectStatus, setSelectStatus] = useState([]);
   const [selectStatusValue, setSelectStatusValue] = useState([]);
 
+  //state for bank view status
+  const [selectViewModalStatus, setSelectViewModalStatus] = useState([]);
+  const [selectViewModalStatusValue, setSelectViewModalStatusValue] = useState(
+    []
+  );
+
+  // state for view bank modal
+  const [bankModal, setBankModal] = useState(false);
+
   //dispatch userrole list api
   useEffect(() => {
     dispatch(allUserRoles(navigate));
     dispatch(getStatusApi(navigate));
+
+    let bankUserSearch = {
+      FirstName: "",
+      LastName: "",
+      RoleID: 0,
+      StatusID: 0,
+      Email: "",
+      Contact: "",
+    };
+    dispatch(searchBankUserList(navigate, bankUserSearch));
   }, []);
 
-  //state for customer list fields
+  //state for bank list fields
   const [bankListFields, setBankListFields] = useState({
     FirstName: {
       value: "",
@@ -72,13 +94,13 @@ const BankList = () => {
     },
 
     userRoles: {
-      value: "",
+      value: 0,
       errorMessage: "",
       errorStatus: false,
     },
 
     userStatus: {
-      value: "",
+      value: 0,
       errorMessage: "",
       errorStatus: false,
     },
@@ -90,6 +112,211 @@ const BankList = () => {
     },
   });
 
+  // state for BanKList View Modal
+  const [bankViewField, setBankViewField] = useState({
+    firstName: "",
+    FirstName: {
+      value: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+
+    LastName: {
+      value: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+
+    Email: {
+      value: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+
+    userRoleID: {
+      value: 0,
+      errorMessage: "",
+      errorStatus: false,
+    },
+    userID: {
+      value: 0,
+      errorMessage: "",
+      errorStatus: false,
+    },
+    userStatus: {
+      value: 0,
+      errorMessage: "",
+      errorStatus: false,
+    },
+    contactNumber: {
+      value: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+
+    ldapAccount: {
+      value: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+  });
+  console.log(bankViewField, "bankViewFieldbankViewFieldbankViewField");
+  // validation for bank view Modal
+  const bankViewValidation = (e) => {
+    let name = e.target.name;
+    let value = e.target.value;
+
+    if (name === "FirstName" && value !== "") {
+      let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
+      console.log("valueCheckvalueCheck", valueCheck);
+      if (valueCheck !== "") {
+        setBankViewField({
+          ...bankViewField,
+          FirstName: {
+            value: valueCheck.trimStart(),
+            errorMessage: "",
+            errorStatus: false,
+          },
+        });
+      }
+    } else if (name === "FirstName" && value === "") {
+      setBankViewField({
+        ...bankViewField,
+        FirstName: { value: "", errorMessage: "", errorStatus: false },
+      });
+    }
+
+    if (name === "LastName" && value !== "") {
+      let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
+      console.log("valueCheckvalueCheck", valueCheck);
+      if (valueCheck !== "") {
+        setBankViewField({
+          ...bankViewField,
+          LastName: {
+            value: valueCheck.trimStart(),
+            errorMessage: "",
+            errorStatus: false,
+          },
+        });
+      }
+    } else if (name === "LastName" && value === "") {
+      setBankViewField({
+        ...bankViewField,
+        LastName: { value: "", errorMessage: "", errorStatus: false },
+      });
+    }
+
+    if (name === "Email" && value !== "") {
+      console.log("valuevalueemailvaluevalueemail", value);
+      if (value !== "") {
+        setBankViewField({
+          ...bankViewField,
+          Email: {
+            value: value.trimStart(),
+            errorMessage: "",
+            errorStatus: false,
+          },
+        });
+      }
+    } else if (name === "Email" && value === "") {
+      setBankViewField({
+        ...bankViewField,
+        Email: {
+          value: "",
+          errorMessage: "",
+          errorStatus: true,
+        },
+      });
+    }
+  };
+
+  //userStatus on select dropdown
+  //onChange for modaledit userStatus state passing props in modal on bottom
+  const SelectStatusBankViewModalHandler = (selectStatus) => {
+    console.log(selectStatus, "check");
+    setBankViewField({
+      ...bankViewField,
+      userStatus: {
+        value: selectStatus.value,
+        label: selectStatus.label,
+        errorMessage: "",
+        errorStatus: false,
+      },
+    });
+  };
+
+  // func to open viewBankModal
+  const openViewModal = async (record) => {
+    let newStatus;
+    console.log(record, "recordrecord");
+
+    // try {
+    //   if (Object.keys(auth.allUserStatus).length > 0) {
+    //     await auth.allUserStatus.map((data, index) => {
+    //       console.log(data, record, "openViewCustomerModal");
+    //       if (data.corporateName === record.userStatusID) {
+    //         newStatus = {
+    //           label: data.corporateName,
+    //           value: data.statusID,
+    //         };
+    //       }
+    //     });
+    //   }
+    // } catch {
+    //   console.log("error on company Corporate select");
+    // }
+
+    try {
+      if (Object.keys(record).length > 0) {
+        console.log(record, "openViewCustomerModal");
+        await setBankViewField({
+          ...bankViewField,
+          firstName: record.firstName,
+          userID: {
+            value: record.userID,
+            errorMessage: "",
+            errorStatus: false,
+          },
+          Email: {
+            value: record.email,
+            errorMessage: "",
+            errorStatus: false,
+          },
+          FirstName: {
+            value: record.firstName,
+            errorMessage: "",
+            errorStatus: false,
+          },
+          LastName: {
+            value: record.lastname,
+            errorMessage: "",
+            errorStatus: false,
+          },
+          userStatus: {
+            value: record.userStatusID,
+            errorMessage: "",
+            errorStatus: false,
+          },
+          userRoleID: {
+            value: record.userRoleID,
+          },
+          contactNumber: {
+            value: record.contactNumber,
+            errorMessage: "",
+            errorStatus: false,
+          },
+
+          ldapAccount: {
+            value: record.ldapAccount,
+          },
+        });
+      }
+    } catch {
+      console.log("error on TextFields");
+    }
+    setBankModal(true);
+  };
+
   // dispatch get all bank user list API
   useEffect(() => {
     let newBankList = {
@@ -97,6 +324,19 @@ const BankList = () => {
     };
     dispatch(getUserBank(navigate, newBankList));
   }, []);
+
+  // dispatch search bank User api
+  useEffect(() => {
+    if (
+      securityReducer.searchBankUsers.length > 0 &&
+      securityReducer.searchBankUsers !== null &&
+      securityReducer.searchBankUsers !== undefined
+    ) {
+      setRows(securityReducer.searchBankUsers);
+    } else {
+      setRows([]);
+    }
+  }, [securityReducer.searchBankUsers]);
 
   //this use Effect is used to show bank user list data in table
   useEffect(() => {
@@ -110,6 +350,54 @@ const BankList = () => {
       setRows([]);
     }
   }, [securityReducer.bankUserList]);
+
+  // on search Button hit in bank user list
+  const onSearchHit = async () => {
+    let bankUserSearch = {
+      FirstName: bankListFields.FirstName.value,
+      LastName: bankListFields.LastName.value,
+      RoleID: bankListFields.userRoles.value,
+      StatusID: bankListFields.userStatus.value,
+      Email: bankListFields.Email.value,
+      Contact: "",
+    };
+    console.log(bankUserSearch, "bankUserSearchbankUserSearch");
+    await dispatch(searchBankUserList(navigate, bankUserSearch));
+  };
+
+  //on update button click in bank view modal
+  const updateUserByBankIdOnClick = () => {
+    let newBankUserData = {
+      user: {
+        FirstName: bankViewField.FirstName.value,
+        Lastname: bankViewField.LastName.value,
+        UserRoleID: bankViewField.userRoleID.value,
+        ContactNumber: bankViewField.contactNumber.value,
+        Email: bankViewField.Email.value,
+        UserID: bankViewField.userID.value,
+      },
+    };
+    let newBankList = {
+      BankId: bankListFields.BankId.value,
+    };
+    let bankUserSearch = {
+      FirstName: "",
+      LastName: "",
+      RoleID: 0,
+      StatusID: 0,
+      Email: "",
+      Contact: "",
+    };
+    dispatch(
+      updateByUserIdBank(
+        navigate,
+        newBankUserData,
+        setBankModal,
+        bankUserSearch,
+        newBankList
+      )
+    );
+  };
 
   // validation for customer List
   const bankListValidation = (e) => {
@@ -238,6 +526,11 @@ const BankList = () => {
     });
     setSelectStatusValue([]);
     setSelectRoleValue([]);
+
+    let newBankList = {
+      BankId: bankListFields.BankId.value,
+    };
+    dispatch(getUserBank(navigate, newBankList));
   };
 
   //on change handler for user select role
@@ -302,10 +595,17 @@ const BankList = () => {
       title: <label className="bottom-table-header">Email</label>,
       dataIndex: "email",
       key: "email",
-      width: "150px",
+      width: "200px",
       render: (text, record) => {
         console.log(record, "recordrecord");
-        return <label className="table-columns">{text}</label>;
+        return (
+          <label
+            className="table-columns"
+            onClick={() => openViewModal(record)}
+          >
+            {text}
+          </label>
+        );
       },
     },
     {
@@ -344,8 +644,8 @@ const BankList = () => {
     },
     {
       title: <label className="bottom-table-header">Status</label>,
-      dataIndex: "statusid",
-      key: "statusid",
+      dataIndex: "userStatusID",
+      key: "userStatusID",
       width: "150px",
       align: "center",
       ellipsis: true,
@@ -443,6 +743,7 @@ const BankList = () => {
                   <Button
                     icon={<i className="icon-search icon-check-space"></i>}
                     className="Search-btn"
+                    onClick={onSearchHit}
                     text="Search"
                   />
                   <Button
@@ -464,7 +765,7 @@ const BankList = () => {
                       column={columns}
                       rows={rows}
                       pagination={false}
-                      className="CustomerList-table"
+                      className="BankUserList-table"
                     />
                   )}
                 </Col>
@@ -473,6 +774,21 @@ const BankList = () => {
           </Col>
         </Row>
       </section>
+      {bankModal ? (
+        <Fragment>
+          <BankUserListModal
+            viewBankModal={bankModal}
+            setViewBankModal={setBankModal}
+            bankViewField={bankViewField}
+            setBankViewField={setBankViewField}
+            bankValidation={bankViewValidation}
+            onChangeStatusSelect={SelectStatusBankViewModalHandler}
+            statusRoleOption={selectStatus}
+            updateUserByBankIdOnClick={updateUserByBankIdOnClick}
+          />
+        </Fragment>
+      ) : null}
+      {securityReducer.Loading ? <Loader /> : null}
     </Fragment>
   );
 };

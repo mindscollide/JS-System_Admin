@@ -5,6 +5,7 @@ import {
   TextField,
   Button,
   Table,
+  Loader,
 } from "../../../../components/elements";
 import { validateEmail } from "../../../../commen/functions/emailValidation";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,6 +15,7 @@ import {
   searchCompanyLogin, // this api is used for seacrh user login history
 } from "../../../../store/actions/Auth-Actions";
 import { corporateNameByBankId } from "../../../../store/actions/System-Admin";
+import { downloadCorporateLoginReports } from "../../../../store/actions/Download-Report";
 import { Spin } from "antd";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
@@ -24,7 +26,9 @@ import "./LoginHistory.css";
 const LoginHistory = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { auth, systemReducer } = useSelector((state) => state);
+  const { auth, systemReducer, downloadReducer } = useSelector(
+    (state) => state
+  );
   console.log(auth, "aaaa");
   // state for row in which table data set
   const [rows, setRows] = useState([]);
@@ -119,15 +123,15 @@ const LoginHistory = () => {
   // dispatch getALLCategoryDropdown and customerLoginHistory API
   useEffect(() => {
     dispatch(getAllCategoriesCorporate(navigate));
+
     let corporateBank = {
       BankID: loginHistoryField.BankID.value,
     };
-
     dispatch(corporateNameByBankId(navigate, corporateBank));
+
     let loginData = {
       CorporateID: loginHistoryField.CorporateID.value,
     };
-
     dispatch(getCustomerLoginHistory(navigate, loginData));
   }, []);
   console.log(loginHistoryField, "loginHistoryFieldloginHistoryField");
@@ -295,6 +299,26 @@ const LoginHistory = () => {
     }
   };
 
+  // onclick to download report of customer user login
+  const downloadExcelReport = () => {
+    let data = {
+      FirstName: loginHistoryField.FirstName.value,
+      LastName: loginHistoryField.LastName.value,
+      CompanyName: loginHistoryField.corporateNames.label,
+      Email: loginHistoryField.Email.value,
+      FromDate:
+        loginHistoryField.startDate.value !== ""
+          ? moment(loginHistoryField.startDate.value).format("YYYYMMDD")
+          : "",
+      ToDate:
+        loginHistoryField.endDate.value !== ""
+          ? moment(loginHistoryField.endDate.value).format("YYYYMMDD")
+          : "",
+      CategoryID: 0,
+    };
+    dispatch(downloadCorporateLoginReports(data));
+  };
+
   // column for LoginHistory
   const columns = [
     {
@@ -350,7 +374,7 @@ const LoginHistory = () => {
         return (
           <span>
             {moment(`${record.loginDate} ${record.loginTime}`).format(
-              "Do-MM-YYYY HH:MM:ss"
+              "YYYY-MM-DD HH:MM:ss"
             )}{" "}
           </span>
         );
@@ -449,42 +473,43 @@ const LoginHistory = () => {
   console.log("customerlisst", rows);
 
   return (
-    <section className="me-4">
-      <Row>
-        <Col lg={12} md={12} sm={12}>
-          <span className="LoginHistory-label">
-            Customer User Login History
-          </span>
-        </Col>
-      </Row>
+    <Fragment>
+      <section className="me-4">
+        <Row>
+          <Col lg={12} md={12} sm={12}>
+            <span className="LoginHistory-label">
+              Customer User Login History
+            </span>
+          </Col>
+        </Row>
 
-      <Row className="mt-3">
-        <Col lg={12} md={12} sm={12}>
-          <CustomPaper className="LoginHistory-paper">
-            <Row className="mt-3">
-              <Col lg={3} md={3} sm={12}>
-                <TextField
-                  placeholder="FirstName"
-                  name="FirstName"
-                  value={loginHistoryField.FirstName.value}
-                  onChange={customerListValidation}
-                  labelClass="d-none"
-                  className="loginHistor-textField-fontsize"
-                />
-              </Col>
+        <Row className="mt-3">
+          <Col lg={12} md={12} sm={12}>
+            <CustomPaper className="LoginHistory-paper">
+              <Row className="mt-3">
+                <Col lg={3} md={3} sm={12}>
+                  <TextField
+                    placeholder="FirstName"
+                    name="FirstName"
+                    value={loginHistoryField.FirstName.value}
+                    onChange={customerListValidation}
+                    labelClass="d-none"
+                    className="loginHistor-textField-fontsize"
+                  />
+                </Col>
 
-              <Col lg={3} md={3} sm={12}>
-                <TextField
-                  placeholder="LastName"
-                  name="LastName"
-                  value={loginHistoryField.LastName.value}
-                  onChange={customerListValidation}
-                  labelClass="d-none"
-                  className="loginHistor-textField-fontsize"
-                />
-              </Col>
-              <Col lg={3} md={3} sm={12}>
-                {/* <TextField
+                <Col lg={3} md={3} sm={12}>
+                  <TextField
+                    placeholder="LastName"
+                    name="LastName"
+                    value={loginHistoryField.LastName.value}
+                    onChange={customerListValidation}
+                    labelClass="d-none"
+                    className="loginHistor-textField-fontsize"
+                  />
+                </Col>
+                <Col lg={3} md={3} sm={12}>
+                  {/* <TextField
                         placeholder="Company Name"
                         name="CompanyName"
                         value={loginHistoryField.CompanyName.value}
@@ -492,110 +517,118 @@ const LoginHistory = () => {
                         labelClass="d-none"
                         className="loginHistor-textField-fontsize"
                       /> */}
-                <Select
-                  name="corporateNames"
-                  options={selectCompany}
-                  value={selectCompanyValue}
-                  isSearchable={true}
-                  onChange={corporateBankIdSelectOnchangeHandler}
-                  placeholder="Company"
-                  className="loginHistor-textField-fontsize"
-                />
-              </Col>
-              <Col lg={3} md={3} sm={12}>
-                <TextField
-                  placeholder="Email"
-                  name="Email"
-                  value={loginHistoryField.Email.value}
-                  onBlur={handlerEmail}
-                  onChange={customerListValidation}
-                  labelClass="d-none"
-                  className="loginHistor-textField-fontsize"
-                />
-              </Col>
-            </Row>
-            <Row className="mt-3">
-              <Col lg={3} md={3} sm={12}>
-                <Select
-                  name="corporateCategoryID"
-                  options={selectCategory}
-                  value={selectCategoryValue}
-                  isSearchable={true}
-                  onChange={selectCategoryOnchangeHandler}
-                  placeholder="Category"
-                  className="loginHistor-textField-fontsize"
-                />
-              </Col>
-              <Col lg={8} md={8} sm={12} className="LoginHistory-Datepicker">
-                <DatePicker
-                  // {...startDateProps}
-                  // onPropsChange={setStartDateProps}
-                  value={loginHistoryField.startDate.value}
-                  placeholder="Start date"
-                  showOtherDays={true}
-                  onChange={(value) =>
-                    changeDateStartHandler(value?.toDate?.().toString())
-                  }
-                  inputClass="LoginHistory-Datepicker-left"
-                />
-                <label className="LoginHistory-date-to">to</label>
-
-                <DatePicker
-                  // {...endDateProps}
-                  // onPropsChange={setEndDateProps}
-                  value={loginHistoryField.endDate.value}
-                  placeholder="End Date"
-                  showOtherDays={true}
-                  onChange={(value) =>
-                    changeDateEndHandler(value?.toDate?.().toString())
-                  }
-                  inputClass="LoginHistory-Datepicker-right"
-                />
-              </Col>
-              <Col lg={1} md={1} sm={12} />
-            </Row>
-            <Row className="mt-3">
-              <Col lg={12} md={12} sm={12} className="col-search-download-btn">
-                <Button
-                  text="Search"
-                  onClick={onSearchButtonHit}
-                  icon={<i className="icon-search Icons-right"></i>}
-                  className={"Search-HistoryLog-btn"}
-                />
-                <Button
-                  text="Reset"
-                  icon={<i className="icon-refresh Icons-right"></i>}
-                  onClick={loginResetHandler}
-                  className={"Reset-btn-login"}
-                />
-                <Button
-                  text="Downlaod Excel"
-                  icon={<i className="icon-download-excel Icons-right"></i>}
-                  className={"Download-Excel-btn"}
-                />
-              </Col>
-            </Row>
-            <Row className="mt-3">
-              <Col lg={12} md={12} sm={12}>
-                {auth.Spinner === true ? (
-                  <span className="customer-login-user-spinner">
-                    <Spin size="large" />
-                  </span>
-                ) : (
-                  <Table
-                    column={columns}
-                    rows={rows}
-                    pagination={false}
-                    // scroll={{ y: "500", x: "500" }}
-                    className="LoginHistory-table"
+                  <Select
+                    name="corporateNames"
+                    options={selectCompany}
+                    value={selectCompanyValue}
+                    isSearchable={true}
+                    onChange={corporateBankIdSelectOnchangeHandler}
+                    placeholder="Company"
+                    className="loginHistor-textField-fontsize"
                   />
-                )}
-              </Col>
-            </Row>
-          </CustomPaper>
-        </Col>
-      </Row>
-    </section>
+                </Col>
+                <Col lg={3} md={3} sm={12}>
+                  <TextField
+                    placeholder="Email"
+                    name="Email"
+                    value={loginHistoryField.Email.value}
+                    onBlur={handlerEmail}
+                    onChange={customerListValidation}
+                    labelClass="d-none"
+                    className="loginHistor-textField-fontsize"
+                  />
+                </Col>
+              </Row>
+              <Row className="mt-3">
+                <Col lg={3} md={3} sm={12}>
+                  <Select
+                    name="corporateCategoryID"
+                    options={selectCategory}
+                    value={selectCategoryValue}
+                    isSearchable={true}
+                    onChange={selectCategoryOnchangeHandler}
+                    placeholder="Category"
+                    className="loginHistor-textField-fontsize"
+                  />
+                </Col>
+                <Col lg={8} md={8} sm={12} className="LoginHistory-Datepicker">
+                  <DatePicker
+                    // {...startDateProps}
+                    // onPropsChange={setStartDateProps}
+                    value={loginHistoryField.startDate.value}
+                    placeholder="Start date"
+                    showOtherDays={true}
+                    onChange={(value) =>
+                      changeDateStartHandler(value?.toDate?.().toString())
+                    }
+                    inputClass="LoginHistory-Datepicker-left"
+                  />
+                  <label className="LoginHistory-date-to">to</label>
+
+                  <DatePicker
+                    // {...endDateProps}
+                    // onPropsChange={setEndDateProps}
+                    value={loginHistoryField.endDate.value}
+                    placeholder="End Date"
+                    showOtherDays={true}
+                    onChange={(value) =>
+                      changeDateEndHandler(value?.toDate?.().toString())
+                    }
+                    inputClass="LoginHistory-Datepicker-right"
+                  />
+                </Col>
+                <Col lg={1} md={1} sm={12} />
+              </Row>
+              <Row className="mt-3">
+                <Col
+                  lg={12}
+                  md={12}
+                  sm={12}
+                  className="col-search-download-btn"
+                >
+                  <Button
+                    text="Search"
+                    onClick={onSearchButtonHit}
+                    icon={<i className="icon-search Icons-right"></i>}
+                    className={"Search-HistoryLog-btn"}
+                  />
+                  <Button
+                    text="Reset"
+                    icon={<i className="icon-refresh Icons-right"></i>}
+                    onClick={loginResetHandler}
+                    className={"Reset-btn-login"}
+                  />
+                  <Button
+                    text="Downlaod Excel"
+                    onClick={downloadExcelReport}
+                    icon={<i className="icon-download-excel Icons-right"></i>}
+                    className={"Download-Excel-btn"}
+                  />
+                </Col>
+              </Row>
+              <Row className="mt-3">
+                <Col lg={12} md={12} sm={12}>
+                  {auth.Spinner === true ? (
+                    <span className="customer-login-user-spinner">
+                      <Spin size="large" />
+                    </span>
+                  ) : (
+                    <Table
+                      column={columns}
+                      rows={rows}
+                      pagination={false}
+                      // scroll={{ y: "500", x: "500" }}
+                      className="LoginHistory-table"
+                    />
+                  )}
+                </Col>
+              </Row>
+            </CustomPaper>
+          </Col>
+        </Row>
+      </section>
+      {downloadReducer.Loading ? <Loader /> : null}
+    </Fragment>
   );
 };
 

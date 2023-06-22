@@ -131,7 +131,7 @@ const ViewCustomer = ({
                   >
                     <span className="Modal-Upload-Customer-Title">
                       {/* Muhammad Ahmed */}
-                      <span>{modalViewCustomerList.FirstName.value}</span>
+                      <span>{modalViewCustomerList.firstName}</span>
                       {modalViewCustomerList.statusId === 1 ? (
                         <span className="Active-member">Enabled</span>
                       ) : modalViewCustomerList.statusId === 2 ? (

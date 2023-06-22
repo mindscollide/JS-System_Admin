@@ -16,7 +16,7 @@ import CounterLimit from "../container/Admin/Reports/CounterParty/CounterLimit";
 import VolMeter from "../container/Admin/Reports/VolMeter/VolMeter";
 import Customerlist from "../container/Admin/Setups/CustomerUserList/Customerlist";
 import BankList from "../container/Admin/Setups/BankUserList/BankList";
-import Userlist from "../container/Admin/Setups/UserList/UserList";
+import Userlist from "../container/Admin/Setups/CustomerList/UserList";
 
 import AdminLogin from "../container/AdminLogin/Login/AdminLogin";
 import SignUpRequest from "../container/AdminLogin/SignUp-Request/SignupRequest";

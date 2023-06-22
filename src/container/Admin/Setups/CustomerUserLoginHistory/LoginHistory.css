@@ -207,7 +207,3 @@
 .Icons-right {
   margin-right: 5px;
 }
-
-.email-table-cursor:is(:hover) {
-  /* display: none !important; */
-}

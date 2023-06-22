@@ -9,6 +9,7 @@ import Modal from "./modal/Modal";
 import CustomRadio from "./radioButton/Radio";
 import Table from "./table/Table";
 import Loader from "./loader/Loader";
+import CustomUpload from "./upload/Upload";
 
 export {
   Button,
@@ -22,4 +23,5 @@ export {
   CustomPaper,
   CustomRadio,
   Table,
+  CustomUpload,
 };

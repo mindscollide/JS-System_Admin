@@ -1,21 +1,26 @@
 import { applyMiddleware, combineReducers } from "redux";
 import thunk from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
+// import { authReducer, systemReducer, securityReducer } from "./reducers";
 
+import { configureStore } from "@reduxjs/toolkit";
+import * as actions from "./action_types";
 import {
   authReducer,
   systemReducer,
   securityReducer,
+  downloadReducer,
+  uploadReducer,
   AddCategory,
   UpdateCategoryMap,
 } from "./reducers";
-import { configureStore } from "@reduxjs/toolkit";
-import * as actions from "./action_types";
 
 const AppReducer = combineReducers({
   auth: authReducer,
   systemReducer: systemReducer,
   securityReducer: securityReducer,
+  downloadReducer: downloadReducer,
+  uploadReducer: uploadReducer,
   AddCategory: AddCategory,
   UpdateCategoryMap: UpdateCategoryMap,
 });
