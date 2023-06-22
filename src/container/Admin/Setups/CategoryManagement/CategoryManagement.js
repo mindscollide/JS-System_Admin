@@ -22,38 +22,11 @@ const CategoryManagement = () => {
   const { Panel } = Collapse;
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { auth } = useSelector((state) => state);
   const [corporates, setCorporates] = useState([]);
   const { AddCategory, UpdateCategoryMap } = useSelector((state) => state);
-
-  //For Adding a Category
-  const [showaddcategory, setShowaddcategory] = useState(false);
-  const [clickadd, setClickadd] = useState(false);
+  //For edit a Category
   const [editCategoryList, setEditCategoryList] = useState([]);
-  const [addCategoryList, setAddCategoryList] = useState([]);
-  const [adddata, setadddata] = useState({
-    category: {
-      value: "",
-      errorMessage: "",
-      errorStatus: false,
-    },
-    bidSpread: {
-      value: null,
-      errorMessage: "",
-      errorStatus: false,
-    },
-    offerSpread: {
-      value: null,
-      errorMessage: "",
-      errorStatus: false,
-    },
-    AssetTypeId: {
-      value: 1,
-      errorMessage: "",
-      errorStatus: false,
-    },
-
-    BankID: 1,
-  });
   const [categoryupdate, setCategoryUpdate] = useState({
     category: {
       value: "",
@@ -82,13 +55,42 @@ const CategoryManagement = () => {
     },
     BankID: 1,
   });
-  const [delteCateogry, setDeltecategory] = useState([]);
-  const { auth } = useSelector((state) => state);
 
+  //For Adding a Category
+  const [addCategoryList, setAddCategoryList] = useState([]);
+  const [addData, setadDdata] = useState({
+    category: {
+      value: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+    bidSpread: {
+      value: null,
+      errorMessage: "",
+      errorStatus: false,
+    },
+    offerSpread: {
+      value: null,
+      errorMessage: "",
+      errorStatus: false,
+    },
+    AssetTypeId: {
+      value: 1,
+      errorMessage: "",
+      errorStatus: false,
+    },
+
+    BankID: 1,
+  });
+
+  const [delteCateogry, setDeltecategory] = useState([]);
+
+  // api call for get All category
   useEffect(() => {
     dispatch(getAllCorporatesCategory(navigate));
   }, []);
 
+  // store data of corporates in loacal variable
   useEffect(() => {
     let corporatesData = auth.Corporates;
     if (Object.keys(corporatesData).length > 0) {
@@ -96,63 +98,6 @@ const CategoryManagement = () => {
     }
   }, [auth.Corporates]);
 
-  useEffect(() => {
-    let corporatesData = UpdateCategoryMap.UpdateCategory;
-    if (Object.keys(corporatesData).length > 0) {
-      console.log("authauth12 UpdateCategoryMap", corporatesData);
-      console.log("authauth12 UpdateCategoryMap", categoryupdate);
-      let id = categoryupdate.categoryID.value;
-      const categoryIndex = corporates.findIndex(
-        (store) => store.categoryID === id.toString()
-      );
-      console.log("authauth12 UpdateCategoryMap", categoryIndex);
-
-      const newSourceItems = [...corporates];
-      const newSourceItem = newSourceItems[categoryIndex];
-      console.log("authauth12 UpdateCategoryMap", newSourceItem);
-
-      let data = {
-        categoryName: categoryupdate.category.value,
-        categoryID: categoryupdate.categoryID.value,
-        offerSpread: parseInt(categoryupdate.offerSpread.value),
-        bidSpread: parseInt(categoryupdate.bidSpread.value),
-        corporates: newSourceItems[categoryIndex].corporates,
-      };
-      if (categoryIndex !== -1) {
-        newSourceItems[categoryIndex] = data;
-        setCorporates(newSourceItems);
-      }
-      setEditCategoryList([]);
-      setCategoryUpdate({
-        category: {
-          value: "",
-          errorMessage: "",
-          errorStatus: false,
-        },
-        bidSpread: {
-          value: null,
-          errorMessage: "",
-          errorStatus: false,
-        },
-        offerSpread: {
-          value: null,
-          errorMessage: "",
-          errorStatus: false,
-        },
-        AssetTypeId: {
-          value: 1,
-          errorMessage: "",
-          errorStatus: false,
-        },
-        categoryID: {
-          value: 0,
-          errorMessage: "",
-          errorStatus: false,
-        },
-        BankID: 1,
-      });
-    }
-  }, [UpdateCategoryMap.UpdateCategory]);
   console.log("authauth12 UpdateCategoryMap corporates", corporates);
 
   //Sliders Function
@@ -166,24 +111,7 @@ const CategoryManagement = () => {
     Slider.scrollLeft = Slider.scrollLeft + 300;
   };
 
-  const OpenAddCategory = (recorde) => {
-    if (addCategoryList.length > 0) {
-      setAddCategoryList([...addCategoryList, recorde]);
-    } else {
-      setAddCategoryList([recorde]);
-    }
-  };
-
-  const checkForAdd = (recorde) => {
-    let newdata = addCategoryList.find((element) => element === recorde);
-    console.log(newdata, "hhhhhhh");
-    if (newdata != undefined) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
+  //  for drage card
   const handleDragEnd = (results) => {
     const { source, destination, type } = results;
     console.log("handleDragEnd", results);
@@ -230,190 +158,7 @@ const CategoryManagement = () => {
     }
   };
 
-  const CloseNewCategory = (recorde) => {
-    let dataForSplice = [...addCategoryList];
-    let newIndex = addCategoryList.indexOf(recorde);
-    dataForSplice.splice(newIndex, 1);
-    setAddCategoryList(dataForSplice);
-  };
-
-  const CloseUpdateCategory = (recorde) => {
-    console.log("hhhhhhh", recorde);
-    let dataForSplice = [...editCategoryList];
-    let newIndex = editCategoryList.indexOf(recorde);
-    dataForSplice.splice(newIndex, 1);
-    setEditCategoryList(dataForSplice);
-    console.log("hhhhhhh", newIndex);
-  };
-
-  const AfterClickAdd = async (recorde) => {
-    let bankId = localStorage.getItem("bankID");
-    let Userid = localStorage.getItem("userID");
-    setClickadd(true);
-    console.log(" i am clicked", adddata);
-
-    let data = {
-      Category: adddata.category.value,
-      BidSpread: parseInt(adddata.bidSpread.value),
-      OfferSpread: parseInt(adddata.offerSpread.value),
-      AssetTypeId: 1,
-      BankID: parseInt(bankId),
-      UserId: parseInt(Userid),
-    };
-    await dispatch(Addcategory(navigate, data));
-    let dataForSplice = [...addCategoryList];
-    let newIndex = addCategoryList.indexOf(recorde);
-    dataForSplice.splice(newIndex, 1);
-    setAddCategoryList(dataForSplice);
-    console.log(" i am clicked");
-  };
-
-  const OpenEditCategory = (recorde, data) => {
-    console.log(data, "datadata");
-    setCategoryUpdate({
-      ...categoryupdate,
-      offerSpread: {
-        value: data.offerSpread,
-      },
-      category: {
-        value: data.categoryName,
-      },
-      bidSpread: {
-        value: data.bidSpread,
-      },
-      categoryID: {
-        value: data.categoryID,
-      },
-    });
-    let dataForSplice = [...addCategoryList];
-    let newIndex = addCategoryList.indexOf(recorde);
-    dataForSplice.splice(newIndex, 1);
-    setAddCategoryList(dataForSplice);
-    if (editCategoryList.length > 0) {
-      setEditCategoryList([...editCategoryList, recorde]);
-    } else {
-      setEditCategoryList([recorde]);
-    }
-  };
-  console.log(editCategoryList, "hhhhhhh");
-
-  const checkForEdit = (recorde) => {
-    let newdata = editCategoryList.find((element) => element === recorde);
-    console.log(newdata, "hhhhhhh");
-    if (newdata != undefined) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-  const addModal = (data, index) => {
-    return (
-      <Row>
-        <Col
-          lg={12}
-          md={12}
-          sm={12}
-          // key={newInstanceId}
-          className="add-cate-wrapper m-3"
-        >
-          <Row>
-            <Col lg={12} md={12} sm={12}>
-              <span className="Name_tag">
-                Name <span className="red_steric">*</span>
-              </span>
-            </Col>
-          </Row>
-
-          <Row>
-            <Col lg={12} md={12} sm={12} className="CreateMeetingInput">
-              <TextField
-                name="name"
-                applyClass="form-control2"
-                type="text"
-                maxLength={100}
-                labelClass="d-none"
-                required={true}
-                value={adddata.category.value}
-                onChange={CategoryManageState}
-              />
-            </Col>
-          </Row>
-
-          <Row className="mt-3">
-            <Col lg={12} md={12} sm={12}>
-              <span className="Name_tag">
-                Spread <span className="red_steric">*</span>
-              </span>
-            </Col>
-          </Row>
-
-          <Row className="mt-2">
-            <Col lg={6} md={6} sm={12} xs={12}>
-              <Row>
-                <Col lg={12} md={12} sm={12}>
-                  <span className="Name_tag">Bid</span>
-                </Col>
-              </Row>
-              <Row>
-                <Col lg={12} md={12} sm={12}>
-                  <TextField
-                    name="Bid"
-                    applyClass="form-control2"
-                    type="text"
-                    maxLength={100}
-                    labelClass="d-none"
-                    required={true}
-                    value={adddata.bidSpread.value}
-                    onChange={CategoryManageState}
-                  />
-                </Col>
-              </Row>
-            </Col>
-            <Col lg={6} md={6} sm={12} xs={12}>
-              <Row>
-                <Col lg={12} md={12} sm={12}>
-                  <span className="Name_tag">Offer</span>
-                </Col>
-              </Row>
-              <Row>
-                <Col lg={12} md={12} sm={12}>
-                  <TextField
-                    name="Offer"
-                    applyClass="form-control2"
-                    type="text"
-                    maxLength={100}
-                    labelClass="d-none"
-                    required={true}
-                    value={adddata.offerSpread.value}
-                    onChange={CategoryManageState}
-                  />
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-          <Row className="mt-3">
-            <Col
-              lg={12}
-              md={12}
-              sm={12}
-              className="d-flex justify-content-center gap-2"
-            >
-              <Button
-                className="Add_button_category"
-                text="Add"
-                onClick={AfterClickAdd}
-              />
-              <Button
-                className="Cancel_button_cateogry"
-                text="Cancel"
-                onClick={CloseNewCategory}
-              />
-            </Col>
-          </Row>
-        </Col>
-      </Row>
-    );
-  };
+  // for corporate data ui
   const showCards = (data) => {
     console.log("showCardsshowCards", data);
     if (Object.keys(data).length > 0) {
@@ -491,73 +236,125 @@ const CategoryManagement = () => {
     }
   };
 
-  const CategoryManageState = (e) => {
-    let name = e.target.name;
-    let value = e.target.value;
-    if (name === "name" && value !== "") {
-      let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
-      console.log("valueCheckvalueCheck", valueCheck);
-      if (valueCheck !== "") {
-        setadddata({
-          ...adddata,
-          category: {
-            value: valueCheck.trimStart(),
-            errorMessage: "",
-            errorStatus: false,
-          },
-        });
-      }
-    } else if (name === "name" && value === "") {
-      setadddata({
-        ...adddata,
-        category: { value: "", errorMessage: "", errorStatus: false },
-      });
-    }
+  // for edit
+  // Update Corporate Function with spinnner
+  useEffect(() => {
+    let corporatesData = UpdateCategoryMap.UpdateCategory;
+    if (Object.keys(corporatesData).length > 0) {
+      console.log("authauth12 UpdateCategoryMap", corporatesData);
+      console.log("authauth12 UpdateCategoryMap", categoryupdate);
+      let id = categoryupdate.categoryID.value;
+      const categoryIndex = corporates.findIndex(
+        (store) => store.categoryID === id.toString()
+      );
+      console.log("authauth12 UpdateCategoryMap", categoryIndex);
 
-    if (name === "Bid" && value !== "") {
-      console.log("valuevalueemailvaluevalueemail", value);
-      if (value !== "") {
-        setadddata({
-          ...adddata,
-          bidSpread: {
-            value: value.trimStart(),
-            errorMessage: "",
-            errorStatus: false,
-          },
-        });
+      const newSourceItems = [...corporates];
+      const newSourceItem = newSourceItems[categoryIndex];
+      console.log("authauth12 UpdateCategoryMap", newSourceItem);
+
+      let data = {
+        categoryName: categoryupdate.category.value,
+        categoryID: categoryupdate.categoryID.value,
+        offerSpread: parseInt(categoryupdate.offerSpread.value),
+        bidSpread: parseInt(categoryupdate.bidSpread.value),
+        corporates: newSourceItems[categoryIndex].corporates,
+      };
+      if (categoryIndex !== -1) {
+        newSourceItems[categoryIndex] = data;
+        setCorporates(newSourceItems);
       }
-    } else if (name === "Bid" && value === "") {
-      setadddata({
-        ...adddata,
+      setEditCategoryList([]);
+      setCategoryUpdate({
+        category: {
+          value: "",
+          errorMessage: "",
+          errorStatus: false,
+        },
         bidSpread: {
-          value: "",
+          value: null,
           errorMessage: "",
-          errorStatus: true,
+          errorStatus: false,
         },
+        offerSpread: {
+          value: null,
+          errorMessage: "",
+          errorStatus: false,
+        },
+        AssetTypeId: {
+          value: 1,
+          errorMessage: "",
+          errorStatus: false,
+        },
+        categoryID: {
+          value: 0,
+          errorMessage: "",
+          errorStatus: false,
+        },
+        BankID: 1,
       });
     }
+  }, [UpdateCategoryMap.UpdateCategory]);
 
-    if (name === "Offer" && value !== "") {
-      console.log("valuevalueemailvaluevalueemail", value);
-      if (value !== "") {
-        setadddata({
-          ...adddata,
-          offerSpread: {
-            value: value.trimStart(),
-            errorMessage: "",
-            errorStatus: false,
-          },
-        });
-      }
-    } else if (name === "Offer" && value === "") {
-      setadddata({
-        ...adddata,
-        offerSpread: {
-          value: "",
-          errorMessage: "",
-          errorStatus: true,
-        },
-      });
+  const OpenEditCategory = (recorde, data) => {
+    console.log(data, "datadata");
+    setAddCategoryList([]);
+    setadDdata({
+      category: {
+        value: "",
+        errorMessage: "",
+        errorStatus: false,
+      },
+      bidSpread: {
+        value: null,
+        errorMessage: "",
+        errorStatus: false,
+      },
+      offerSpread: {
+        value: null,
+        errorMessage: "",
+        errorStatus: false,
+      },
+      AssetTypeId: {
+        value: 1,
+        errorMessage: "",
+        errorStatus: false,
+      },
+
+      BankID: 1,
+    });
+    setCategoryUpdate({
+      offerSpread: {
+        value: data.offerSpread,
+        errorMessage: "",
+        errorStatus: false,
+      },
+      category: {
+        value: data.categoryName,
+        errorMessage: "",
+        errorStatus: false,
+      },
+      bidSpread: {
+        value: data.bidSpread,
+        errorMessage: "",
+        errorStatus: false,
+      },
+      categoryID: {
+        value: data.categoryID,
+        errorMessage: "",
+        errorStatus: false,
+      },
+    });
+    setEditCategoryList([recorde]);
+  };
+
+  const checkForEdit = (recorde) => {
+    let newdata = editCategoryList.find((element) => element === recorde);
+    console.log(newdata, "hhhhhhh");
+    if (newdata != undefined) {
+      return true;
+    } else {
+      return false;
     }
   };
 
@@ -644,6 +441,359 @@ const CategoryManagement = () => {
     };
     dispatch(UpdateMapCategory(navigate, data, setEditCategoryList));
   };
+
+  const CloseUpdateCategory = (recorde) => {
+    setCategoryUpdate({
+      category: {
+        value: "",
+        errorMessage: "",
+        errorStatus: false,
+      },
+      bidSpread: {
+        value: null,
+        errorMessage: "",
+        errorStatus: false,
+      },
+      offerSpread: {
+        value: null,
+        errorMessage: "",
+        errorStatus: false,
+      },
+      AssetTypeId: {
+        value: 1,
+        errorMessage: "",
+        errorStatus: false,
+      },
+      categoryID: {
+        value: 0,
+        errorMessage: "",
+        errorStatus: false,
+      },
+      BankID: 1,
+    });
+    setEditCategoryList([]);
+  };
+
+  // for add category
+  // Add Corporate Function with spinnner
+  useEffect(() => {
+    let corporatesData = AddCategory.addCategory;
+    if (Object.keys(corporatesData).length > 0) {
+      const newSourceItems = [...corporates];
+      let data = {
+        categoryName: addData.category.value,
+        categoryID: corporatesData.categoryID,
+        offerSpread: parseInt(addData.offerSpread.value),
+        bidSpread: parseInt(addData.bidSpread.value),
+        corporates: [],
+      };
+      newSourceItems.push(data);
+
+      setCorporates(newSourceItems);
+      setadDdata({
+        category: {
+          value: "",
+          errorMessage: "",
+          errorStatus: false,
+        },
+        bidSpread: {
+          value: null,
+          errorMessage: "",
+          errorStatus: false,
+        },
+        offerSpread: {
+          value: null,
+          errorMessage: "",
+          errorStatus: false,
+        },
+        AssetTypeId: {
+          value: 1,
+          errorMessage: "",
+          errorStatus: false,
+        },
+
+        BankID: 1,
+      });
+      setAddCategoryList([]);
+    }
+  }, [AddCategory.addCategory]);
+
+  const OpenAddCategory = (recorde) => {
+    setCategoryUpdate({
+      category: {
+        value: "",
+        errorMessage: "",
+        errorStatus: false,
+      },
+      bidSpread: {
+        value: null,
+        errorMessage: "",
+        errorStatus: false,
+      },
+      offerSpread: {
+        value: null,
+        errorMessage: "",
+        errorStatus: false,
+      },
+      AssetTypeId: {
+        value: 1,
+        errorMessage: "",
+        errorStatus: false,
+      },
+      categoryID: {
+        value: 0,
+        errorMessage: "",
+        errorStatus: false,
+      },
+      BankID: 1,
+    });
+    setEditCategoryList([]);
+    setAddCategoryList([recorde]);
+  };
+
+  const checkForAdd = (recorde) => {
+    let newdata = addCategoryList.find((element) => element === recorde);
+    console.log(newdata, "hhhhhhh");
+    if (newdata != undefined) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  const CategoryManageState = (e) => {
+    let name = e.target.name;
+    let value = e.target.value;
+    if (name === "name" && value !== "") {
+      let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
+      console.log("valueCheckvalueCheck", valueCheck);
+      if (valueCheck !== "") {
+        setadDdata({
+          ...addData,
+          category: {
+            value: valueCheck.trimStart(),
+            errorMessage: "",
+            errorStatus: false,
+          },
+        });
+      }
+    } else if (name === "name" && value === "") {
+      setadDdata({
+        ...addData,
+        category: { value: "", errorMessage: "", errorStatus: false },
+      });
+    }
+
+    if (name === "Bid" && value !== "") {
+      console.log("valuevalueemailvaluevalueemail", value);
+      if (value !== "") {
+        setadDdata({
+          ...addData,
+          bidSpread: {
+            value: value.trimStart(),
+            errorMessage: "",
+            errorStatus: false,
+          },
+        });
+      }
+    } else if (name === "Bid" && value === "") {
+      setadDdata({
+        ...addData,
+        bidSpread: {
+          value: "",
+          errorMessage: "",
+          errorStatus: true,
+        },
+      });
+    }
+
+    if (name === "Offer" && value !== "") {
+      console.log("valuevalueemailvaluevalueemail", value);
+      if (value !== "") {
+        setadDdata({
+          ...addData,
+          offerSpread: {
+            value: value.trimStart(),
+            errorMessage: "",
+            errorStatus: false,
+          },
+        });
+      }
+    } else if (name === "Offer" && value === "") {
+      setadDdata({
+        ...addData,
+        offerSpread: {
+          value: "",
+          errorMessage: "",
+          errorStatus: true,
+        },
+      });
+    }
+  };
+
+  const AfterClickAdd = async (recorde) => {
+    let bankId = localStorage.getItem("bankID");
+    let Userid = localStorage.getItem("userID");
+    console.log(" i am clicked", addData);
+
+    let data = {
+      Category: addData.category.value,
+      BidSpread: parseInt(addData.bidSpread.value),
+      OfferSpread: parseInt(addData.offerSpread.value),
+      AssetTypeId: 1,
+      BankID: parseInt(bankId),
+      UserId: parseInt(Userid),
+    };
+    await dispatch(Addcategory(navigate, data));
+  };
+
+  const CloseNewCategory = (recorde) => {
+    setadDdata({
+      category: {
+        value: "",
+        errorMessage: "",
+        errorStatus: false,
+      },
+      bidSpread: {
+        value: null,
+        errorMessage: "",
+        errorStatus: false,
+      },
+      offerSpread: {
+        value: null,
+        errorMessage: "",
+        errorStatus: false,
+      },
+      AssetTypeId: {
+        value: 1,
+        errorMessage: "",
+        errorStatus: false,
+      },
+
+      BankID: 1,
+    });
+    setAddCategoryList([]);
+  };
+
+  const addModal = (data, index) => {
+    return (
+      <Row>
+        {AddCategory.Spinner === true ? (
+          <>
+            <span className="customer-login-user-spinner">
+              <Spin size="large" />
+            </span>
+          </>
+        ) : (
+          <>
+            <Col
+              lg={12}
+              md={12}
+              sm={12}
+              // key={newInstanceId}
+              className="add-cate-wrapper m-3"
+            >
+              <Row>
+                <Col lg={12} md={12} sm={12}>
+                  <span className="Name_tag">
+                    Name <span className="red_steric">*</span>
+                  </span>
+                </Col>
+              </Row>
+
+              <Row>
+                <Col lg={12} md={12} sm={12} className="CreateMeetingInput">
+                  <TextField
+                    name="name"
+                    applyClass="form-control2"
+                    type="text"
+                    maxLength={100}
+                    labelClass="d-none"
+                    required={true}
+                    value={addData.category.value}
+                    onChange={CategoryManageState}
+                  />
+                </Col>
+              </Row>
+
+              <Row className="mt-3">
+                <Col lg={12} md={12} sm={12}>
+                  <span className="Name_tag">
+                    Spread <span className="red_steric">*</span>
+                  </span>
+                </Col>
+              </Row>
+
+              <Row className="mt-2">
+                <Col lg={6} md={6} sm={12} xs={12}>
+                  <Row>
+                    <Col lg={12} md={12} sm={12}>
+                      <span className="Name_tag">Bid</span>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col lg={12} md={12} sm={12}>
+                      <TextField
+                        name="Bid"
+                        applyClass="form-control2"
+                        type="text"
+                        maxLength={100}
+                        labelClass="d-none"
+                        required={true}
+                        value={addData.bidSpread.value}
+                        onChange={CategoryManageState}
+                      />
+                    </Col>
+                  </Row>
+                </Col>
+                <Col lg={6} md={6} sm={12} xs={12}>
+                  <Row>
+                    <Col lg={12} md={12} sm={12}>
+                      <span className="Name_tag">Offer</span>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col lg={12} md={12} sm={12}>
+                      <TextField
+                        name="Offer"
+                        applyClass="form-control2"
+                        type="text"
+                        maxLength={100}
+                        labelClass="d-none"
+                        required={true}
+                        value={addData.offerSpread.value}
+                        onChange={CategoryManageState}
+                      />
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
+              <Row className="mt-3">
+                <Col
+                  lg={12}
+                  md={12}
+                  sm={12}
+                  className="d-flex justify-content-center gap-2"
+                >
+                  <Button
+                    className="Add_button_category"
+                    text="Add"
+                    onClick={AfterClickAdd}
+                  />
+                  <Button
+                    className="Cancel_button_cateogry"
+                    text="Cancel"
+                    onClick={CloseNewCategory}
+                  />
+                </Col>
+              </Row>
+            </Col>
+          </>
+        )}
+      </Row>
+    );
+  };
+
   return (
     <section className="Property-container">
       <Row>
