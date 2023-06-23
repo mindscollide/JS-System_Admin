@@ -1691,7 +1691,7 @@ input[type="number"] {
   display: inline-block;
   padding: 2px 3px;
   border-radius: 2px;
-  width: 50px;
+  width: auto !important;
   cursor: pointer;
 }
 .val-highlight2 {
@@ -1716,7 +1716,7 @@ input[type="number"] {
   display: inline-block;
   padding: 2px 3px;
   border-radius: 2px;
-  width: 50px;
+  width: auto !important;
   cursor: pointer;
 }
 .floatThead-container {
@@ -2185,7 +2185,7 @@ thead .dropdown-menu-filter .dropdown-item label span {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#64c0ef', endColorstr='#087f99',GradientType=0 ); /* IE6-9 */
   color: #ffffff;
   display: inline-block;
-  padding: 2px 3px;
+  padding: 3px 4px;
   border-radius: 2px;
   width: 50px;
   cursor: pointer;
@@ -2210,9 +2210,9 @@ thead .dropdown-menu-filter .dropdown-item label span {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f8ae58', endColorstr='#c64309',GradientType=0 ); /* IE6-9 */
   color: #ffffff;
   display: inline-block;
-  padding: 2px 3px;
+  padding: 3px 4px;
   border-radius: 2px;
-  width: 50px;
+  width: auto !important;
   cursor: pointer;
 }
 .page-gutter {

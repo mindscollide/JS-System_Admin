@@ -9,6 +9,7 @@ import { Spin } from "antd";
 import { json, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
+  DeleteCorporateCategoryAPI,
   UpdatecorporateMapping,
   getAllCorporatesCategory,
 } from "../../../../store/actions/Auth-Actions";
@@ -16,6 +17,12 @@ import { useSelector } from "react-redux";
 import { Addcategory } from "../../../../store/actions/AddCategoryActions";
 import { UpdateCategoryMap } from "../../../../store/reducers";
 import { UpdateMapCategory } from "../../../../store/actions/UpdateCategoryAction";
+import {
+  forNumbersOnly,
+  formatNumberForFourDecimal,
+  numberformatgerWithFourDecimalValues,
+  stringConvertintoNumber,
+} from "../../../../commen/functions/numberFormatter";
 
 const CategoryManagement = () => {
   //Accordian
@@ -45,12 +52,12 @@ const CategoryManagement = () => {
       errorStatus: false,
     },
     bidSpread: {
-      value: null,
+      value: "",
       errorMessage: "",
       errorStatus: false,
     },
     offerSpread: {
-      value: null,
+      value: "",
       errorMessage: "",
       errorStatus: false,
     },
@@ -69,6 +76,7 @@ const CategoryManagement = () => {
 
   //For Adding a Category
   const [addCategoryList, setAddCategoryList] = useState([]);
+  const [deleteCategoryList, setDeleteCategoryList] = useState([]);
   const [addData, setadDdata] = useState({
     category: {
       value: "",
@@ -76,12 +84,12 @@ const CategoryManagement = () => {
       errorStatus: false,
     },
     bidSpread: {
-      value: null,
+      value: "",
       errorMessage: "",
       errorStatus: false,
     },
     offerSpread: {
-      value: null,
+      value: "",
       errorMessage: "",
       errorStatus: false,
     },
@@ -263,7 +271,8 @@ const CategoryManagement = () => {
       const newSourceItems = [...corporates];
       const newSourceItem = newSourceItems[categoryIndex];
       console.log("authauth12 UpdateCategoryMap", newSourceItem);
-
+      console.log("authauth12 UpdateCategoryMapvvvv", categoryupdate);
+      // stringConvertintoNumber(addData.bidSpread.value)
       let data = {
         categoryName: categoryupdate.category.value,
         categoryID: categoryupdate.categoryID.value,
@@ -283,12 +292,12 @@ const CategoryManagement = () => {
           errorStatus: false,
         },
         bidSpread: {
-          value: null,
+          value: "",
           errorMessage: "",
           errorStatus: false,
         },
         offerSpread: {
-          value: null,
+          value: "",
           errorMessage: "",
           errorStatus: false,
         },
@@ -309,6 +318,10 @@ const CategoryManagement = () => {
 
   const OpenEditCategory = (recorde, data) => {
     console.log(data, "datadata");
+    // console.log(
+    //   " i am clicked",
+    //   numberformatgerWithFourDecimalValues(data.bidSpread.trimStart())
+    // );
     setAddCategoryList([]);
     setadDdata({
       category: {
@@ -317,12 +330,12 @@ const CategoryManagement = () => {
         errorStatus: false,
       },
       bidSpread: {
-        value: null,
+        value: "",
         errorMessage: "",
         errorStatus: false,
       },
       offerSpread: {
-        value: null,
+        value: "",
         errorMessage: "",
         errorStatus: false,
       },
@@ -336,17 +349,17 @@ const CategoryManagement = () => {
     });
     setCategoryUpdate({
       offerSpread: {
-        value: data.offerSpread,
+        value: formatNumberForFourDecimal(data.offerSpread),
         errorMessage: "",
         errorStatus: false,
       },
       category: {
-        value: data.categoryName,
+        value: data.categoryName.trimStart(),
         errorMessage: "",
         errorStatus: false,
       },
       bidSpread: {
-        value: data.bidSpread,
+        value: formatNumberForFourDecimal(data.bidSpread),
         errorMessage: "",
         errorStatus: false,
       },
@@ -356,12 +369,15 @@ const CategoryManagement = () => {
         errorStatus: false,
       },
     });
+    console.log(" i am clicked", formatNumberForFourDecimal(data.bidSpread));
+
     setEditCategoryList([recorde]);
   };
 
   const checkForEdit = (recorde) => {
     let newdata = editCategoryList.find((element) => element === recorde);
-    console.log(newdata, "hhhhhhh");
+    console.log(newdata, "gggggggggggggg");
+    console.log(recorde, "hhhhhhh");
     if (newdata != undefined) {
       return true;
     } else {
@@ -396,15 +412,17 @@ const CategoryManagement = () => {
     if (name === "Bidupdated" && value !== "") {
       let valueCheck = value.replace(/[^0-9]+/g, "");
       console.log("valuevalueemailvaluevalueemail", value);
-      if (valueCheck !== "") {
-        setCategoryUpdate({
-          ...categoryupdate,
-          bidSpread: {
-            value: valueCheck.trimStart(),
-            errorMessage: "",
-            errorStatus: false,
-          },
-        });
+      if (forNumbersOnly(value.trimStart()) !== "") {
+        if (numberformatgerWithFourDecimalValues(value.trimStart())) {
+          setCategoryUpdate({
+            ...categoryupdate,
+            bidSpread: {
+              value: numberformatgerWithFourDecimalValues(value.trimStart()),
+              errorMessage: "",
+              errorStatus: false,
+            },
+          });
+        }
       }
     } else if (name === "Bidupdated" && value === "") {
       setCategoryUpdate({
@@ -418,17 +436,21 @@ const CategoryManagement = () => {
     }
 
     if (name === "Offerupdate" && value !== "") {
-      let valueCheck = value.replace(/[^0-9]+/g, "");
-      console.log("valuevalueemailvaluevalueemail", value);
-      if (valueCheck !== "") {
-        setCategoryUpdate({
-          ...categoryupdate,
-          offerSpread: {
-            value: valueCheck.trimStart(),
-            errorMessage: "",
-            errorStatus: false,
-          },
-        });
+      console.log(
+        "valuevalueemailvaluevalueemail",
+        numberformatgerWithFourDecimalValues(value.trimStart())
+      );
+      if (forNumbersOnly(value.trimStart()) !== "") {
+        if (numberformatgerWithFourDecimalValues(value.trimStart())) {
+          setCategoryUpdate({
+            ...categoryupdate,
+            offerSpread: {
+              value: numberformatgerWithFourDecimalValues(value.trimStart()),
+              errorMessage: "",
+              errorStatus: false,
+            },
+          });
+        }
       }
     } else if (name === "Offerupdate" && value === "") {
       setCategoryUpdate({
@@ -444,14 +466,17 @@ const CategoryManagement = () => {
 
   const UpdateCategory = () => {
     let bankid = localStorage.getItem("bankID");
+    console.log(" i am clicked", categoryupdate);
+
     let data = {
       Category: categoryupdate.category.value,
-      BidSpread: parseInt(categoryupdate.bidSpread.value),
-      OfferSpread: parseInt(categoryupdate.offerSpread.value),
+      BidSpread: stringConvertintoNumber(categoryupdate.bidSpread.value),
+      OfferSpread: stringConvertintoNumber(categoryupdate.offerSpread.value),
       CategoryId: parseInt(categoryupdate.categoryID.value),
       BankID: parseInt(bankid),
       AssetTypeId: 1,
     };
+    console.log(" i am clicked", data);
     dispatch(UpdateMapCategory(navigate, data, setEditCategoryList));
   };
 
@@ -463,12 +488,12 @@ const CategoryManagement = () => {
         errorStatus: false,
       },
       bidSpread: {
-        value: null,
+        value: "",
         errorMessage: "",
         errorStatus: false,
       },
       offerSpread: {
-        value: null,
+        value: "",
         errorMessage: "",
         errorStatus: false,
       },
@@ -496,12 +521,11 @@ const CategoryManagement = () => {
       let data = {
         categoryName: addData.category.value,
         categoryID: corporatesData.categoryID,
-        offerSpread: parseInt(addData.offerSpread.value),
-        bidSpread: parseInt(addData.bidSpread.value),
+        offerSpread: formatNumberForFourDecimal(addData.offerSpread.value),
+        bidSpread: formatNumberForFourDecimal(addData.bidSpread.value),
         corporates: [],
       };
       newSourceItems.push(data);
-
       setCorporates(newSourceItems);
       setadDdata({
         category: {
@@ -510,12 +534,12 @@ const CategoryManagement = () => {
           errorStatus: false,
         },
         bidSpread: {
-          value: null,
+          value: "",
           errorMessage: "",
           errorStatus: false,
         },
         offerSpread: {
-          value: null,
+          value: "",
           errorMessage: "",
           errorStatus: false,
         },
@@ -539,12 +563,12 @@ const CategoryManagement = () => {
         errorStatus: false,
       },
       bidSpread: {
-        value: null,
+        value: "",
         errorMessage: "",
         errorStatus: false,
       },
       offerSpread: {
-        value: null,
+        value: "",
         errorMessage: "",
         errorStatus: false,
       },
@@ -562,6 +586,16 @@ const CategoryManagement = () => {
     });
     setEditCategoryList([]);
     setAddCategoryList([recorde]);
+  };
+
+  const handleDelteCliked = (id) => {
+    let bankId = localStorage.getItem("bankID");
+    let data = {
+      CategoryId: id,
+      BankID: bankId,
+    };
+    dispatch(DeleteCorporateCategoryAPI(navigate, data));
+    // setDeleteCategoryList([recorde]);
   };
 
   const checkForAdd = (recorde) => {
@@ -602,17 +636,18 @@ const CategoryManagement = () => {
     }
 
     if (name === "Bid" && value !== "") {
-      let valueCheck = value.replace(/[^0-9]+/g, "");
-      console.log("valuevalueemailvaluevalueemail", valueCheck);
-      if (valueCheck !== "") {
-        setadDdata({
-          ...addData,
-          bidSpread: {
-            value: valueCheck.trimStart(),
-            errorMessage: "",
-            errorStatus: false,
-          },
-        });
+      console.log("valuevalueemailvaluevalueemail", value);
+      if (forNumbersOnly(value.trimStart()) !== "") {
+        if (numberformatgerWithFourDecimalValues(value.trimStart())) {
+          setadDdata({
+            ...addData,
+            bidSpread: {
+              value: numberformatgerWithFourDecimalValues(value.trimStart()),
+              errorMessage: "",
+              errorStatus: false,
+            },
+          });
+        }
       }
     } else if (name === "Bid" && value === "") {
       setadDdata({
@@ -626,17 +661,18 @@ const CategoryManagement = () => {
     }
 
     if (name === "Offer" && value !== "") {
-      let valueCheck = value.replace(/[^0-9]+/g, "");
       console.log("valuevalueemailvaluevalueemail", value);
-      if (valueCheck !== "") {
-        setadDdata({
-          ...addData,
-          offerSpread: {
-            value: value.trimStart(),
-            errorMessage: "",
-            errorStatus: false,
-          },
-        });
+      if (forNumbersOnly(value.trimStart()) !== "") {
+        if (numberformatgerWithFourDecimalValues(value)) {
+          setadDdata({
+            ...addData,
+            offerSpread: {
+              value: numberformatgerWithFourDecimalValues(value),
+              errorMessage: "",
+              errorStatus: false,
+            },
+          });
+        }
       }
     } else if (name === "Offer" && value === "") {
       setadDdata({
@@ -650,7 +686,8 @@ const CategoryManagement = () => {
     }
   };
 
-  const AfterClickAdd = async (recorde) => {
+  const AfterClickAdd = async (e) => {
+    e.preventDefault();
     if (addData.category.value !== "") {
       seterrormessege(false);
       let bankId = localStorage.getItem("bankID");
@@ -659,12 +696,14 @@ const CategoryManagement = () => {
 
       let data = {
         Category: addData.category.value,
-        BidSpread: parseInt(addData.bidSpread.value),
-        OfferSpread: parseInt(addData.offerSpread.value),
+        BidSpread: stringConvertintoNumber(addData.bidSpread.value),
+        OfferSpread: stringConvertintoNumber(addData.offerSpread.value),
         AssetTypeId: 1,
         BankID: parseInt(bankId),
         UserId: parseInt(Userid),
       };
+      console.log(" i am clicked", data);
+
       await dispatch(Addcategory(navigate, data));
     } else {
       seterrormessege(true);
@@ -672,6 +711,7 @@ const CategoryManagement = () => {
   };
 
   const CloseNewCategory = (recorde) => {
+    seterrormessege(false);
     setadDdata({
       category: {
         value: "",
@@ -679,12 +719,12 @@ const CategoryManagement = () => {
         errorStatus: false,
       },
       bidSpread: {
-        value: null,
+        value: "",
         errorMessage: "",
         errorStatus: false,
       },
       offerSpread: {
-        value: null,
+        value: "",
         errorMessage: "",
         errorStatus: false,
       },
@@ -1068,7 +1108,12 @@ const CategoryManagement = () => {
                                         >
                                           <i className="icon-add-circle"></i>
                                         </span>
-                                        <span className="delete-cat d-inline-block">
+                                        <span
+                                          className="delete-cat d-inline-block"
+                                          onClick={() =>
+                                            handleDelteCliked(data.categoryID)
+                                          }
+                                        >
                                           <i className="icon-trash"></i>
                                         </span>
                                       </Col>
@@ -1095,7 +1140,11 @@ const CategoryManagement = () => {
                                           >
                                             <div className="title_bid">Bid</div>
                                             <div className="rate val-highlight1">
-                                              {data.bidSpread}
+                                              {data.bidSpread != ""
+                                                ? formatNumberForFourDecimal(
+                                                    data.bidSpread
+                                                  )
+                                                : "0.00"}
                                             </div>
                                           </Col>
                                         </Row>
@@ -1118,7 +1167,11 @@ const CategoryManagement = () => {
                                               offer
                                             </div>
                                             <div className="rate val-highlight2">
-                                              {data.offerSpread}
+                                              {data.offerSpread != ""
+                                                ? formatNumberForFourDecimal(
+                                                    data.offerSpread
+                                                  )
+                                                : "0.00"}
                                             </div>
                                           </Col>
                                         </Row>

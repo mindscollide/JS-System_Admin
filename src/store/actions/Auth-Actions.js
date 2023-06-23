@@ -15,12 +15,14 @@ import {
   getCorporateUserLoginApiERM,
   getallCoporatesSystem,
   UpdateCorporateMapping,
+  DeleteCategory,
 } from "../../commen/apis/Api_config";
 import {
   authenticationAPI,
   systemAdminAPI,
 } from "../../commen/apis/Api_ends_points";
 import { type } from "@testing-library/user-event/dist/type";
+import { message } from "antd";
 
 const logininit = () => {
   return {
@@ -1496,6 +1498,115 @@ const UpdatecorporateMapping = (navigate, data) => {
       });
   };
 };
+
+const deletecorporatecategoryinit = () => {
+  return {
+    type: actions.DELETE_CATEGORY_INIT,
+  };
+};
+
+const deletecorporatecategorysuccess = (response, message) => {
+  return {
+    type: actions.DELETE_CATEGORY_SUCCESS,
+    response: response,
+    message: message,
+  };
+};
+
+const deletecorporatecategoryfailed = (message) => {
+  return {
+    type: actions.DELETE_CATEGORY_FAILED,
+    message: message,
+  };
+};
+
+const DeleteCorporateCategoryAPI = (navigate, data) => {
+  let token = JSON.parse(localStorage.getItem("token"));
+  return (dispatch) => {
+    dispatch(deletecorporatecategoryinit());
+    let form = new FormData();
+    form.append("RequestMethod", DeleteCategory.RequestMethod);
+    form.append("RequestData", JSON.stringify(data));
+    axios({
+      method: "POST",
+      url: systemAdminAPI,
+      data: form,
+      headers: {
+        _token: token,
+      },
+    })
+      .then(async (response) => {
+        console.log("CorporateCategoryCorporateCategory", response);
+        if (response.data.responseCode === 417) {
+          await dispatch(RefreshToken(navigate));
+          dispatch(DeleteCorporateCategoryAPI(navigate, data));
+        } else if (response.data.responseCode === 200) {
+          if (response.data.responseResult.isExecuted === true) {
+            if (
+              response.data.responseResult.responseMessage.toLowerCase() ===
+              "SystemAdmin_SystemAdminManager_DeleteCorporateCategory_01".toLowerCase()
+            ) {
+              // await dispatch(getAllCorporatesCategory(navigate));
+              dispatch(
+                deletecorporatecategoryfailed(
+                  "Category Cannot be delete It is mapped with a corporate"
+                )
+              );
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_DeleteCorporateCategory_02".toLowerCase()
+                )
+            ) {
+              dispatch(
+                deletecorporatecategorysuccess(
+                  response.data.responseResult.corporateCategory,
+                  "Category Deleted"
+                )
+              );
+              dispatch(getAllCorporatesCategory(navigate));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_DeleteCorporateCategory_03".toLowerCase()
+                )
+            ) {
+              dispatch(deletecorporatecategoryfailed("Category not Deleted"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_DeleteCorporateCategory_04".toLowerCase()
+                )
+            ) {
+              dispatch(deletecorporatecategoryfailed("Invalid Role"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_DeleteCorporateCategory_05".toLowerCase()
+                )
+            ) {
+              dispatch(
+                deletecorporatecategoryfailed("Exception Something went wrong ")
+              );
+            }
+          } else {
+            dispatch(deletecorporatecategoryfailed("Something went wrong"));
+            console.log("There's no corporates category");
+          }
+        } else {
+          dispatch(deletecorporatecategoryfailed("Something went wrong"));
+          console.log("There's no corporates category");
+        }
+      })
+      .catch((response) => {
+        dispatch(deletecorporatecategoryfailed("something went wrong"));
+      });
+  };
+};
 export {
   logIn,
   signUp,
@@ -1512,4 +1623,5 @@ export {
   getCustomerLoginHistory,
   getAllCorporatesCategory,
   UpdatecorporateMapping,
+  DeleteCorporateCategoryAPI,
 };

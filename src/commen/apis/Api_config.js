@@ -135,6 +135,12 @@ const saveCounterPartyApi = {
   RequestMethod: "ServiceManager.SavecounterPartyLimit",
 };
 
+//Delete a Category
+
+const DeleteCategory = {
+  RequestMethod: "ServiceManager.DeleteCorporateCategory",
+};
+
 export {
   authenticationLogIn,
   authenticationSignUp,
@@ -165,4 +171,5 @@ export {
   saveCounterPartyApi,
   updateUserByUserIDApi,
   searchBankListApi,
+  DeleteCategory,
 };
