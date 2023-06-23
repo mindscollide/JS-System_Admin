@@ -394,12 +394,13 @@ const CategoryManagement = () => {
     }
 
     if (name === "Bidupdated" && value !== "") {
+      let valueCheck = value.replace(/[^0-9]+/g, "");
       console.log("valuevalueemailvaluevalueemail", value);
-      if (value !== "") {
+      if (valueCheck !== "") {
         setCategoryUpdate({
           ...categoryupdate,
           bidSpread: {
-            value: value.trimStart(),
+            value: valueCheck.trimStart(),
             errorMessage: "",
             errorStatus: false,
           },
@@ -417,12 +418,13 @@ const CategoryManagement = () => {
     }
 
     if (name === "Offerupdate" && value !== "") {
+      let valueCheck = value.replace(/[^0-9]+/g, "");
       console.log("valuevalueemailvaluevalueemail", value);
-      if (value !== "") {
+      if (valueCheck !== "") {
         setCategoryUpdate({
           ...categoryupdate,
           offerSpread: {
-            value: value.trimStart(),
+            value: valueCheck.trimStart(),
             errorMessage: "",
             errorStatus: false,
           },
