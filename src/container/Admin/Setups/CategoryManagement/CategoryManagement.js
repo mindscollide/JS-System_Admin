@@ -23,6 +23,7 @@ import {
   numberformatgerWithFourDecimalValues,
   stringConvertintoNumber,
 } from "../../../../commen/functions/numberFormatter";
+import DeleteModal from "./DeleRejectModal";
 
 const CategoryManagement = () => {
   //Accordian
@@ -102,12 +103,21 @@ const CategoryManagement = () => {
     BankID: 1,
   });
 
-  const [delteCateogry, setDeltecategory] = useState([]);
+  const [delteCateogry, setDeltecategory] = useState(null);
+  const [deleteRejectModal, setDeleteRejectModal] = useState(false);
 
   // api call for get All category
   useEffect(() => {
     dispatch(getAllCorporatesCategory(navigate));
   }, []);
+
+  useEffect(() => {
+    const deletecategoryData = auth.DeleteCategory;
+    if (Object.keys(deletecategoryData).length > 0) {
+      setDeltecategory(deletecategoryData);
+    }
+    console.log("deletecategoryDatadeletecategoryData", deletecategoryData);
+  }, [auth.DeleteCategory]);
 
   // store data of corporates in loacal variable
   useEffect(() => {
@@ -590,12 +600,12 @@ const CategoryManagement = () => {
 
   const handleDelteCliked = (id) => {
     let bankId = localStorage.getItem("bankID");
+    console.log("handleDelteClikedhandleDelteCliked", id);
     let data = {
-      CategoryId: id,
-      BankID: bankId,
+      CategoryId: parseInt(id),
+      BankID: parseInt(bankId),
     };
-    dispatch(DeleteCorporateCategoryAPI(navigate, data));
-    // setDeleteCategoryList([recorde]);
+    dispatch(DeleteCorporateCategoryAPI(navigate, data, setDeleteRejectModal));
   };
 
   const checkForAdd = (recorde) => {
@@ -879,6 +889,129 @@ const CategoryManagement = () => {
     );
   };
 
+  const updateModal = (data, index) => {
+    return (
+      <Row>
+        {UpdateCategoryMap.Spinner === true ? (
+          <>
+            <span className="customer-login-user-spinner m-3">
+              <Spin size="large" />
+            </span>
+          </>
+        ) : (
+          <>
+            <Col lg={12} md={12} sm={12} className="add-cate-wrapper m-3">
+              <Row>
+                <Col lg={12} md={12} sm={12}>
+                  <span className="Name_tag">
+                    Name
+                    <span className="red_steric">*</span>
+                  </span>
+                </Col>
+              </Row>
+
+              <Row>
+                <Col lg={12} md={12} sm={12} className="CreateMeetingInput">
+                  <TextField
+                    name="nameUpdate"
+                    applyClass="form-control2"
+                    type="text"
+                    maxLength={100}
+                    labelClass="d-none"
+                    required={true}
+                    value={categoryupdate.category.value}
+                    onChange={HandleUpdateChange}
+                  />
+                  <p
+                    className={
+                      errormessege && categoryupdate.category.value === ""
+                        ? "errorMessage"
+                        : "errorMessage_hidden"
+                    }
+                  >
+                    Please Fill all the credentials
+                  </p>
+                </Col>
+              </Row>
+
+              <Row className="mt-3">
+                <Col lg={12} md={12} sm={12}>
+                  <span className="Name_tag">
+                    Spread <span className="red_steric">*</span>
+                  </span>
+                </Col>
+              </Row>
+
+              <Row className="mt-2">
+                <Col lg={6} md={6} sm={12} xs={12}>
+                  <Row>
+                    <Col lg={12} md={12} sm={12}>
+                      <span className="Name_tag">Bid</span>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col lg={12} md={12} sm={12}>
+                      <TextField
+                        name="Bidupdated"
+                        applyClass="form-control2"
+                        type="text"
+                        maxLength={100}
+                        labelClass="d-none"
+                        required={true}
+                        value={categoryupdate.bidSpread.value}
+                        onChange={HandleUpdateChange}
+                      />
+                    </Col>
+                  </Row>
+                </Col>
+                <Col lg={6} md={6} sm={12} xs={12}>
+                  <Row>
+                    <Col lg={12} md={12} sm={12}>
+                      <span className="Name_tag">Offer</span>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col lg={12} md={12} sm={12}>
+                      <TextField
+                        name="Offerupdate"
+                        applyClass="form-control2"
+                        type="text"
+                        maxLength={100}
+                        labelClass="d-none"
+                        required={true}
+                        value={categoryupdate.offerSpread.value}
+                        onChange={HandleUpdateChange}
+                      />
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
+              <Row className="mt-3">
+                <Col
+                  lg={12}
+                  md={12}
+                  sm={12}
+                  className="d-flex justify-content-center gap-2"
+                >
+                  <Button
+                    className="Update_button_category"
+                    text="Update"
+                    onClick={UpdateCategory}
+                  />
+                  <Button
+                    className="Cancel_button_cateogry"
+                    text="Cancel"
+                    onClick={() => CloseUpdateCategory(data.corporateID)}
+                  />
+                </Col>
+              </Row>
+            </Col>
+          </>
+        )}
+      </Row>
+    );
+  };
+
   return (
     <section className="Property-container">
       <Row>
@@ -920,144 +1053,7 @@ const CategoryManagement = () => {
                     return (
                       <>
                         {checkForEdit(data.categoryID) ? (
-                          <Row>
-                            {UpdateCategoryMap.Spinner === true ? (
-                              <>
-                                <span className="customer-login-user-spinner m-3">
-                                  <Spin size="large" />
-                                </span>
-                              </>
-                            ) : (
-                              <>
-                                <Col
-                                  lg={12}
-                                  md={12}
-                                  sm={12}
-                                  className="add-cate-wrapper m-3"
-                                >
-                                  <Row>
-                                    <Col lg={12} md={12} sm={12}>
-                                      <span className="Name_tag">
-                                        Name
-                                        <span className="red_steric">*</span>
-                                      </span>
-                                    </Col>
-                                  </Row>
-
-                                  <Row>
-                                    <Col
-                                      lg={12}
-                                      md={12}
-                                      sm={12}
-                                      className="CreateMeetingInput"
-                                    >
-                                      <TextField
-                                        name="nameUpdate"
-                                        applyClass="form-control2"
-                                        type="text"
-                                        maxLength={100}
-                                        labelClass="d-none"
-                                        required={true}
-                                        value={categoryupdate.category.value}
-                                        onChange={HandleUpdateChange}
-                                      />
-                                      <p
-                                        className={
-                                          errormessege &&
-                                          categoryupdate.category.value === ""
-                                            ? "errorMessage"
-                                            : "errorMessage_hidden"
-                                        }
-                                      >
-                                        Please Fill all the credentials
-                                      </p>
-                                    </Col>
-                                  </Row>
-
-                                  <Row className="mt-3">
-                                    <Col lg={12} md={12} sm={12}>
-                                      <span className="Name_tag">
-                                        Spread{" "}
-                                        <span className="red_steric">*</span>
-                                      </span>
-                                    </Col>
-                                  </Row>
-
-                                  <Row className="mt-2">
-                                    <Col lg={6} md={6} sm={12} xs={12}>
-                                      <Row>
-                                        <Col lg={12} md={12} sm={12}>
-                                          <span className="Name_tag">Bid</span>
-                                        </Col>
-                                      </Row>
-                                      <Row>
-                                        <Col lg={12} md={12} sm={12}>
-                                          <TextField
-                                            name="Bidupdated"
-                                            applyClass="form-control2"
-                                            type="text"
-                                            maxLength={100}
-                                            labelClass="d-none"
-                                            required={true}
-                                            value={
-                                              categoryupdate.bidSpread.value
-                                            }
-                                            onChange={HandleUpdateChange}
-                                          />
-                                        </Col>
-                                      </Row>
-                                    </Col>
-                                    <Col lg={6} md={6} sm={12} xs={12}>
-                                      <Row>
-                                        <Col lg={12} md={12} sm={12}>
-                                          <span className="Name_tag">
-                                            Offer
-                                          </span>
-                                        </Col>
-                                      </Row>
-                                      <Row>
-                                        <Col lg={12} md={12} sm={12}>
-                                          <TextField
-                                            name="Offerupdate"
-                                            applyClass="form-control2"
-                                            type="text"
-                                            maxLength={100}
-                                            labelClass="d-none"
-                                            required={true}
-                                            value={
-                                              categoryupdate.offerSpread.value
-                                            }
-                                            onChange={HandleUpdateChange}
-                                          />
-                                        </Col>
-                                      </Row>
-                                    </Col>
-                                  </Row>
-                                  <Row className="mt-3">
-                                    <Col
-                                      lg={12}
-                                      md={12}
-                                      sm={12}
-                                      className="d-flex justify-content-center gap-2"
-                                    >
-                                      <Button
-                                        className="Update_button_category"
-                                        text="Update"
-                                        onClick={UpdateCategory}
-                                      />
-                                      <Button
-                                        className="Cancel_button_cateogry"
-                                        text="Cancel"
-                                        onClick={() =>
-                                          CloseUpdateCategory(data.corporateID)
-                                        }
-                                      />
-                                    </Col>
-                                  </Row>
-                                </Col>
-                              </>
-                            )}
-                          </Row>
+                          updateModal(data, index)
                         ) : (
                           <Draggable
                             key={data.categoryID + data.corporateID}
@@ -1109,7 +1105,7 @@ const CategoryManagement = () => {
                                           <i className="icon-add-circle"></i>
                                         </span>
                                         <span
-                                          className="delete-cat d-inline-block"
+                                          className="delete-cat d-inline-block cursor-pointer"
                                           onClick={() =>
                                             handleDelteCliked(data.categoryID)
                                           }
@@ -1215,7 +1211,11 @@ const CategoryManagement = () => {
           />
         </Col>
       </Row>
-
+      <DeleteModal
+        delteCateogry={delteCateogry}
+        deleteRejectModal={deleteRejectModal}
+        setDeleteRejectModal={setDeleteRejectModal}
+      />
       {auth.Loading ? <Loader /> : null}
       {/* {AddCategory.Loading ? <Loader /> : null} */}
     </section>

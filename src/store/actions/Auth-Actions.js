@@ -1520,14 +1520,14 @@ const deletecorporatecategoryfailed = (message) => {
   };
 };
 
-const DeleteCorporateCategoryAPI = (navigate, data) => {
+const DeleteCorporateCategoryAPI = (navigate, data, setDeleteRejectModal) => {
   let token = JSON.parse(localStorage.getItem("token"));
-  return (dispatch) => {
+  return async (dispatch) => {
     dispatch(deletecorporatecategoryinit());
     let form = new FormData();
     form.append("RequestMethod", DeleteCategory.RequestMethod);
     form.append("RequestData", JSON.stringify(data));
-    axios({
+    await axios({
       method: "POST",
       url: systemAdminAPI,
       data: form,
@@ -1546,9 +1546,10 @@ const DeleteCorporateCategoryAPI = (navigate, data) => {
               response.data.responseResult.responseMessage.toLowerCase() ===
               "SystemAdmin_SystemAdminManager_DeleteCorporateCategory_01".toLowerCase()
             ) {
-              // await dispatch(getAllCorporatesCategory(navigate));
+              setDeleteRejectModal(true);
               dispatch(
-                deletecorporatecategoryfailed(
+                deletecorporatecategorysuccess(
+                  response.data.responseResult.corporateCategory,
                   "Category Cannot be delete It is mapped with a corporate"
                 )
               );
