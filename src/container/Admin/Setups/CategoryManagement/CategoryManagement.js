@@ -523,6 +523,7 @@ const CategoryManagement = () => {
   };
 
   // for add category
+
   // Add Corporate Function with spinnner
   useEffect(() => {
     let corporatesData = AddCategory.addCategory;
