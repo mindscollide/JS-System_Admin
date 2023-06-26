@@ -326,6 +326,7 @@ const LoginHistory = () => {
       dataIndex: "email",
       key: "email",
       width: "200px",
+      align: "center",
       render: (text) => <label className="email-table-cursor">{text}</label>,
     },
     {
@@ -590,7 +591,7 @@ const LoginHistory = () => {
                     text="Search"
                     onClick={onSearchButtonHit}
                     icon={<i className="icon-search Icons-right"></i>}
-                    className={"Search-HistoryLog-btn"}
+                    className={"Search-HistoryLogin-btn"}
                   />
                   <Button
                     text="Reset"

@@ -295,6 +295,7 @@ const UserLogin = () => {
       title: <label className="bottom-table-header">Email</label>,
       dataIndex: "email",
       key: "email",
+      align: "center",
       width: "250px",
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
@@ -537,7 +538,7 @@ const UserLogin = () => {
                     text="Search"
                     onClick={searchButtonHit}
                     icon={<i className="icon-search"></i>}
-                    className={"Search-UserHistory-btn"}
+                    className={"Search-BankUserHistory-btn"}
                   />
                   <Button
                     text="Reset"
@@ -549,7 +550,7 @@ const UserLogin = () => {
                     text="Downlaod Excel"
                     onClick={downloadExcelBankReport}
                     icon={<i className="icon-download-excel"></i>}
-                    className={"Download-Excel-btn"}
+                    className={"Download-Bank-Excel-btn"}
                   />
                 </Col>
               </Row>

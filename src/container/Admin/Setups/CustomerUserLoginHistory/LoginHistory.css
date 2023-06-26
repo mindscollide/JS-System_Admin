@@ -25,12 +25,12 @@
   gap: 10px !important;
 }
 
-.Search-HistoryLog-btn {
+.Search-HistoryLogin-btn {
   font-size: 14px;
-  border-top-right-radius: 0px;
-  border-bottom-left-radius: 0px;
-  border-top-left-radius: 8px;
-  border-bottom-right-radius: 8px;
+  border-top-right-radius: 0px !important;
+  border-bottom-left-radius: 0px !important;
+  border-top-left-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
   padding: 6px 12px !important;
   border-color: #6873a9;
   background-color: #6873a9 !important;
@@ -38,10 +38,10 @@
 
 .Download-Excel-btn {
   font-size: 14px;
-  border-top-right-radius: 0px;
-  border-bottom-left-radius: 0px;
-  border-top-left-radius: 8px;
-  border-bottom-right-radius: 8px;
+  border-top-right-radius: 0px !important;
+  border-bottom-left-radius: 0px !important;
+  border-top-left-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
   padding: 6px 18px !important;
   border-color: #019308 !important;
   background-color: #019308 !important;
@@ -193,12 +193,17 @@
   outline: none !important;
 }
 
+.table-data-login-history {
+  display: flex;
+  justify-content: start;
+}
+
 .Reset-btn-login {
   font-size: 14px;
-  /* border-top-right-radius: 0px; */
-  /* border-bottom-left-radius: 0px; */
-  /* border-top-left-radius: 8px; */
-  /* border-bottom-right-radius: 8px; */
+  border-top-right-radius: 0px !important;
+  border-bottom-left-radius: 0px !important;
+  border-top-left-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
   padding: 6px 18px !important;
   border: none;
   background: linear-gradient(to bottom, #5b67cd 0%, #2a38af 100%) !important;

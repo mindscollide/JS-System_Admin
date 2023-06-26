@@ -25,7 +25,6 @@
 
 .counterLimit-table {
   max-width: 100vw;
-  max-height: 72vh;
   overflow: auto !important;
   overflow-y: hidden;
   border-radius: 0px !important;

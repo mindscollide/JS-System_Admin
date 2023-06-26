@@ -106,6 +106,7 @@ const CounterModal = ({ ModalTitle, modalCounter, setModalCounter }) => {
   const closeCounterModal = () => {
     setModalCounter(false);
   };
+
   useEffect(() => {
     if (
       systemReducer.counterCorporateLimit !== null &&
@@ -114,7 +115,10 @@ const CounterModal = ({ ModalTitle, modalCounter, setModalCounter }) => {
       setCounterModalField({
         ...counterModalField,
         avaliableLimit: {
-          value: systemReducer.counterCorporateLimit.avaliableLimit,
+          value:
+            systemReducer.counterCorporateLimit.avaliableLimit.toLocaleString(
+              "en-US"
+            ),
         },
         corporateName: {
           value: systemReducer.counterCorporateLimit.corporateName,
@@ -131,6 +135,7 @@ const CounterModal = ({ ModalTitle, modalCounter, setModalCounter }) => {
       });
     }
   }, [systemReducer.counterCorporateLimit]);
+
   return (
     <Fragment>
       <Modal
@@ -280,14 +285,10 @@ const CounterModal = ({ ModalTitle, modalCounter, setModalCounter }) => {
             <Row className="mb-3">
               <Col lg={12} md={12} sm={12} className="modal-Counter-btn-col">
                 <Button
-                  text="Save Changes"
-                  className="save-Changes"
-                  //   icon={<i class="icon-arrow-right icon-right"></i>}
-                />
-                <Button
                   text="Cancel"
+                  onClick={closeCounterModal}
                   className="Cancel-btn"
-                  //   icon={<i class="icon-close icon-right"></i>}
+                  icon={<i class="icon-close icon-right"></i>}
                 />
               </Col>
             </Row>

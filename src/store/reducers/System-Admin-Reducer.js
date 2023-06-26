@@ -11,6 +11,8 @@ const initialState = {
   counterCorporateLimit: "",
   updateCorporateResponse: [],
   saveValidCorporates: [],
+  volGetMetersBankId: [],
+  updateVolMeter: [],
 };
 
 const systemReducer = (state = initialState, action) => {
@@ -178,6 +180,50 @@ const systemReducer = (state = initialState, action) => {
         ...state,
         Loading: false,
         saveValidCorporates: [],
+        ResponseMessage: action.message,
+      };
+
+    case actions.GET_VOL_METER_BANK_ID_INIT:
+      return {
+        ...state,
+        Loading: true,
+      };
+
+    case actions.GET_VOL_METER_BANK_ID_SUCCESS:
+      return {
+        ...state,
+        Loading: false,
+        volGetMetersBankId: action.response,
+        ResponseMessage: action.message,
+      };
+
+    case actions.GET_VOL_METER_BANK_ID_FAIL:
+      return {
+        ...state,
+        Loading: false,
+        volGetMetersBankId: [],
+        ResponseMessage: action.message,
+      };
+
+    case actions.ADD_UPDATE_VOL_METER_INIT:
+      return {
+        ...state,
+        Loading: true,
+      };
+
+    case actions.ADD_UPDATE_VOL_METER_SUCCESS:
+      return {
+        ...state,
+        Loading: false,
+        updateVolMeter: action.response,
+        ResponseMessage: action.message,
+      };
+
+    case actions.ADD_UPDATE_VOL_METER_FAIL:
+      return {
+        ...state,
+        Loading: false,
+        updateVolMeter: [],
         ResponseMessage: action.message,
       };
 

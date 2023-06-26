@@ -4,11 +4,176 @@ import {
   CustomPaper,
   TextField,
   Button,
+  Loader,
   Table,
 } from "../../../../components/elements";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getVolMeter,
+  addUpdateVolMeterApi,
+} from "../../../../store/actions/System-Admin";
+import { useNavigate } from "react-router-dom";
 import "./VolMeter.css";
+import { useState } from "react";
+import { useEffect } from "react";
 
 const VolMeter = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { systemReducer } = useSelector((state) => state);
+  console.log(systemReducer, "systemReducersystemReducer");
+  let volBankId = localStorage.getItem("bankID");
+
+  // state for volmeter array field
+  const [volMeter, setVolMeter] = useState([]);
+
+  // state for vol meter field
+  const [volMeterFields, setVolMeterFields] = useState({
+    volatilityMeter: {
+      value: 1,
+      errorMessage: "",
+      errorStatus: false,
+    },
+
+    nameVol: {
+      label: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+
+    volMeter: {
+      value: 0,
+      errorMessage: "",
+      errorStatus: false,
+    },
+
+    isVolActive: true,
+  });
+
+  console.log(volMeterFields, "volMeterFieldsvolMeterFields");
+
+  useEffect(() => {
+    let newVolMeter = {
+      BankId: parseInt(volBankId),
+    };
+    dispatch(getVolMeter(navigate, newVolMeter));
+  }, []);
+
+  useEffect(() => {
+    if (
+      systemReducer.volGetMetersBankId !== null &&
+      systemReducer.volGetMetersBankId !== undefined
+    ) {
+      try {
+        setVolMeterFields({
+          ...volMeterFields,
+          volatilityMeter: {
+            value: systemReducer.volGetMetersBankId[0].volMeterID,
+          },
+          nameVol: {
+            label: systemReducer.volGetMetersBankId[0].name,
+          },
+          volMeter: {
+            value: systemReducer.volGetMetersBankId[0].meter,
+          },
+          isVolActive: {
+            value: systemReducer.volGetMetersBankId[0].isVolMeterActive,
+          },
+        });
+      } catch {
+        console.log("Error");
+      }
+    }
+  }, [systemReducer.volGetMetersBankId]);
+  console.log(systemReducer, "systemReducervolGetMetersBankId");
+
+  const onChanngeVolMterValidation = (e) => {
+    let name = e.target.name;
+    let value = e.target.value;
+
+    if (name === "volatilityMeter" && value !== "") {
+      console.log("valuevalueemailvaluevalueemail", value);
+      if (value !== "") {
+        setVolMeterFields({
+          ...volMeterFields,
+          volatilityMeter: {
+            value: value.trimStart(),
+            errorMessage: "",
+            errorStatus: false,
+          },
+        });
+      }
+    } else if (name === "volatilityMeter" && value === "") {
+      setVolMeterFields({
+        ...volMeterFields,
+        volatilityMeter: {
+          value: "",
+          errorMessage: "",
+          errorStatus: true,
+        },
+      });
+    }
+
+    if (name === "nameVol" && value !== "") {
+      console.log("valuevalueemailvaluevalueemail", value);
+      if (value !== "") {
+        setVolMeterFields({
+          ...volMeterFields,
+          nameVol: {
+            value: value.trimStart(),
+            errorMessage: "",
+            errorStatus: false,
+          },
+        });
+      }
+    } else if (name === "nameVol" && value === "") {
+      setVolMeterFields({
+        ...volMeterFields,
+        nameVol: {
+          value: "",
+          errorMessage: "",
+          errorStatus: true,
+        },
+      });
+    }
+
+    if (name === "volMeter" && value !== "") {
+      console.log("valuevalueemailvaluevalueemail", value);
+      if (value !== "") {
+        setVolMeterFields({
+          ...volMeterFields,
+          volMeter: {
+            value: value.trimStart(),
+            errorMessage: "",
+            errorStatus: false,
+          },
+        });
+      }
+    } else if (name === "volMeter" && value === "") {
+      setVolMeterFields({
+        ...volMeterFields,
+        volMeter: {
+          value: "",
+          errorMessage: "",
+          errorStatus: true,
+        },
+      });
+    }
+  };
+
+  const onUpdateBtnHit = async () => {
+    let addData = {
+      VolMeters: [
+        {
+          VolMeterID: parseInt(volMeterFields.volatilityMeter.value),
+          meter: parseInt(volMeterFields.volMeter.value),
+        },
+      ],
+      BankID: parseInt(volBankId),
+    };
+    await dispatch(addUpdateVolMeterApi(navigate, addData));
+  };
+
   return (
     <Fragment>
       <section className="me-4">
@@ -36,15 +201,33 @@ const VolMeter = () => {
                   <Row className="vol-meter-fields">
                     <Col lg={2} md={2} sm={12}>
                       <span className="number-on-textfiels">1</span>
-                      <TextField labelClass="d-none" />
+                      <TextField
+                        name="volatilityMeter"
+                        type="text"
+                        value={volMeterFields.volatilityMeter.value}
+                        onChange={onChanngeVolMterValidation}
+                        labelClass="d-none"
+                      />
                     </Col>
                     <Col lg={2} md={2} sm={12}>
                       <span className="number-on-textfiels">2</span>
-                      <TextField labelClass="d-none" />
+                      <TextField
+                        name="nameVol"
+                        type="text"
+                        onChange={onChanngeVolMterValidation}
+                        value={volMeterFields.nameVol.label}
+                        labelClass="d-none"
+                      />
                     </Col>
                     <Col lg={2} md={2} sm={12}>
                       <span className="number-on-textfiels">3</span>
-                      <TextField labelClass="d-none" />
+                      <TextField
+                        name="volMeter"
+                        type="text"
+                        value={volMeterFields.volMeter.value}
+                        onChange={onChanngeVolMterValidation}
+                        labelClass="d-none"
+                      />
                     </Col>
                   </Row>
                 </Col>
@@ -59,7 +242,8 @@ const VolMeter = () => {
                   className="d-flex justify-content-center"
                 >
                   <Button
-                    text="Upload"
+                    text="Update"
+                    onClick={onUpdateBtnHit}
                     icon={<i className="icon-refresh icon-update-refresh"></i>}
                     className="VolMeter-Update-btn"
                   />
@@ -69,6 +253,7 @@ const VolMeter = () => {
           </Col>
         </Row>
       </section>
+      {systemReducer.Loading ? <Loader /> : null}
     </Fragment>
   );
 };
