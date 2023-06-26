@@ -45,6 +45,91 @@ const Userlist = () => {
   const [selectCorporateCompanyValue, setSelectCorporateCompanyValue] =
     useState([]);
 
+  let customerListBankId = localStorage.getItem("bankID");
+
+  // show data in bank dropdown
+  useEffect(() => {
+    let corporateBank = {
+      BankID: parseInt(customerListBankId),
+    };
+    dispatch(corporateNameByBankId(navigate, corporateBank));
+  }, []);
+
+  // dispatch API in for bank Corporate
+  useEffect(() => {
+    let Data = {
+      BankID: 1,
+      CorporateName: "",
+      NatureOfBussinessId: 0,
+      AssetTypeID: 0,
+      CategoryId: 0,
+      PageNumber: 1,
+      Length: 3,
+    };
+    dispatch(bankCorporateAPI(navigate, Data));
+    dispatch(getAllCategoriesCorporate(navigate));
+    dispatch(getNatureBusiness(navigate));
+  }, []);
+
+  // render data in table of bank Corporate API
+  useEffect(() => {
+    if (
+      systemReducer.bankCorporates.length > 0 &&
+      systemReducer.bankCorporates !== null &&
+      systemReducer.bankCorporates !== undefined
+    ) {
+      setRows(systemReducer.bankCorporates);
+    } else {
+      setRows([]);
+    }
+  }, [systemReducer.bankCorporates]);
+  console.log("bankCorporatessss", rows);
+
+  // for category Corporate in select drop down
+  useEffect(() => {
+    if (Object.keys(auth.getAllCorporate).length > 0) {
+      let tem = [];
+      auth.getAllCorporate.map((data, index) => {
+        console.log(data, "getAllCorporate");
+        tem.push({
+          label: data.category,
+          value: data.corporateCategoryID,
+        });
+      });
+      setSelectCategory(tem);
+    }
+  }, [auth.getAllCorporate]);
+
+  // for nature of Business in select drop down
+  useEffect(() => {
+    if (Object.keys(auth.getAllNature).length > 0) {
+      let tem = [];
+      auth.getAllNature.map((data, index) => {
+        console.log(data, "getAllCorporate");
+        tem.push({
+          label: data.name,
+          value: data.pK_NatureOfBusiness,
+        });
+      });
+      setSelectNatureBusiness(tem);
+    }
+  }, [auth.getAllNature]);
+
+  // for corporate company in select drop down we use bankCorporate
+  useEffect(() => {
+    if (Object.keys(systemReducer.corporateNameByBankId).length > 0) {
+      let tem = [];
+      systemReducer.corporateNameByBankId.map((data, index) => {
+        console.log(data, "corporateNamecorporateName");
+        tem.push({
+          // value: data.corporateID,
+          label: data.corporateName,
+        });
+      });
+      setSelectCorporateCompany(tem);
+    }
+  }, [systemReducer.corporateNameByBankId]);
+
   //state for customer list fields
   const [userListFields, setUserListFields] = useState({
     corporates: {
@@ -54,17 +139,13 @@ const Userlist = () => {
       errorStatus: false,
     },
     corporateNames: {
+      value: "",
       label: "",
       errorMessage: "",
       errorStatus: false,
     },
     natureofBusinesses: {
       value: 0,
-      errorMessage: "",
-      errorStatus: false,
-    },
-    BankID: {
-      value: 1,
       errorMessage: "",
       errorStatus: false,
     },
@@ -156,99 +237,17 @@ const Userlist = () => {
   //on search of customer User list Api
   const onHitSearchCustomerList = async () => {
     let newData = {
-      BankID: userListFields.BankID.value,
+      BankID: parseInt(customerListBankId),
       CorporateName: userListFields.corporateNames.label,
       NatureOfBussinessId: userListFields.natureofBusinesses.value,
       AssetTypeID: 0,
       CategoryId: userListFields.corporateCategoryID.value,
-      PageNumber: 0,
-      Length: 0,
+      PageNumber: 1,
+      Length: 3,
     };
+    console.log("bankCorporateAPI", newData);
     await dispatch(bankCorporateAPI(navigate, newData));
   };
-
-  // show data in bank dropdown
-  useEffect(() => {
-    let corporateBank = {
-      BankID: userListFields.BankID.value,
-    };
-    dispatch(corporateNameByBankId(navigate, corporateBank));
-  }, []);
-
-  // dispatch API in for bank Corporate
-  useEffect(() => {
-    let Data = {
-      BankID: 1,
-      CorporateName: "",
-      NatureOfBussinessId: 0,
-      AssetTypeID: 0,
-      CategoryId: 0,
-      PageNumber: 3,
-      Length: 5,
-    };
-    dispatch(bankCorporateAPI(navigate, Data));
-    dispatch(getAllCategoriesCorporate(navigate));
-    dispatch(getNatureBusiness(navigate));
-  }, []);
-
-  // render data in table of bank Corporate API
-  useEffect(() => {
-    if (
-      systemReducer.bankCorporates.length > 0 &&
-      systemReducer.bankCorporates !== null &&
-      systemReducer.bankCorporates !== undefined
-    ) {
-      setRows(systemReducer.bankCorporates);
-    } else {
-      setRows([]);
-    }
-  }, [systemReducer.bankCorporates]);
-  console.log("bankCorporatessss", rows);
-
-  // for category Corporate in select drop down
-  useEffect(() => {
-    if (Object.keys(auth.getAllCorporate).length > 0) {
-      let tem = [];
-      auth.getAllCorporate.map((data, index) => {
-        console.log(data, "getAllCorporate");
-        tem.push({
-          label: data.category,
-          value: data.corporateCategoryID,
-        });
-      });
-      setSelectCategory(tem);
-    }
-  }, [auth.getAllCorporate]);
-
-  // for nature of Business in select drop down
-  useEffect(() => {
-    if (Object.keys(auth.getAllNature).length > 0) {
-      let tem = [];
-      auth.getAllNature.map((data, index) => {
-        console.log(data, "getAllCorporate");
-        tem.push({
-          label: data.name,
-          value: data.pK_NatureOfBusiness,
-        });
-      });
-      setSelectNatureBusiness(tem);
-    }
-  }, [auth.getAllNature]);
-
-  // for corporate company in select drop down we use bankCorporate
-  useEffect(() => {
-    if (Object.keys(systemReducer.corporateNameByBankId).length > 0) {
-      let tem = [];
-      systemReducer.corporateNameByBankId.map((data, index) => {
-        console.log(data, "corporateNamecorporateName");
-        tem.push({
-          label: data.corporateName,
-          value: data.corporateName,
-        });
-      });
-      setSelectCorporateCompany(tem);
-    }
-  }, [systemReducer.corporateNameByBankId]);
 
   //ON CHANGE HANDLER FOR CATEGORY DROPDOWN
   const selectCategoryOnchangeHandler = async (selectedCategory) => {
@@ -278,11 +277,12 @@ const Userlist = () => {
 
   //ON CHANGE HANDLER FOR CORPORATE COMPANY DROPDOWN
   const selectBankCompanyOnchangeHandler = async (selectedCompany) => {
-    console.log(selectedCompany, "selectedNatureselectedNature");
+    console.log(selectedCompany, "selectedCompanyselectedCompany");
     setSelectCorporateCompanyValue(selectedCompany);
     setUserListFields({
       ...userListFields,
       corporateNames: {
+        // value: selectedCompany.value,
         label: selectedCompany.label,
       },
     });
@@ -311,10 +311,11 @@ const Userlist = () => {
       NatureOfBussinessId: 0,
       AssetTypeID: 0,
       CategoryId: 0,
-      PageNumber: 3,
-      Length: 5,
+      PageNumber: 1,
+      Length: 3,
     };
     dispatch(bankCorporateAPI(navigate, Data));
+    console.log("bankCorporateAPI", Data);
     setSelectCategoryValue([]);
     setSelectNatureBusinessValue([]);
     setSelectCorporateCompanyValue([]);
@@ -399,7 +400,7 @@ const Userlist = () => {
               <Row className="mt-3">
                 <Col lg={4} md={4} sm={12}>
                   <Select
-                    name="corporates"
+                    name="corporateNames"
                     options={selectCorporateCompany}
                     isSearchable={true}
                     onChange={selectBankCompanyOnchangeHandler}

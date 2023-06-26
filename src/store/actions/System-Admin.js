@@ -8,6 +8,8 @@ import {
   getCorporateNameApi,
   getCounterPartyLmit,
   saveCounterPartyApi,
+  VolatilityMeterAPI,
+  addUpdateVolApi,
 } from "../../commen/apis/Api_config";
 import { RefreshToken } from "./Auth-Actions";
 import { systemAdminAPI } from "../../commen/apis/Api_ends_points";
@@ -336,14 +338,14 @@ const getBankCorporateFail = (message) => {
   };
 };
 
-const bankCorporateAPI = (navigate, newData, Data) => {
+const bankCorporateAPI = (navigate, newData) => {
   let token = JSON.parse(localStorage.getItem("token"));
 
   return async (dispatch) => {
     dispatch(getBankCorporateInit());
     let form = new FormData();
     form.append("RequestMethod", getAllBankCorporate.RequestMethod);
-    form.append("RequestData", JSON.stringify(newData, Data));
+    form.append("RequestData", JSON.stringify(newData));
     await axios({
       method: "post",
       url: systemAdminAPI,
@@ -355,7 +357,7 @@ const bankCorporateAPI = (navigate, newData, Data) => {
       .then(async (response) => {
         if (response.data.responseCode === 417) {
           await dispatch(RefreshToken(navigate));
-          dispatch(bankCorporateAPI(navigate, newData, Data));
+          dispatch(bankCorporateAPI(navigate, newData));
         } else if (response.data.responseCode === 200) {
           if (response.data.responseResult.isExecuted === true) {
             if (
@@ -692,6 +694,233 @@ const saveCounterParty = (navigate, Data, setUploadCounterModal) => {
   };
 };
 
+// api for get Volatility meter in Vol Meter Page
+const volMeterInit = () => {
+  return {
+    type: actions.GET_VOL_METER_BANK_ID_INIT,
+  };
+};
+
+const volMeterSuccess = (response, message) => {
+  return {
+    type: actions.GET_VOL_METER_BANK_ID_SUCCESS,
+    response: response,
+    message: message,
+  };
+};
+
+const volMeterFail = (message) => {
+  return {
+    type: actions.GET_VOL_METER_BANK_ID_FAIL,
+    message: message,
+  };
+};
+
+const getVolMeter = (navigate, newVolMeter) => {
+  let token = JSON.parse(localStorage.getItem("token"));
+
+  return async (dispatch) => {
+    dispatch(volMeterInit());
+    let form = new FormData();
+    form.append("RequestMethod", VolatilityMeterAPI.RequestMethod);
+    form.append("RequestData", JSON.stringify(newVolMeter));
+    await axios({
+      method: "post",
+      url: systemAdminAPI,
+      data: form,
+      headers: {
+        _token: token,
+      },
+    })
+      .then(async (response) => {
+        if (response.data.responseCode === 417) {
+          await dispatch(RefreshToken(navigate));
+          dispatch(getVolMeter(navigate, newVolMeter));
+        } else if (response.data.responseCode === 200) {
+          if (response.data.responseResult.isExecuted === true) {
+            if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_GetVolMetersByBankID_01".toLowerCase()
+                )
+            ) {
+              dispatch(
+                volMeterSuccess(
+                  response.data.responseResult.volMeters,
+                  "Record Found"
+                )
+              );
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_GetVolMetersByBankID_02".toLowerCase()
+                )
+            ) {
+              dispatch(
+                volMeterSuccess(
+                  response.data.responseResult.volMeters,
+                  "Record Found"
+                )
+              );
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_GetVolMetersByBankID_03".toLowerCase()
+                )
+            ) {
+              dispatch(volMeterFail("No Record Found"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_GetVolMetersByBankID_04".toLowerCase()
+                )
+            ) {
+              dispatch(volMeterFail("Not A Valid Role"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_GetVolMetersByBankID_05".toLowerCase()
+                )
+            ) {
+              dispatch(volMeterFail("Exception No Recond Found"));
+            }
+          } else {
+            dispatch(volMeterFail("Something went wrong"));
+          }
+        } else {
+          dispatch(volMeterFail("Something went wrong"));
+        }
+      })
+      .catch((response) => {
+        dispatch(volMeterFail("Something went wrong"));
+      });
+  };
+};
+
+// api for Add Update Vol Meter in vol meter page
+const updateVolInit = () => {
+  return {
+    type: actions.ADD_UPDATE_VOL_METER_INIT,
+  };
+};
+
+const updateVolSuccess = (response, message) => {
+  return {
+    type: actions.ADD_UPDATE_VOL_METER_SUCCESS,
+    response: response,
+    message: message,
+  };
+};
+
+const updateVolFail = (message) => {
+  return {
+    type: actions.ADD_UPDATE_VOL_METER_FAIL,
+    message: message,
+  };
+};
+
+const addUpdateVolMeterApi = (navigate, addData) => {
+  let token = JSON.parse(localStorage.getItem("token"));
+
+  return async (dispatch) => {
+    dispatch(updateVolInit());
+    let form = new FormData();
+    form.append("RequestMethod", addUpdateVolApi.RequestMethod);
+    form.append("RequestData", JSON.stringify(addData));
+    await axios({
+      method: "post",
+      url: systemAdminAPI,
+      data: form,
+      headers: {
+        _token: token,
+      },
+    })
+      .then(async (response) => {
+        if (response.data.responseCode === 417) {
+          await dispatch(RefreshToken(navigate));
+          dispatch(addUpdateVolMeterApi(navigate, addData));
+        } else if (response.data.responseCode === 200) {
+          if (response.data.responseResult.isExecuted === true) {
+            if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_AddUpdateVolmeter_01".toLowerCase()
+                )
+            ) {
+              dispatch(
+                updateVolSuccess(
+                  response.data.responseResult.responseMessage,
+                  "Record Saved"
+                )
+              );
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_AddUpdateVolmeter_02".toLowerCase()
+                )
+            ) {
+              dispatch(updateVolFail("No Record Saved"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_AddUpdateVolmeter_03".toLowerCase()
+                )
+            ) {
+              dispatch(updateVolSuccess("Record Saved"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_AddUpdateVolmeter_04".toLowerCase()
+                )
+            ) {
+              dispatch(updateVolFail("No Record Saved"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_AddUpdateVolmeter_05".toLowerCase()
+                )
+            ) {
+              dispatch(updateVolFail("No Record Saved"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_AddUpdateVolmeter_06".toLowerCase()
+                )
+            ) {
+              dispatch(updateVolFail("Invalid Role"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_AddUpdateVolmeter_07".toLowerCase()
+                )
+            ) {
+              dispatch(updateVolFail("Exception Not Saved"));
+            }
+          } else {
+            dispatch(updateVolFail("Something went wrong"));
+          }
+        } else {
+          dispatch(updateVolFail("Something went wrong"));
+        }
+      })
+      .catch((response) => {
+        dispatch(updateVolFail("Something went wrong"));
+      });
+  };
+};
+
 export {
   getAllCorporateUserApi,
   searchUserCorporateApi,
@@ -700,4 +929,6 @@ export {
   corporateNameByBankId,
   counterPartyLimitCorporate,
   saveCounterParty,
+  getVolMeter,
+  addUpdateVolMeterApi,
 };

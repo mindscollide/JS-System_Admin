@@ -34,14 +34,13 @@
 .Counter-Party-Modal-table {
   max-width: 100vw;
   border-radius: 0px !important;
-  max-height: 30vh !important;
   overflow: auto !important;
   overflow-y: hidden;
 }
 
 .Counter-Party-Modal-table th.ant-table-cell {
   color: #ffffff !important;
-  border-radius: 0% !important;
+  border-radius: 0px !important;
   background: linear-gradient(to bottom, #5b67cd 0%, #2a38af 100%) !important;
 }
 
@@ -55,7 +54,6 @@
 .Counter-Party-Modal-table::-webkit-scrollbar-thumb {
   border-radius: 20px;
   background: #ccc;
-  margin-left: -15px;
 }
 
 .ant-table-wrapper.UploadModalTwo-table

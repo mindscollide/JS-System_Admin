@@ -281,6 +281,12 @@ const Customerlist = () => {
     dispatch(getAllCorporateCompany(navigate));
     let newData = {
       BankID: 1,
+      CorporateName: "",
+      NatureOfBussinessId: 0,
+      AssetTypeID: 0,
+      CategoryId: 0,
+      PageNumber: 1,
+      Length: 3,
     };
     dispatch(bankCorporateAPI(navigate, newData));
 
@@ -763,13 +769,13 @@ const Customerlist = () => {
                 >
                   <Button
                     icon={<i className="icon-search icon-check-space"></i>}
-                    className="Search-btn"
+                    className="Search-customerUserList-btn"
                     onClick={seacrhButtonHit}
                     text="Search"
                   />
                   <Button
                     icon={<i className="icon-refresh icon-check-space"></i>}
-                    className="Reset-btn"
+                    className="customerUserList-Reset-btn"
                     onClick={resetBtnHandler}
                     text="Reset"
                   />

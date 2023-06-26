@@ -742,14 +742,14 @@ const BankList = () => {
                 >
                   <Button
                     icon={<i className="icon-search icon-check-space"></i>}
-                    className="Search-btn"
+                    className="Search-btn-BankList"
                     onClick={onSearchHit}
                     text="Search"
                   />
                   <Button
                     icon={<i className="icon-refresh icon-check-space"></i>}
                     onClick={bankResetHandler}
-                    className="Reset-btn"
+                    className="Banklist-Reset-btn"
                     text="Reset"
                   />
                 </Col>

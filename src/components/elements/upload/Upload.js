@@ -19,12 +19,11 @@ const CustomUpload = ({
         id="contained-button-file"
         type="file"
         onChange={change}
-        disable={disable}
-        onClick={onClick}
-        size={1000}
-        accept=".doc, .docx, .xls, .xlsx,.pdf,.png,.txt,.jpg, .jpeg,.gif"
-        maxfilesize={10000000}
         disabled={disable}
+        onClick={onClick}
+        // size={1000}
+        // accept=".doc, .docx, .xls, .xlsx,.pdf,.png,.txt,.jpg, .jpeg,.gif"
+        // maxfilesize={10000000}
       />
       <label
         htmlFor="contained-button-file"
