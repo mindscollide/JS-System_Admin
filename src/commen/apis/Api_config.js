@@ -145,6 +145,12 @@ const addUpdateVolApi = {
   RequestMethod: "ServiceManager.AddUpdateVolmeter",
 };
 
+//Delete a Category
+
+const DeleteCategory = {
+  RequestMethod: "ServiceManager.DeleteCorporateCategory",
+};
+
 export {
   authenticationLogIn,
   authenticationSignUp,
@@ -177,4 +183,5 @@ export {
   searchBankListApi,
   VolatilityMeterAPI,
   addUpdateVolApi,
+  DeleteCategory,
 };

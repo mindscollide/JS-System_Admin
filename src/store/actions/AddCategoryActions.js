@@ -68,7 +68,7 @@ const Addcategory = (navigate, data) => {
                   "Category saved"
                 )
               );
-              dispatch(getAllCorporatesCategory(navigate));
+              // dispatch(getAllCorporatesCategory(navigate));
             } else if (
               response.data.responseResult.responseMessage
                 .toLowerCase()

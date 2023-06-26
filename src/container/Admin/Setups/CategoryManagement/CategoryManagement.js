@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./CategoryManagement.css";
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row, Form } from "react-bootstrap";
 import { Paper } from "@material-ui/core";
 import { TextField, Button, Loader } from "../../../../components/elements";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
@@ -9,6 +9,7 @@ import { Spin } from "antd";
 import { json, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
+  DeleteCorporateCategoryAPI,
   UpdatecorporateMapping,
   getAllCorporatesCategory,
 } from "../../../../store/actions/Auth-Actions";
@@ -16,44 +17,35 @@ import { useSelector } from "react-redux";
 import { Addcategory } from "../../../../store/actions/AddCategoryActions";
 import { UpdateCategoryMap } from "../../../../store/reducers";
 import { UpdateMapCategory } from "../../../../store/actions/UpdateCategoryAction";
+import {
+  forNumbersOnly,
+  formatNumberForFourDecimal,
+  numberformatgerWithFourDecimalValues,
+  stringConvertintoNumber,
+} from "../../../../commen/functions/numberFormatter";
+import DeleteModal from "./DeleRejectModal";
 
 const CategoryManagement = () => {
   //Accordian
   const { Panel } = Collapse;
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { auth } = useSelector((state) => state);
   const [corporates, setCorporates] = useState([]);
   const { AddCategory, UpdateCategoryMap } = useSelector((state) => state);
 
-  //For Adding a Category
-  const [showaddcategory, setShowaddcategory] = useState(false);
-  const [clickadd, setClickadd] = useState(false);
-  const [editCategoryList, setEditCategoryList] = useState([]);
-  const [addCategoryList, setAddCategoryList] = useState([]);
-  const [adddata, setadddata] = useState({
-    category: {
-      value: "",
-      errorMessage: "",
-      errorStatus: false,
-    },
-    bidSpread: {
-      value: null,
-      errorMessage: "",
-      errorStatus: false,
-    },
-    offerSpread: {
-      value: null,
-      errorMessage: "",
-      errorStatus: false,
-    },
-    AssetTypeId: {
-      value: 1,
-      errorMessage: "",
-      errorStatus: false,
-    },
+  //for Auto focus
+  const NameRef = useRef(null);
 
-    BankID: 1,
-  });
+  useEffect(() => {
+    if (NameRef.current) {
+      NameRef.current.focus();
+    }
+  }, []);
+
+  //For edit a Category
+  const [editCategoryList, setEditCategoryList] = useState([]);
+  const [errormessege, seterrormessege] = useState(false);
   const [categoryupdate, setCategoryUpdate] = useState({
     category: {
       value: "",
@@ -61,12 +53,12 @@ const CategoryManagement = () => {
       errorStatus: false,
     },
     bidSpread: {
-      value: null,
+      value: "",
       errorMessage: "",
       errorStatus: false,
     },
     offerSpread: {
-      value: null,
+      value: "",
       errorMessage: "",
       errorStatus: false,
     },
@@ -82,13 +74,52 @@ const CategoryManagement = () => {
     },
     BankID: 1,
   });
-  const [delteCateogry, setDeltecategory] = useState([]);
-  const { auth } = useSelector((state) => state);
 
+  //For Adding a Category
+  const [addCategoryList, setAddCategoryList] = useState([]);
+  const [deleteCategoryList, setDeleteCategoryList] = useState([]);
+  const [addData, setadDdata] = useState({
+    category: {
+      value: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+    bidSpread: {
+      value: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+    offerSpread: {
+      value: "",
+      errorMessage: "",
+      errorStatus: false,
+    },
+    AssetTypeId: {
+      value: 1,
+      errorMessage: "",
+      errorStatus: false,
+    },
+
+    BankID: 1,
+  });
+
+  const [delteCateogry, setDeltecategory] = useState(null);
+  const [deleteRejectModal, setDeleteRejectModal] = useState(false);
+
+  // api call for get All category
   useEffect(() => {
     dispatch(getAllCorporatesCategory(navigate));
   }, []);
 
+  useEffect(() => {
+    const deletecategoryData = auth.DeleteCategory;
+    if (Object.keys(deletecategoryData).length > 0) {
+      setDeltecategory(deletecategoryData);
+    }
+    console.log("deletecategoryDatadeletecategoryData", deletecategoryData);
+  }, [auth.DeleteCategory]);
+
+  // store data of corporates in loacal variable
   useEffect(() => {
     let corporatesData = auth.Corporates;
     if (Object.keys(corporatesData).length > 0) {
@@ -96,63 +127,6 @@ const CategoryManagement = () => {
     }
   }, [auth.Corporates]);
 
-  useEffect(() => {
-    let corporatesData = UpdateCategoryMap.UpdateCategory;
-    if (Object.keys(corporatesData).length > 0) {
-      console.log("authauth12 UpdateCategoryMap", corporatesData);
-      console.log("authauth12 UpdateCategoryMap", categoryupdate);
-      let id = categoryupdate.categoryID.value;
-      const categoryIndex = corporates.findIndex(
-        (store) => store.categoryID === id.toString()
-      );
-      console.log("authauth12 UpdateCategoryMap", categoryIndex);
-
-      const newSourceItems = [...corporates];
-      const newSourceItem = newSourceItems[categoryIndex];
-      console.log("authauth12 UpdateCategoryMap", newSourceItem);
-
-      let data = {
-        categoryName: categoryupdate.category.value,
-        categoryID: categoryupdate.categoryID.value,
-        offerSpread: parseInt(categoryupdate.offerSpread.value),
-        bidSpread: parseInt(categoryupdate.bidSpread.value),
-        corporates: newSourceItems[categoryIndex].corporates,
-      };
-      if (categoryIndex !== -1) {
-        newSourceItems[categoryIndex] = data;
-        setCorporates(newSourceItems);
-      }
-      setEditCategoryList([]);
-      setCategoryUpdate({
-        category: {
-          value: "",
-          errorMessage: "",
-          errorStatus: false,
-        },
-        bidSpread: {
-          value: null,
-          errorMessage: "",
-          errorStatus: false,
-        },
-        offerSpread: {
-          value: null,
-          errorMessage: "",
-          errorStatus: false,
-        },
-        AssetTypeId: {
-          value: 1,
-          errorMessage: "",
-          errorStatus: false,
-        },
-        categoryID: {
-          value: 0,
-          errorMessage: "",
-          errorStatus: false,
-        },
-        BankID: 1,
-      });
-    }
-  }, [UpdateCategoryMap.UpdateCategory]);
   console.log("authauth12 UpdateCategoryMap corporates", corporates);
 
   //Sliders Function
@@ -166,24 +140,7 @@ const CategoryManagement = () => {
     Slider.scrollLeft = Slider.scrollLeft + 300;
   };
 
-  const OpenAddCategory = (recorde) => {
-    if (addCategoryList.length > 0) {
-      setAddCategoryList([...addCategoryList, recorde]);
-    } else {
-      setAddCategoryList([recorde]);
-    }
-  };
-
-  const checkForAdd = (recorde) => {
-    let newdata = addCategoryList.find((element) => element === recorde);
-    console.log(newdata, "hhhhhhh");
-    if (newdata != undefined) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
+  //  for drage card
   const handleDragEnd = (results) => {
     const { source, destination, type } = results;
     console.log("handleDragEnd", results);
@@ -230,190 +187,7 @@ const CategoryManagement = () => {
     }
   };
 
-  const CloseNewCategory = (recorde) => {
-    let dataForSplice = [...addCategoryList];
-    let newIndex = addCategoryList.indexOf(recorde);
-    dataForSplice.splice(newIndex, 1);
-    setAddCategoryList(dataForSplice);
-  };
-
-  const CloseUpdateCategory = (recorde) => {
-    console.log("hhhhhhh", recorde);
-    let dataForSplice = [...editCategoryList];
-    let newIndex = editCategoryList.indexOf(recorde);
-    dataForSplice.splice(newIndex, 1);
-    setEditCategoryList(dataForSplice);
-    console.log("hhhhhhh", newIndex);
-  };
-
-  const AfterClickAdd = async (recorde) => {
-    let bankId = localStorage.getItem("bankID");
-    let Userid = localStorage.getItem("userID");
-    setClickadd(true);
-    console.log(" i am clicked", adddata);
-
-    let data = {
-      Category: adddata.category.value,
-      BidSpread: parseInt(adddata.bidSpread.value),
-      OfferSpread: parseInt(adddata.offerSpread.value),
-      AssetTypeId: 1,
-      BankID: parseInt(bankId),
-      UserId: parseInt(Userid),
-    };
-    await dispatch(Addcategory(navigate, data));
-    let dataForSplice = [...addCategoryList];
-    let newIndex = addCategoryList.indexOf(recorde);
-    dataForSplice.splice(newIndex, 1);
-    setAddCategoryList(dataForSplice);
-    console.log(" i am clicked");
-  };
-
-  const OpenEditCategory = (recorde, data) => {
-    console.log(data, "datadata");
-    setCategoryUpdate({
-      ...categoryupdate,
-      offerSpread: {
-        value: data.offerSpread,
-      },
-      category: {
-        value: data.categoryName,
-      },
-      bidSpread: {
-        value: data.bidSpread,
-      },
-      categoryID: {
-        value: data.categoryID,
-      },
-    });
-    let dataForSplice = [...addCategoryList];
-    let newIndex = addCategoryList.indexOf(recorde);
-    dataForSplice.splice(newIndex, 1);
-    setAddCategoryList(dataForSplice);
-    if (editCategoryList.length > 0) {
-      setEditCategoryList([...editCategoryList, recorde]);
-    } else {
-      setEditCategoryList([recorde]);
-    }
-  };
-  console.log(editCategoryList, "hhhhhhh");
-
-  const checkForEdit = (recorde) => {
-    let newdata = editCategoryList.find((element) => element === recorde);
-    console.log(newdata, "hhhhhhh");
-    if (newdata != undefined) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-  const addModal = (data, index) => {
-    return (
-      <Row>
-        <Col
-          lg={12}
-          md={12}
-          sm={12}
-          // key={newInstanceId}
-          className="add-cate-wrapper m-3"
-        >
-          <Row>
-            <Col lg={12} md={12} sm={12}>
-              <span className="Name_tag">
-                Name <span className="red_steric">*</span>
-              </span>
-            </Col>
-          </Row>
-
-          <Row>
-            <Col lg={12} md={12} sm={12} className="CreateMeetingInput">
-              <TextField
-                name="name"
-                applyClass="form-control2"
-                type="text"
-                maxLength={100}
-                labelClass="d-none"
-                required={true}
-                value={adddata.category.value}
-                onChange={CategoryManageState}
-              />
-            </Col>
-          </Row>
-
-          <Row className="mt-3">
-            <Col lg={12} md={12} sm={12}>
-              <span className="Name_tag">
-                Spread <span className="red_steric">*</span>
-              </span>
-            </Col>
-          </Row>
-
-          <Row className="mt-2">
-            <Col lg={6} md={6} sm={12} xs={12}>
-              <Row>
-                <Col lg={12} md={12} sm={12}>
-                  <span className="Name_tag">Bid</span>
-                </Col>
-              </Row>
-              <Row>
-                <Col lg={12} md={12} sm={12}>
-                  <TextField
-                    name="Bid"
-                    applyClass="form-control2"
-                    type="text"
-                    maxLength={100}
-                    labelClass="d-none"
-                    required={true}
-                    value={adddata.bidSpread.value}
-                    onChange={CategoryManageState}
-                  />
-                </Col>
-              </Row>
-            </Col>
-            <Col lg={6} md={6} sm={12} xs={12}>
-              <Row>
-                <Col lg={12} md={12} sm={12}>
-                  <span className="Name_tag">Offer</span>
-                </Col>
-              </Row>
-              <Row>
-                <Col lg={12} md={12} sm={12}>
-                  <TextField
-                    name="Offer"
-                    applyClass="form-control2"
-                    type="text"
-                    maxLength={100}
-                    labelClass="d-none"
-                    required={true}
-                    value={adddata.offerSpread.value}
-                    onChange={CategoryManageState}
-                  />
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-          <Row className="mt-3">
-            <Col
-              lg={12}
-              md={12}
-              sm={12}
-              className="d-flex justify-content-center gap-2"
-            >
-              <Button
-                className="Add_button_category"
-                text="Add"
-                onClick={AfterClickAdd}
-              />
-              <Button
-                className="Cancel_button_cateogry"
-                text="Cancel"
-                onClick={CloseNewCategory}
-              />
-            </Col>
-          </Row>
-        </Col>
-      </Row>
-    );
-  };
+  // for corporate data ui
   const showCards = (data) => {
     console.log("showCardsshowCards", data);
     if (Object.keys(data).length > 0) {
@@ -491,73 +265,133 @@ const CategoryManagement = () => {
     }
   };
 
-  const CategoryManageState = (e) => {
-    let name = e.target.name;
-    let value = e.target.value;
-    if (name === "name" && value !== "") {
-      let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
-      console.log("valueCheckvalueCheck", valueCheck);
-      if (valueCheck !== "") {
-        setadddata({
-          ...adddata,
-          category: {
-            value: valueCheck.trimStart(),
-            errorMessage: "",
-            errorStatus: false,
-          },
-        });
-      }
-    } else if (name === "name" && value === "") {
-      setadddata({
-        ...adddata,
-        category: { value: "", errorMessage: "", errorStatus: false },
-      });
-    }
+  // for edit
+  // Update Corporate Function with spinnner
+  useEffect(() => {
+    let corporatesData = UpdateCategoryMap.UpdateCategory;
+    if (Object.keys(corporatesData).length > 0) {
+      console.log("authauth12 UpdateCategoryMap", corporatesData);
+      console.log("authauth12 UpdateCategoryMap", categoryupdate);
+      let id = categoryupdate.categoryID.value;
+      const categoryIndex = corporates.findIndex(
+        (store) => store.categoryID === id.toString()
+      );
+      console.log("authauth12 UpdateCategoryMap", categoryIndex);
 
-    if (name === "Bid" && value !== "") {
-      console.log("valuevalueemailvaluevalueemail", value);
-      if (value !== "") {
-        setadddata({
-          ...adddata,
-          bidSpread: {
-            value: value.trimStart(),
-            errorMessage: "",
-            errorStatus: false,
-          },
-        });
+      const newSourceItems = [...corporates];
+      const newSourceItem = newSourceItems[categoryIndex];
+      console.log("authauth12 UpdateCategoryMap", newSourceItem);
+      console.log("authauth12 UpdateCategoryMapvvvv", categoryupdate);
+      // stringConvertintoNumber(addData.bidSpread.value)
+      let data = {
+        categoryName: categoryupdate.category.value,
+        categoryID: categoryupdate.categoryID.value,
+        offerSpread: parseInt(categoryupdate.offerSpread.value),
+        bidSpread: parseInt(categoryupdate.bidSpread.value),
+        corporates: newSourceItems[categoryIndex].corporates,
+      };
+      if (categoryIndex !== -1) {
+        newSourceItems[categoryIndex] = data;
+        setCorporates(newSourceItems);
       }
-    } else if (name === "Bid" && value === "") {
-      setadddata({
-        ...adddata,
+      setEditCategoryList([]);
+      setCategoryUpdate({
+        category: {
+          value: "",
+          errorMessage: "",
+          errorStatus: false,
+        },
         bidSpread: {
           value: "",
           errorMessage: "",
-          errorStatus: true,
+          errorStatus: false,
         },
-      });
-    }
-
-    if (name === "Offer" && value !== "") {
-      console.log("valuevalueemailvaluevalueemail", value);
-      if (value !== "") {
-        setadddata({
-          ...adddata,
-          offerSpread: {
-            value: value.trimStart(),
-            errorMessage: "",
-            errorStatus: false,
-          },
-        });
-      }
-    } else if (name === "Offer" && value === "") {
-      setadddata({
-        ...adddata,
         offerSpread: {
           value: "",
           errorMessage: "",
-          errorStatus: true,
+          errorStatus: false,
         },
+        AssetTypeId: {
+          value: 1,
+          errorMessage: "",
+          errorStatus: false,
+        },
+        categoryID: {
+          value: 0,
+          errorMessage: "",
+          errorStatus: false,
+        },
+        BankID: 1,
       });
+    }
+  }, [UpdateCategoryMap.UpdateCategory]);
+
+  const OpenEditCategory = (recorde, data) => {
+    console.log(data, "datadata");
+    // console.log(
+    //   " i am clicked",
+    //   numberformatgerWithFourDecimalValues(data.bidSpread.trimStart())
+    // );
+    setAddCategoryList([]);
+    setadDdata({
+      category: {
+        value: "",
+        errorMessage: "",
+        errorStatus: false,
+      },
+      bidSpread: {
+        value: "",
+        errorMessage: "",
+        errorStatus: false,
+      },
+      offerSpread: {
+        value: "",
+        errorMessage: "",
+        errorStatus: false,
+      },
+      AssetTypeId: {
+        value: 1,
+        errorMessage: "",
+        errorStatus: false,
+      },
+
+      BankID: 1,
+    });
+    setCategoryUpdate({
+      offerSpread: {
+        value: formatNumberForFourDecimal(data.offerSpread),
+        errorMessage: "",
+        errorStatus: false,
+      },
+      category: {
+        value: data.categoryName.trimStart(),
+        errorMessage: "",
+        errorStatus: false,
+      },
+      bidSpread: {
+        value: formatNumberForFourDecimal(data.bidSpread),
+        errorMessage: "",
+        errorStatus: false,
+      },
+      categoryID: {
+        value: data.categoryID,
+        errorMessage: "",
+        errorStatus: false,
+      },
+    });
+    console.log(" i am clicked", formatNumberForFourDecimal(data.bidSpread));
+
+    setEditCategoryList([recorde]);
+  };
+
+  const checkForEdit = (recorde) => {
+    let newdata = editCategoryList.find((element) => element === recorde);
+    console.log(newdata, "gggggggggggggg");
+    console.log(recorde, "hhhhhhh");
+    if (newdata != undefined) {
+      return true;
+    } else {
+      return false;
     }
   };
 
@@ -586,16 +420,19 @@ const CategoryManagement = () => {
     }
 
     if (name === "Bidupdated" && value !== "") {
+      let valueCheck = value.replace(/[^0-9]+/g, "");
       console.log("valuevalueemailvaluevalueemail", value);
-      if (value !== "") {
-        setCategoryUpdate({
-          ...categoryupdate,
-          bidSpread: {
-            value: value.trimStart(),
-            errorMessage: "",
-            errorStatus: false,
-          },
-        });
+      if (forNumbersOnly(value.trimStart()) !== "") {
+        if (numberformatgerWithFourDecimalValues(value.trimStart())) {
+          setCategoryUpdate({
+            ...categoryupdate,
+            bidSpread: {
+              value: numberformatgerWithFourDecimalValues(value.trimStart()),
+              errorMessage: "",
+              errorStatus: false,
+            },
+          });
+        }
       }
     } else if (name === "Bidupdated" && value === "") {
       setCategoryUpdate({
@@ -609,16 +446,21 @@ const CategoryManagement = () => {
     }
 
     if (name === "Offerupdate" && value !== "") {
-      console.log("valuevalueemailvaluevalueemail", value);
-      if (value !== "") {
-        setCategoryUpdate({
-          ...categoryupdate,
-          offerSpread: {
-            value: value.trimStart(),
-            errorMessage: "",
-            errorStatus: false,
-          },
-        });
+      console.log(
+        "valuevalueemailvaluevalueemail",
+        numberformatgerWithFourDecimalValues(value.trimStart())
+      );
+      if (forNumbersOnly(value.trimStart()) !== "") {
+        if (numberformatgerWithFourDecimalValues(value.trimStart())) {
+          setCategoryUpdate({
+            ...categoryupdate,
+            offerSpread: {
+              value: numberformatgerWithFourDecimalValues(value.trimStart()),
+              errorMessage: "",
+              errorStatus: false,
+            },
+          });
+        }
       }
     } else if (name === "Offerupdate" && value === "") {
       setCategoryUpdate({
@@ -634,16 +476,545 @@ const CategoryManagement = () => {
 
   const UpdateCategory = () => {
     let bankid = localStorage.getItem("bankID");
+    console.log(" i am clicked", categoryupdate);
+
     let data = {
       Category: categoryupdate.category.value,
-      BidSpread: parseInt(categoryupdate.bidSpread.value),
-      OfferSpread: parseInt(categoryupdate.offerSpread.value),
+      BidSpread: stringConvertintoNumber(categoryupdate.bidSpread.value),
+      OfferSpread: stringConvertintoNumber(categoryupdate.offerSpread.value),
       CategoryId: parseInt(categoryupdate.categoryID.value),
       BankID: parseInt(bankid),
       AssetTypeId: 1,
     };
+    console.log(" i am clicked", data);
     dispatch(UpdateMapCategory(navigate, data, setEditCategoryList));
   };
+
+  const CloseUpdateCategory = (recorde) => {
+    setCategoryUpdate({
+      category: {
+        value: "",
+        errorMessage: "",
+        errorStatus: false,
+      },
+      bidSpread: {
+        value: "",
+        errorMessage: "",
+        errorStatus: false,
+      },
+      offerSpread: {
+        value: "",
+        errorMessage: "",
+        errorStatus: false,
+      },
+      AssetTypeId: {
+        value: 1,
+        errorMessage: "",
+        errorStatus: false,
+      },
+      categoryID: {
+        value: 0,
+        errorMessage: "",
+        errorStatus: false,
+      },
+      BankID: 1,
+    });
+    setEditCategoryList([]);
+  };
+
+  // for add category
+
+  // Add Corporate Function with spinnner
+  useEffect(() => {
+    let corporatesData = AddCategory.addCategory;
+    if (Object.keys(corporatesData).length > 0) {
+      const newSourceItems = [...corporates];
+      let data = {
+        categoryName: addData.category.value,
+        categoryID: corporatesData.categoryID,
+        offerSpread: formatNumberForFourDecimal(addData.offerSpread.value),
+        bidSpread: formatNumberForFourDecimal(addData.bidSpread.value),
+        corporates: [],
+      };
+      newSourceItems.push(data);
+      setCorporates(newSourceItems);
+      setadDdata({
+        category: {
+          value: "",
+          errorMessage: "",
+          errorStatus: false,
+        },
+        bidSpread: {
+          value: "",
+          errorMessage: "",
+          errorStatus: false,
+        },
+        offerSpread: {
+          value: "",
+          errorMessage: "",
+          errorStatus: false,
+        },
+        AssetTypeId: {
+          value: 1,
+          errorMessage: "",
+          errorStatus: false,
+        },
+
+        BankID: 1,
+      });
+      setAddCategoryList([]);
+    }
+  }, [AddCategory.addCategory]);
+
+  const OpenAddCategory = (recorde) => {
+    setCategoryUpdate({
+      category: {
+        value: "",
+        errorMessage: "",
+        errorStatus: false,
+      },
+      bidSpread: {
+        value: "",
+        errorMessage: "",
+        errorStatus: false,
+      },
+      offerSpread: {
+        value: "",
+        errorMessage: "",
+        errorStatus: false,
+      },
+      AssetTypeId: {
+        value: 1,
+        errorMessage: "",
+        errorStatus: false,
+      },
+      categoryID: {
+        value: 0,
+        errorMessage: "",
+        errorStatus: false,
+      },
+      BankID: 1,
+    });
+    setEditCategoryList([]);
+    setAddCategoryList([recorde]);
+  };
+
+  const handleDelteCliked = (id) => {
+    let bankId = localStorage.getItem("bankID");
+    console.log("handleDelteClikedhandleDelteCliked", id);
+    let data = {
+      CategoryId: parseInt(id),
+      BankID: parseInt(bankId),
+    };
+    dispatch(DeleteCorporateCategoryAPI(navigate, data, setDeleteRejectModal));
+  };
+
+  const checkForAdd = (recorde) => {
+    let newdata = addCategoryList.find((element) => element === recorde);
+    console.log(newdata, "hhhhhhh");
+    if (newdata != undefined) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  const CategoryManageState = (e) => {
+    let name = e.target.name;
+    let value = e.target.value;
+    if (name === "name" && value !== "") {
+      let valueCheck = value.replace(/[^a-zA-Z ]/g, "");
+      console.log("valueCheckvalueCheck", valueCheck);
+      if (valueCheck !== "") {
+        setadDdata({
+          ...addData,
+          category: {
+            value: valueCheck.trimStart(),
+            errorMessage: "",
+            errorStatus: false,
+          },
+        });
+      }
+    } else if (name === "name" && value === "") {
+      setadDdata({
+        ...addData,
+        category: {
+          value: "",
+          errorMessage: "",
+          errorStatus: false,
+        },
+      });
+    }
+
+    if (name === "Bid" && value !== "") {
+      console.log("valuevalueemailvaluevalueemail", value);
+      if (forNumbersOnly(value.trimStart()) !== "") {
+        if (numberformatgerWithFourDecimalValues(value.trimStart())) {
+          setadDdata({
+            ...addData,
+            bidSpread: {
+              value: numberformatgerWithFourDecimalValues(value.trimStart()),
+              errorMessage: "",
+              errorStatus: false,
+            },
+          });
+        }
+      }
+    } else if (name === "Bid" && value === "") {
+      setadDdata({
+        ...addData,
+        bidSpread: {
+          value: "",
+          errorMessage: "",
+          errorStatus: true,
+        },
+      });
+    }
+
+    if (name === "Offer" && value !== "") {
+      console.log("valuevalueemailvaluevalueemail", value);
+      if (forNumbersOnly(value.trimStart()) !== "") {
+        if (numberformatgerWithFourDecimalValues(value)) {
+          setadDdata({
+            ...addData,
+            offerSpread: {
+              value: numberformatgerWithFourDecimalValues(value),
+              errorMessage: "",
+              errorStatus: false,
+            },
+          });
+        }
+      }
+    } else if (name === "Offer" && value === "") {
+      setadDdata({
+        ...addData,
+        offerSpread: {
+          value: "",
+          errorMessage: "",
+          errorStatus: true,
+        },
+      });
+    }
+  };
+
+  const AfterClickAdd = async (e) => {
+    e.preventDefault();
+    if (addData.category.value !== "") {
+      seterrormessege(false);
+      let bankId = localStorage.getItem("bankID");
+      let Userid = localStorage.getItem("userID");
+      console.log(" i am clicked", addData);
+
+      let data = {
+        Category: addData.category.value,
+        BidSpread: stringConvertintoNumber(addData.bidSpread.value),
+        OfferSpread: stringConvertintoNumber(addData.offerSpread.value),
+        AssetTypeId: 1,
+        BankID: parseInt(bankId),
+        UserId: parseInt(Userid),
+      };
+      console.log(" i am clicked", data);
+
+      await dispatch(Addcategory(navigate, data));
+    } else {
+      seterrormessege(true);
+    }
+  };
+
+  const CloseNewCategory = (recorde) => {
+    seterrormessege(false);
+    setadDdata({
+      category: {
+        value: "",
+        errorMessage: "",
+        errorStatus: false,
+      },
+      bidSpread: {
+        value: "",
+        errorMessage: "",
+        errorStatus: false,
+      },
+      offerSpread: {
+        value: "",
+        errorMessage: "",
+        errorStatus: false,
+      },
+      AssetTypeId: {
+        value: 1,
+        errorMessage: "",
+        errorStatus: false,
+      },
+
+      BankID: 1,
+    });
+    setAddCategoryList([]);
+  };
+
+  const addModal = (data, index) => {
+    return (
+      <Row>
+        {AddCategory.Spinner === true ? (
+          <>
+            <span className="customer-login-user-spinner">
+              <Spin size="large" />
+            </span>
+          </>
+        ) : (
+          <>
+            <Col
+              lg={12}
+              md={12}
+              sm={12}
+              // key={newInstanceId}
+              className="add-cate-wrapper m-3"
+            >
+              <Row>
+                <Col lg={12} md={12} sm={12}>
+                  <Form onSubmit={AfterClickAdd}>
+                    <Row>
+                      <Col lg={12} md={12} sm={12}>
+                        <span className="Name_tag">
+                          Name <span className="red_steric">*</span>
+                        </span>
+                      </Col>
+                    </Row>
+
+                    <Row>
+                      <Col
+                        lg={12}
+                        md={12}
+                        sm={12}
+                        className="CreateMeetingInput"
+                      >
+                        <TextField
+                          name="name"
+                          applyClass="form-control2"
+                          ref={NameRef}
+                          type="text"
+                          autoFocus
+                          maxLength={100}
+                          labelClass="d-none"
+                          value={addData.category.value}
+                          onChange={CategoryManageState}
+                        />
+                      </Col>
+                    </Row>
+                    <p
+                      className={
+                        errormessege && addData.category.value === ""
+                          ? "errorMessage"
+                          : "errorMessage_hidden"
+                      }
+                    >
+                      Please Fill all the credentials
+                    </p>
+
+                    <Row className="mt-3">
+                      <Col lg={12} md={12} sm={12}>
+                        <span className="Name_tag">
+                          Spread <span className="red_steric">*</span>
+                        </span>
+                      </Col>
+                    </Row>
+
+                    <Row className="mt-2">
+                      <Col lg={6} md={6} sm={12} xs={12}>
+                        <Row>
+                          <Col lg={12} md={12} sm={12}>
+                            <span className="Name_tag">Bid</span>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col lg={12} md={12} sm={12}>
+                            <TextField
+                              name="Bid"
+                              applyClass="form-control2"
+                              type="text"
+                              maxLength={100}
+                              labelClass="d-none"
+                              required={true}
+                              value={addData.bidSpread.value}
+                              onChange={CategoryManageState}
+                            />
+                          </Col>
+                        </Row>
+                      </Col>
+                      <Col lg={6} md={6} sm={12} xs={12}>
+                        <Row>
+                          <Col lg={12} md={12} sm={12}>
+                            <span className="Name_tag">Offer</span>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col lg={12} md={12} sm={12}>
+                            <TextField
+                              name="Offer"
+                              applyClass="form-control2"
+                              type="text"
+                              maxLength={100}
+                              labelClass="d-none"
+                              required={true}
+                              value={addData.offerSpread.value}
+                              onChange={CategoryManageState}
+                            />
+                          </Col>
+                        </Row>
+                      </Col>
+                    </Row>
+                    <Row className="mt-3">
+                      <Col
+                        lg={12}
+                        md={12}
+                        sm={12}
+                        className="d-flex justify-content-center gap-2"
+                      >
+                        <Button
+                          className="Add_button_category"
+                          text="Add"
+                          onClick={AfterClickAdd}
+                        />
+                        <Button
+                          className="Cancel_button_cateogry"
+                          text="Cancel"
+                          onClick={CloseNewCategory}
+                        />
+                      </Col>
+                    </Row>
+                  </Form>
+                </Col>
+              </Row>
+            </Col>
+          </>
+        )}
+      </Row>
+    );
+  };
+
+  const updateModal = (data, index) => {
+    return (
+      <Row>
+        {UpdateCategoryMap.Spinner === true ? (
+          <>
+            <span className="customer-login-user-spinner m-3">
+              <Spin size="large" />
+            </span>
+          </>
+        ) : (
+          <>
+            <Col lg={12} md={12} sm={12} className="add-cate-wrapper m-3">
+              <Form onSubmit={UpdateCategory}>
+                <Row>
+                  <Col lg={12} md={12} sm={12}>
+                    <span className="Name_tag">
+                      Name
+                      <span className="red_steric">*</span>
+                    </span>
+                  </Col>
+                </Row>
+
+                <Row>
+                  <Col lg={12} md={12} sm={12} className="CreateMeetingInput">
+                    <TextField
+                      name="nameUpdate"
+                      applyClass="form-control2"
+                      type="text"
+                      maxLength={100}
+                      labelClass="d-none"
+                      required={true}
+                      value={categoryupdate.category.value}
+                      onChange={HandleUpdateChange}
+                    />
+                    <p
+                      className={
+                        errormessege && categoryupdate.category.value === ""
+                          ? "errorMessage"
+                          : "errorMessage_hidden"
+                      }
+                    >
+                      Please Fill all the credentials
+                    </p>
+                  </Col>
+                </Row>
+
+                <Row className="mt-3">
+                  <Col lg={12} md={12} sm={12}>
+                    <span className="Name_tag">
+                      Spread <span className="red_steric">*</span>
+                    </span>
+                  </Col>
+                </Row>
+
+                <Row className="mt-2">
+                  <Col lg={6} md={6} sm={12} xs={12}>
+                    <Row>
+                      <Col lg={12} md={12} sm={12}>
+                        <span className="Name_tag">Bid</span>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col lg={12} md={12} sm={12}>
+                        <TextField
+                          name="Bidupdated"
+                          applyClass="form-control2"
+                          type="text"
+                          maxLength={100}
+                          labelClass="d-none"
+                          required={true}
+                          value={categoryupdate.bidSpread.value}
+                          onChange={HandleUpdateChange}
+                        />
+                      </Col>
+                    </Row>
+                  </Col>
+                  <Col lg={6} md={6} sm={12} xs={12}>
+                    <Row>
+                      <Col lg={12} md={12} sm={12}>
+                        <span className="Name_tag">Offer</span>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col lg={12} md={12} sm={12}>
+                        <TextField
+                          name="Offerupdate"
+                          applyClass="form-control2"
+                          type="text"
+                          maxLength={100}
+                          labelClass="d-none"
+                          required={true}
+                          value={categoryupdate.offerSpread.value}
+                          onChange={HandleUpdateChange}
+                        />
+                      </Col>
+                    </Row>
+                  </Col>
+                </Row>
+                <Row className="mt-3">
+                  <Col
+                    lg={12}
+                    md={12}
+                    sm={12}
+                    className="d-flex justify-content-center gap-2"
+                  >
+                    <Button
+                      className="Update_button_category"
+                      text="Update"
+                      onClick={UpdateCategory}
+                    />
+                    <Button
+                      className="Cancel_button_cateogry"
+                      text="Cancel"
+                      onClick={() => CloseUpdateCategory(data.corporateID)}
+                    />
+                  </Col>
+                </Row>
+              </Form>
+            </Col>
+          </>
+        )}
+      </Row>
+    );
+  };
+
   return (
     <section className="Property-container">
       <Row>
@@ -685,134 +1056,7 @@ const CategoryManagement = () => {
                     return (
                       <>
                         {checkForEdit(data.categoryID) ? (
-                          <Row>
-                            {UpdateCategoryMap.Spinner === true ? (
-                              <>
-                                <span className="category-management-table-user-spinner m-3">
-                                  <Spin size="large" />
-                                </span>
-                              </>
-                            ) : (
-                              <>
-                                <Col
-                                  lg={12}
-                                  md={12}
-                                  sm={12}
-                                  className="add-cate-wrapper m-3"
-                                >
-                                  <Row>
-                                    <Col lg={12} md={12} sm={12}>
-                                      <span className="Name_tag">
-                                        Name
-                                        <span className="red_steric">*</span>
-                                      </span>
-                                    </Col>
-                                  </Row>
-
-                                  <Row>
-                                    <Col
-                                      lg={12}
-                                      md={12}
-                                      sm={12}
-                                      className="CreateMeetingInput"
-                                    >
-                                      <TextField
-                                        name="nameUpdate"
-                                        applyClass="form-control2"
-                                        type="text"
-                                        maxLength={100}
-                                        labelClass="d-none"
-                                        required={true}
-                                        value={categoryupdate.category.value}
-                                        onChange={HandleUpdateChange}
-                                      />
-                                    </Col>
-                                  </Row>
-
-                                  <Row className="mt-3">
-                                    <Col lg={12} md={12} sm={12}>
-                                      <span className="Name_tag">
-                                        Spread{" "}
-                                        <span className="red_steric">*</span>
-                                      </span>
-                                    </Col>
-                                  </Row>
-
-                                  <Row className="mt-2">
-                                    <Col lg={6} md={6} sm={12} xs={12}>
-                                      <Row>
-                                        <Col lg={12} md={12} sm={12}>
-                                          <span className="Name_tag">Bid</span>
-                                        </Col>
-                                      </Row>
-                                      <Row>
-                                        <Col lg={12} md={12} sm={12}>
-                                          <TextField
-                                            name="Bidupdated"
-                                            applyClass="form-control2"
-                                            type="text"
-                                            maxLength={100}
-                                            labelClass="d-none"
-                                            required={true}
-                                            value={
-                                              categoryupdate.bidSpread.value
-                                            }
-                                            onChange={HandleUpdateChange}
-                                          />
-                                        </Col>
-                                      </Row>
-                                    </Col>
-                                    <Col lg={6} md={6} sm={12} xs={12}>
-                                      <Row>
-                                        <Col lg={12} md={12} sm={12}>
-                                          <span className="Name_tag">
-                                            Offer
-                                          </span>
-                                        </Col>
-                                      </Row>
-                                      <Row>
-                                        <Col lg={12} md={12} sm={12}>
-                                          <TextField
-                                            name="Offerupdate"
-                                            applyClass="form-control2"
-                                            type="text"
-                                            maxLength={100}
-                                            labelClass="d-none"
-                                            required={true}
-                                            value={
-                                              categoryupdate.offerSpread.value
-                                            }
-                                            onChange={HandleUpdateChange}
-                                          />
-                                        </Col>
-                                      </Row>
-                                    </Col>
-                                  </Row>
-                                  <Row className="mt-3">
-                                    <Col
-                                      lg={12}
-                                      md={12}
-                                      sm={12}
-                                      className="d-flex justify-content-center gap-2"
-                                    >
-                                      <Button
-                                        className="Update_button_category"
-                                        text="Update"
-                                        onClick={UpdateCategory}
-                                      />
-                                      <Button
-                                        className="Cancel_button_cateogry"
-                                        text="Cancel"
-                                        onClick={() =>
-                                          CloseUpdateCategory(data.corporateID)
-                                        }
-                                      />
-                                    </Col>
-                                  </Row>
-                                </Col>
-                              </>
-                            )}
-                          </Row>
+                          updateModal(data, index)
                         ) : (
                           <Draggable
                             key={data.categoryID + data.corporateID}
@@ -863,7 +1107,12 @@ const CategoryManagement = () => {
                                         >
                                           <i className="icon-add-circle"></i>
                                         </span>
-                                        <span className="delete-cat d-inline-block">
+                                        <span
+                                          className="delete-cat d-inline-block cursor-pointer"
+                                          onClick={() =>
+                                            handleDelteCliked(data.categoryID)
+                                          }
+                                        >
                                           <i className="icon-trash"></i>
                                         </span>
                                       </Col>
@@ -890,7 +1139,11 @@ const CategoryManagement = () => {
                                           >
                                             <div className="title_bid">Bid</div>
                                             <div className="rate val-highlight1">
-                                              {data.bidSpread}
+                                              {data.bidSpread != ""
+                                                ? formatNumberForFourDecimal(
+                                                    data.bidSpread
+                                                  )
+                                                : "0.00"}
                                             </div>
                                           </Col>
                                         </Row>
@@ -913,7 +1166,11 @@ const CategoryManagement = () => {
                                               offer
                                             </div>
                                             <div className="rate val-highlight2">
-                                              {data.offerSpread}
+                                              {data.offerSpread != ""
+                                                ? formatNumberForFourDecimal(
+                                                    data.offerSpread
+                                                  )
+                                                : "0.00"}
                                             </div>
                                           </Col>
                                         </Row>
@@ -957,8 +1214,13 @@ const CategoryManagement = () => {
           />
         </Col>
       </Row>
-
+      <DeleteModal
+        delteCateogry={delteCateogry}
+        deleteRejectModal={deleteRejectModal}
+        setDeleteRejectModal={setDeleteRejectModal}
+      />
       {auth.Loading ? <Loader /> : null}
+      {/* {AddCategory.Loading ? <Loader /> : null} */}
     </section>
   );
 };
