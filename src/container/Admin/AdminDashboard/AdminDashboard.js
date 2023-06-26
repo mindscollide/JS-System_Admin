@@ -18,24 +18,9 @@ const AdminDashboard = () => {
       <Row>
         <Col lg={12} md={12} sm={12}>
           <Row>
-            <Col
-              sm={12}
-              md={12}
-              lg={12}
-              // style={{
-              //   width: "100%",
-              // }}
-              // className="d-flex gap-5"
-            >
-              <Row>
-                <Col sm={12} md={2} lg={2}>
-                  <Sidebar2 />
-                </Col>
-                <Col sm={12} md={10} lg={10}>
-                  <Outlet />
-                </Col>
-                {/* <Col sm={12} md={1} lg={1}></Col> */}
-              </Row>
+            <Col sm={12} md={12} lg={12} className="d-flex gap-3">
+              <Sidebar2 />
+              <Outlet />
             </Col>
           </Row>
         </Col>
