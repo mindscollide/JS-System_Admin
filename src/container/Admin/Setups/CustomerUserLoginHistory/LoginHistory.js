@@ -617,7 +617,7 @@ const LoginHistory = () => {
                     column={columns}
                     rows={rows}
                     pagination={true}
-                    scroll={{ x: "500" }}
+                    scroll={{ x: "800" }}
                     className={"LoginHistory-table"}
                   />
                 )}

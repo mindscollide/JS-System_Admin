@@ -3,6 +3,23 @@
   /* margin: 0 50px 0 0 !important; */
 }
 
+:where(.css-dev-only-do-not-override-k7429z).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-k7429z).ant-table-wrapper
+  .ant-table-tbody
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-k7429z).ant-table-wrapper
+  .ant-table-tbody
+  > tr
+  > td,
+:where(.css-dev-only-do-not-override-k7429z).ant-table-wrapper tfoot > tr > th,
+:where(.css-dev-only-do-not-override-k7429z).ant-table-wrapper tfoot > tr > td {
+  font-family: "Montserrat", sans-serif !important;
+}
+
 .LoginHistory-label {
   font-size: 18px;
   color: #004990;
@@ -59,6 +76,7 @@
 .LoginHistory-table th.ant-table-cell {
   color: #ffffff !important;
   border-radius: 0% !important;
+  border-color: #5b67cd !important;
   background: linear-gradient(to bottom, #5b67cd 0%, #2a38af 100%) !important;
 }
 
@@ -209,11 +227,6 @@
   margin-right: 5px;
 }
 .email-table-cursor {
-  width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  cursor: pointer;
 }
 
 .email-table-cursor:hover,
@@ -221,4 +234,22 @@
 .email-table-cursor:focus,
 .email-table-cursor:focus-visible {
   width: 100%;
+}
+
+:where(.css-dev-only-do-not-override-k7429z).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-k7429z).ant-table-wrapper
+  .ant-table-tbody
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-k7429z).ant-table-wrapper
+  .ant-table-tbody
+  > tr
+  > td,
+:where(.css-dev-only-do-not-override-k7429z).ant-table-wrapper tfoot > tr > th,
+:where(.css-dev-only-do-not-override-k7429z).ant-table-wrapper tfoot > tr > td {
+  padding: 7px !important;
+  font-size: 14px;
 }
