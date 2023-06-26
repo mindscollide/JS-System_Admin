@@ -6,8 +6,7 @@ import {
   Table,
   Modal,
 } from "../../../../components/elements";
-// import "./RejectionReasonModal.css";
-
+import "./CategoryManagement.css";
 const DeleteModal = ({
   deleteRejectModal,
   setDeleteRejectModal,
@@ -29,37 +28,47 @@ const DeleteModal = ({
         onHide={closeRejectionReasonModal}
         ModalBody={
           <>
-            <Row>
-              <Col lg={12} md={12} sm={12}>
-                <span>Corporates Associated With Category</span>
+            <Row className="mt-2">
+              <Col
+                lg={12}
+                md={12}
+                sm={12}
+                className="d-flex justify-content-center"
+              >
+                <span className="HeadingModal">
+                  Corporates Associated With Category
+                </span>
               </Col>
             </Row>
             <Row>
               <Col lg={12} md={12} sm={12}>
-                {delteCateogry !== undefined && delteCateogry !== null ? (
-                  <>
-                    <p>{delteCateogry?.categoryName}</p>
+                <Row>
+                  <Col lg={12} md={12} sm={12} className="ModalScroller">
+                    {delteCateogry !== undefined && delteCateogry !== null ? (
+                      <>
+                        {/* <p>{delteCateogry?.categoryName}</p>
                     <p>{delteCateogry?.bidSpread}</p>
                     <p>{delteCateogry?.categoryID}</p>
-                    <p>{delteCateogry?.offerSpread}</p>
-                    {delteCateogry?.corporates.length > 0
-                      ? delteCateogry?.corporates.map((data, index) => {
-                          return <p>{data.corporateName}</p>;
-                        })
-                      : ""}
-                    {/* <p>{delteCateogry?.corporates.map((data, index) => {
-                        console.log("")
-                    })}</p> */}
-                    <p>{delteCateogry?.categoryName}</p>
-                    {/* {delteCateogry.map((data, index) => {
-                      console.log("datadatadatadatadatadata", data);
+                    <p>{delteCateogry?.offerSpread}</p> */}
+                        {delteCateogry?.corporates.length > 0
+                          ? delteCateogry?.corporates.map((data, index) => {
+                              return (
+                                <p>
+                                  {
+                                    <ul>
+                                      <li>{data.corporateName}</li>
+                                    </ul>
+                                  }
+                                </p>
+                              );
+                            })
+                          : ""}
 
-                      // return(
-
-                      // )
-                    })} */}
-                  </>
-                ) : null}
+                        {/* <p>{delteCateogry?.categoryName}</p> */}
+                      </>
+                    ) : null}
+                  </Col>
+                </Row>
               </Col>
             </Row>
           </>

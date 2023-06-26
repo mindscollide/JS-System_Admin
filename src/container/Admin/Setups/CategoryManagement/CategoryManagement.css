@@ -2420,3 +2420,26 @@ thead .dropdown-menu-filter .dropdown-item label span {
   height: 0px;
   color: #f16b6b !important;
 }
+
+.HeadingModal {
+  font-size: 18px;
+  color: #004990;
+  font-weight: 600;
+}
+
+.ModalScroller {
+  height: 30vh !important;
+  overflow-x: hidden !important;
+}
+
+.ModalScroller::-webkit-scrollbar {
+  width: 0.5rem;
+  border-radius: 20px;
+  background-color: #f2f2f2;
+}
+
+.ModalScroller::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  background: #ccc;
+  margin-left: -15px;
+}
