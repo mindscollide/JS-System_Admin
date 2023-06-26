@@ -19,6 +19,7 @@ const initialState = {
   customerLoginHistory: [],
   Corporates: [],
   UpdatedCorporates: [],
+  DeleteCategory: [],
   roles: null,
   Token: "",
   Refresh: "",
@@ -332,6 +333,27 @@ const authReducer = (state = initialState, action) => {
       };
 
     case actions.UPDATE_CORPORATE_MAPPING_FAIL:
+      return {
+        ...state,
+        Loading: false,
+        ResponseMessage: action.message,
+      };
+
+    case actions.DELETE_CATEGORY_INIT:
+      return {
+        ...state,
+        Loading: true,
+      };
+
+    case actions.DELETE_CATEGORY_SUCCESS:
+      return {
+        ...state,
+        Loading: false,
+        DeleteCategory: action.response,
+        ResponseMessage: action.message,
+      };
+
+    case actions.DELETE_CATEGORY_FAILED:
       return {
         ...state,
         Loading: false,

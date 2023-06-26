@@ -29,6 +29,7 @@ const TextField = ({
   labelClass,
   clickIcon,
   maxLength,
+  autoFocus,
 }) => {
   return (
     <>
@@ -55,6 +56,7 @@ const TextField = ({
           maxLength={maxLength}
           disabled={disable}
           required={required}
+          autoFocus={autoFocus}
         />
         <FormControl.Feedback className={iconClassName} onClick={clickIcon}>
           {inputIcon}
