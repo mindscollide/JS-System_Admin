@@ -94,6 +94,7 @@ const CounterLimit = () => {
   }, []);
 
   const handlerUploadCounterFile = (data) => {
+    console.log(data, "handlerUploadCounterFilehandlerUploadCounterFile");
     const counterUploadFile = data.target.value;
     const counteruploadedFile = data.target.files[0];
     console.log("UploadFileUploadFile", counterUploadFile);
@@ -109,7 +110,7 @@ const CounterLimit = () => {
     }
   };
 
-  //New Api 46.	GetAllCorporateNameByBankID data Rendering
+  //New Api GetAllCorporateNameByBankID data Rendering
   useEffect(() => {
     if (
       systemReducer.corporateNameByBankId !== null &&
@@ -194,6 +195,7 @@ const CounterLimit = () => {
                       column={counterColumns}
                       rows={rows}
                       pagination={false}
+                      scroll={{ y: 390 }}
                       className="counterLimit-table"
                     />
                   )}

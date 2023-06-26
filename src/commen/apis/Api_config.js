@@ -135,6 +135,16 @@ const saveCounterPartyApi = {
   RequestMethod: "ServiceManager.SavecounterPartyLimit",
 };
 
+// get volmeters by bank ID api in vol meter page
+const VolatilityMeterAPI = {
+  RequestMethod: "ServiceManager.GetVolMetersByBankID",
+};
+
+//add Update VolMeter API in vol meter page
+const addUpdateVolApi = {
+  RequestMethod: "ServiceManager.AddUpdateVolmeter",
+};
+
 export {
   authenticationLogIn,
   authenticationSignUp,
@@ -165,4 +175,6 @@ export {
   saveCounterPartyApi,
   updateUserByUserIDApi,
   searchBankListApi,
+  VolatilityMeterAPI,
+  addUpdateVolApi,
 };

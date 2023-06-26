@@ -87,7 +87,13 @@ const CounterPartyModal = ({ uploadCounterModal, setUploadCounterModal }) => {
       dataIndex: "avaliableLimit",
       key: "avaliableLimit",
       width: "200px",
-      render: (text) => <label className="issue-date-column">{text}</label>,
+      render: (text) => {
+        return (
+          <label className="issue-date-column">
+            {text.toLocaleString("en-US")}
+          </label>
+        );
+      },
     },
     {
       title: <label className="bottom-table-header">Instrument Type</label>,
@@ -112,7 +118,13 @@ const CounterPartyModal = ({ uploadCounterModal, setUploadCounterModal }) => {
       dataIndex: "avaliableLimit",
       key: "avaliableLimit",
       width: "200px",
-      render: (text) => <label className="issue-date-column">{text}</label>,
+      render: (text) => {
+        return (
+          <label className="issue-date-column">
+            {text.toLocaleString("en-US")}
+          </label>
+        );
+      },
     },
     {
       title: <label className="bottom-table-header">Instrument Type</label>,
@@ -147,6 +159,7 @@ const CounterPartyModal = ({ uploadCounterModal, setUploadCounterModal }) => {
                       column={columns}
                       rows={validCorporates}
                       pagination={false}
+                      scroll={{ y: 150 }}
                       className="Counter-Party-Modal-table"
                     />
                   </Col>
@@ -161,6 +174,7 @@ const CounterPartyModal = ({ uploadCounterModal, setUploadCounterModal }) => {
                       column={InValidColumn}
                       rows={invalidCorporates}
                       pagination={false}
+                      scroll={{ y: 200 }}
                       className="Counter-Party-Modal-table"
                     />
                   </Col>

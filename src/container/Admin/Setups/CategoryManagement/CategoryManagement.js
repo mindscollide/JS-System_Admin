@@ -688,7 +688,7 @@ const CategoryManagement = () => {
                           <Row>
                             {UpdateCategoryMap.Spinner === true ? (
                               <>
-                                <span className="customer-login-user-spinner m-3">
+                                <span className="category-management-table-user-spinner m-3">
                                   <Spin size="large" />
                                 </span>
                               </>
