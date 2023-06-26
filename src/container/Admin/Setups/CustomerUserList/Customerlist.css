@@ -6,6 +6,17 @@
   font-weight: 600;
 }
 
+.SectionContainer {
+  width: 100%;
+  margin: 0 50px 0 0 !important;
+}
+
+.Email_Coloumn {
+  width: 100% !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
 .customer-List-paper {
   border-radius: 4px;
   padding: 3px 10px !important;

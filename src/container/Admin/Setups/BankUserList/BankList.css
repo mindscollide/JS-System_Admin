@@ -77,6 +77,11 @@
   font-size: 13px !important;
 }
 
+.SectionContainer {
+  width: 100% !important;
+  margin: 0 50px 0 0 !important;
+}
+
 .BankUserList-table {
   max-width: 100vw;
   max-height: 50vh !important;

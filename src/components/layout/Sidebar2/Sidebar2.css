@@ -4,7 +4,7 @@
   font-size: 15px;
   color: #004990 !important;
   width: 100% !important;
-  height: 100%;
+  height: 100% !important;
 }
 
 .menu-icons {
@@ -13,7 +13,7 @@
 
 .submenu-sidebar-icons {
   font-family: "Montserrat", sans-serif !important;
-  margin-left: -10px;
+  margin-left: -3px;
   width: 100% !important;
   padding: 6px 0px !important;
   border-radius: 0px !important;
@@ -25,10 +25,9 @@
   color: #004990 !important;
 }
 
-section.ant-layout.ant-layout-has-sider.css-dev-only-do-not-override-1e3x2xa {
+:where(.css-dev-only-do-not-override-k7429z).ant-layout.ant-layout-has-sider {
   height: 83.5vh !important;
   border-top-right-radius: 10px;
-  overflow: hidden !important;
   border-top-right-radius: 20px !important;
 }
 
@@ -79,4 +78,18 @@ section.ant-layout.ant-layout-has-sider.css-dev-only-do-not-override-1e3x2xa {
   > .ant-menu-submenu-title
   > .ant-menu-submenu-arrow::after {
   transform: rotate(135deg) translateX(-2.5px) translateY(0px);
+}
+
+:where(
+    .css-dev-only-do-not-override-k7429z
+  ).ant-menu-light.ant-menu-root.ant-menu-inline,
+:where(.css-dev-only-do-not-override-k7429z).ant-menu-light
+  > .ant-menu.ant-menu-root.ant-menu-inline,
+:where(
+    .css-dev-only-do-not-override-k7429z
+  ).ant-menu-light.ant-menu-root.ant-menu-vertical,
+:where(.css-dev-only-do-not-override-k7429z).ant-menu-light
+  > .ant-menu.ant-menu-root.ant-menu-vertical {
+  border-top-right-radius: 10px !important;
+  border-inline-end: none !important;
 }

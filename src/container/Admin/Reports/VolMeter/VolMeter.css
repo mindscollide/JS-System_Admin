@@ -7,6 +7,11 @@
   position: fixed !important;
 }
 
+.SystemContainer {
+  width: 100% !important;
+  margin: 0 50px 0 0 !important;
+}
+
 .volMeter-paper {
   border-radius: 4px;
   padding: 3px 10px !important;

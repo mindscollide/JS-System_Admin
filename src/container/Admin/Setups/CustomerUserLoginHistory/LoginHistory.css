@@ -4,25 +4,21 @@
 }
 
 .LoginHistory-label {
-  display: flex;
-  justify-content: start;
   font-size: 18px;
   color: #004990;
   font-weight: 600;
+}
+.sectionConctainerClass {
+  width: 100% !important;
+  margin: 0 50px 0 0 !important;
 }
 
 .LoginHistory-paper {
   border-radius: 4px;
   width: 100% !important;
-  overflow: hidden !important;
+  overflow-x: hidden !important;
   padding: 3px 10px !important;
   background-color: #ffffff !important;
-}
-
-.col-search-download-btn {
-  display: flex;
-  justify-content: center !important;
-  gap: 10px !important;
 }
 
 .Search-HistoryLogin-btn {
@@ -53,7 +49,7 @@
 }
 
 .LoginHistory-table {
-  width: 100%;
+  max-width: 100vw;
   max-height: 50vh !important;
   overflow: auto !important;
   overflow-y: hidden;
@@ -211,4 +207,18 @@
 
 .Icons-right {
   margin-right: 5px;
+}
+.email-table-cursor {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.email-table-cursor:hover,
+.email-table-cursor:active,
+.email-table-cursor:focus,
+.email-table-cursor:focus-visible {
+  width: 100%;
 }

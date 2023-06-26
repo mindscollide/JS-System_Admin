@@ -339,7 +339,6 @@ const Userlist = () => {
       dataIndex: "categoryName",
       key: "categoryName",
       align: "center",
-      width: "100px",
       ellipsis: true,
       render: (text, record) => {
         console.log(record, "categoryNamecategoryName");
@@ -354,7 +353,6 @@ const Userlist = () => {
       title: <label className="bottom-table-header">Nature Of Bussiness</label>,
       dataIndex: "natureOfBussiness",
       key: "natureOfBussiness",
-      width: "150px",
       align: "center",
       ellipsis: true,
       render: (text, record) => {
@@ -369,7 +367,6 @@ const Userlist = () => {
       title: <label className="bottom-table-header">Edit</label>,
       dataIndex: "edit",
       key: "edit",
-      width: "100px",
       align: "center",
       ellipsis: true,
       render: (text, record) => {
@@ -387,88 +384,86 @@ const Userlist = () => {
   ];
 
   return (
-    <Fragment>
-      <section className="me-4">
-        <Row>
-          <Col lg={12} md={12} sm={12}>
-            <span className="user-List-label">Customer List</span>
-          </Col>
-        </Row>
-        <Row className="mt-3">
-          <Col lg={12} md={12} sm={12}>
-            <CustomPaper className="user-List-paper">
-              <Row className="mt-3">
-                <Col lg={4} md={4} sm={12}>
-                  <Select
-                    name="corporateNames"
-                    options={selectCorporateCompany}
-                    isSearchable={true}
-                    onChange={selectBankCompanyOnchangeHandler}
-                    value={selectCorporateCompanyValue}
-                    placeholder="Company"
-                    className="select-user-list-fontsize"
-                  />
-                </Col>
+    <section className="SectionContainer">
+      <Row>
+        <Col lg={12} md={12} sm={12}>
+          <span className="user-List-label">Customer List</span>
+        </Col>
+      </Row>
+      <Row className="mt-3">
+        <Col lg={12} md={12} sm={12}>
+          <CustomPaper className="user-List-paper">
+            <Row className="mt-3">
+              <Col lg={4} md={4} sm={12}>
+                <Select
+                  name="corporateNames"
+                  options={selectCorporateCompany}
+                  isSearchable={true}
+                  onChange={selectBankCompanyOnchangeHandler}
+                  value={selectCorporateCompanyValue}
+                  placeholder="Company"
+                  className="select-user-list-fontsize"
+                />
+              </Col>
 
-                <Col lg={4} md={4} sm={12}>
-                  <Select
-                    name="corporateCategoryID"
-                    options={selectCategory}
-                    onChange={selectCategoryOnchangeHandler}
-                    value={selectCategoryValue}
-                    placeholder="Categories"
-                    className="select-user-list-fontsize"
-                  />
-                </Col>
+              <Col lg={4} md={4} sm={12}>
+                <Select
+                  name="corporateCategoryID"
+                  options={selectCategory}
+                  onChange={selectCategoryOnchangeHandler}
+                  value={selectCategoryValue}
+                  placeholder="Categories"
+                  className="select-user-list-fontsize"
+                />
+              </Col>
 
-                <Col lg={4} md={4} sm={12}>
-                  <Select
-                    name="natureofBusinesses"
-                    options={selectNatureBusiness}
-                    onChange={selectNatureOnchangeHandler}
-                    value={selectNatureBusinessValue}
-                    placeholder="Nature Business"
-                    className="select-user-list-fontsize"
-                  />
-                </Col>
-              </Row>
+              <Col lg={4} md={4} sm={12}>
+                <Select
+                  name="natureofBusinesses"
+                  options={selectNatureBusiness}
+                  onChange={selectNatureOnchangeHandler}
+                  value={selectNatureBusinessValue}
+                  placeholder="Nature Business"
+                  className="select-user-list-fontsize"
+                />
+              </Col>
+            </Row>
 
-              <Row className="mt-3">
-                <Col lg={12} md={12} sm={12} className="user-list-col-fields">
-                  <Button
-                    icon={<i className="icon-search icon-check-space"></i>}
-                    className="User-Search-btn"
-                    onClick={onHitSearchCustomerList}
-                    text="Search"
+            <Row className="mt-3">
+              <Col lg={12} md={12} sm={12} className="user-list-col-fields">
+                <Button
+                  icon={<i className="icon-search icon-check-space"></i>}
+                  className="User-Search-btn"
+                  onClick={onHitSearchCustomerList}
+                  text="Search"
+                />
+                <Button
+                  icon={<i className="icon-refresh icon-check-space"></i>}
+                  className="User-Reset-btn"
+                  onClick={resetBtnHandler}
+                  text="Reset"
+                />
+              </Col>
+            </Row>
+            <Row className="mt-3">
+              <Col lg={12} md={12} sm={12}>
+                {systemReducer.Spinner === true ? (
+                  <span className="user-list-table-spinner">
+                    <Spin size="large" />
+                  </span>
+                ) : (
+                  <Table
+                    column={columns}
+                    rows={rows}
+                    pagination={true}
+                    className="User-List-table"
                   />
-                  <Button
-                    icon={<i className="icon-refresh icon-check-space"></i>}
-                    className="User-Reset-btn"
-                    onClick={resetBtnHandler}
-                    text="Reset"
-                  />
-                </Col>
-              </Row>
-              <Row className="mt-3">
-                <Col lg={12} md={12} sm={12}>
-                  {systemReducer.Spinner === true ? (
-                    <span className="user-list-table-spinner">
-                      <Spin size="large" />
-                    </span>
-                  ) : (
-                    <Table
-                      column={columns}
-                      rows={rows}
-                      pagination={false}
-                      className="User-List-table"
-                    />
-                  )}
-                </Col>
-              </Row>
-            </CustomPaper>
-          </Col>
-        </Row>
-      </section>
+                )}
+              </Col>
+            </Row>
+          </CustomPaper>
+        </Col>
+      </Row>
 
       {editCustomerListModal ? (
         <Fragment>
@@ -485,7 +480,7 @@ const Userlist = () => {
           />
         </Fragment>
       ) : null}
-    </Fragment>
+    </section>
   );
 };
 

@@ -6,6 +6,11 @@
   font-weight: 600;
 }
 
+.SectionContainer {
+  width: 100% !important;
+  margin: 0 50px 0 0;
+}
+
 .user-List-paper {
   border-radius: 4px;
   padding: 3px 10px !important;
