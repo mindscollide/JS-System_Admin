@@ -572,7 +572,6 @@ const UserLogin = () => {
             </Row>
           </CustomPaper>
         </Col>
-        {/* <Col lg={2} md={2} sm={12}></Col> */}
       </Row>
       {downloadReducer.Loading ? <Loader /> : null}
     </section>

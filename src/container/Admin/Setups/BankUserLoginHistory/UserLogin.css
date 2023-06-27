@@ -62,8 +62,8 @@
 }
 
 .UserHistory-table {
-  max-width: 77vw;
-  max-height: 48vh !important;
+  max-width: 76.8vw;
+  max-height: auto !important;
   /* overflow: auto !important; */
   overflow-y: hidden;
   border-radius: 0px !important;

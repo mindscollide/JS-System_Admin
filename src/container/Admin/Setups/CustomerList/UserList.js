@@ -459,6 +459,7 @@ const Userlist = () => {
                     column={columns}
                     rows={rows}
                     pagination={true}
+                    scroll={{ x: 500, y: 200 }}
                     className="User-List-table"
                   />
                 )}

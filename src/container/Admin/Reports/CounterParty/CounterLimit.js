@@ -135,7 +135,8 @@ const CounterLimit = () => {
       title: <label className="bottom-table-header">Company Name</label>,
       dataIndex: "corporateName",
       key: "corporateName",
-      width: "360px",
+      width: "180px",
+      ellipsis: true,
       align: "left",
       render: (text) => (
         <label className="counterLimit-company-text">{text}</label>
@@ -145,8 +146,8 @@ const CounterLimit = () => {
       title: <label className="bottom-table-header">View</label>,
       dataIndex: "view",
       key: "view",
-      width: "40px",
       align: "center",
+      width: "180px",
       render: (text, record) => {
         console.log(record, "recordrecordrecord");
         return (
@@ -194,6 +195,7 @@ const CounterLimit = () => {
                     column={counterColumns}
                     rows={rows}
                     pagination={true}
+                    scroll={{ x: 500, y: 200 }}
                     className="counterLimit-table"
                   />
                 )}

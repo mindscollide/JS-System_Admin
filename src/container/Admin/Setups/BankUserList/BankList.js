@@ -759,6 +759,7 @@ const BankList = () => {
                     column={columns}
                     rows={rows}
                     pagination={true}
+                    // scroll={{ x: 500, y: 200 }}
                     className="BankUserList-table"
                   />
                 )}

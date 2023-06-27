@@ -75,7 +75,7 @@
 
 .User-List-table {
   max-width: 100vw;
-  max-height: 56vh !important;
+  max-height: auto !important;
   overflow: auto !important;
   overflow-y: hidden;
   border-radius: 0px !important;

@@ -621,7 +621,6 @@ const LoginHistory = () => {
             </Row>
           </CustomPaper>
         </Col>
-        {/* <Col lg={1} md={1} sm={12}></Col> */}
       </Row>
       {downloadReducer.Loading ? <Loader /> : null}
     </section>
