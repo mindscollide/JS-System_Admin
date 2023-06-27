@@ -406,7 +406,7 @@ const LoginHistory = () => {
       title: <label>Interface</label>,
       dataIndex: "interface",
       key: "interface",
-      width: "170px",
+      width: "188px",
       align: "center",
       // ellipsis: true,
       render: (text) => <label>{text}</label>,
@@ -480,7 +480,7 @@ const LoginHistory = () => {
       </Row>
 
       <Row className="mt-2">
-        <Col lg={11} md={11} sm={12}>
+        <Col lg={12} md={12} sm={12}>
           <CustomPaper className="LoginHistory-paper">
             <Row className="mt-3">
               <Col lg={3} md={3} sm={12}>
@@ -621,7 +621,7 @@ const LoginHistory = () => {
             </Row>
           </CustomPaper>
         </Col>
-        <Col lg={1} md={1} sm={12}></Col>
+        {/* <Col lg={1} md={1} sm={12}></Col> */}
       </Row>
       {downloadReducer.Loading ? <Loader /> : null}
     </section>
