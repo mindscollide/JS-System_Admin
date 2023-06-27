@@ -512,7 +512,7 @@ body {
   font-size: 18px;
   color: #004990;
   font-weight: 600;
-  margin-left: 2.5% !important;
+  margin-left: 3% !important;
 }
 .select2-container .select2-selection--single {
   height: 37px;
@@ -2255,12 +2255,12 @@ thead .dropdown-menu-filter .dropdown-item label span {
 
 .Property-container {
   height: 100% !important;
-  width: 89% !important;
+  width: 87% !important;
   margin: 0 auto !important;
 }
 
 .Content_container {
-  width: 96%;
+  width: 95%;
   margin: 0 auto;
 }
 

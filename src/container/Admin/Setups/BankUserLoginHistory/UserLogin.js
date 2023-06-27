@@ -294,22 +294,24 @@ const UserLogin = () => {
     {
       title: <label className="bottom-table-header">Email</label>,
       dataIndex: "email",
-      width: "200px",
       key: "email",
       align: "center",
-      render: (text) => <label className="Email_coloumn">{text}</label>,
+      width: "250px",
+      render: (text) => <label className="issue-date-column">{text}</label>,
     },
     {
       title: <label className="bottom-table-header">First Name</label>,
       dataIndex: "firstName",
       key: "firstName",
       align: "center",
+      width: "150px",
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
     {
       title: <label className="bottom-table-header">Last Name</label>,
       dataIndex: "lastName",
       key: "lastName",
+      width: "150px",
       align: "center",
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
@@ -326,6 +328,7 @@ const UserLogin = () => {
       title: <label className="bottom-table-header">Bank Name</label>,
       dataIndex: "bankName",
       key: "bankName",
+      width: "150px",
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -334,6 +337,7 @@ const UserLogin = () => {
       title: <label className="bottom-table-header">Ip Address</label>,
       dataIndex: "ipAddress",
       key: "ipAddress",
+      width: "100px",
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -360,6 +364,7 @@ const UserLogin = () => {
       title: <label className="bottom-table-header">LoggedIn Date</label>,
       dataIndex: "CombineLoginInTimeDate",
       key: "CombineLoginInTimeDate",
+      width: "150px",
       align: "center",
       ellipsis: true,
       render: (_, record) => (
@@ -390,6 +395,7 @@ const UserLogin = () => {
       title: <label className="bottom-table-header">LoggOut Date</label>,
       dataIndex: "CombineLoggedOutTimeDate",
       key: "CombineLoggedOutTimeDate",
+      width: "150px",
       align: "center",
       ellipsis: true,
       render: (_, record) => (
@@ -402,6 +408,7 @@ const UserLogin = () => {
       title: <label className="bottom-table-header">Total Span</label>,
       dataIndex: "totalSpan",
       key: "totalSpan",
+      width: "200px",
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -411,6 +418,7 @@ const UserLogin = () => {
       title: <label className="bottom-table-header">Interface</label>,
       dataIndex: "interface",
       key: "interface",
+      width: "188px",
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -451,7 +459,7 @@ const UserLogin = () => {
         </Col>
       </Row>
       <Row className="mt-3">
-        <Col lg={12} md={12} sm={12}>
+        <Col lg={10} md={10} sm={12}>
           <CustomPaper className="UserHistory-paper">
             <Row className="mt-3">
               <Col lg={4} md={4} sm={12}>
@@ -556,6 +564,7 @@ const UserLogin = () => {
                     column={userColumns}
                     rows={rows}
                     pagination={true}
+                    scroll={{ x: 500, y: 200 }}
                     className="UserHistory-table"
                   />
                 )}
@@ -563,6 +572,7 @@ const UserLogin = () => {
             </Row>
           </CustomPaper>
         </Col>
+        <Col lg={2} md={2} sm={12}></Col>
       </Row>
       {downloadReducer.Loading ? <Loader /> : null}
     </section>
