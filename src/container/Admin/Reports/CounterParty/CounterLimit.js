@@ -135,6 +135,7 @@ const CounterLimit = () => {
       title: <label className="bottom-table-header">Company Name</label>,
       dataIndex: "corporateName",
       key: "corporateName",
+      width: "360px",
       align: "left",
       render: (text) => (
         <label className="counterLimit-company-text">{text}</label>
@@ -144,6 +145,7 @@ const CounterLimit = () => {
       title: <label className="bottom-table-header">View</label>,
       dataIndex: "view",
       key: "view",
+      width: "40px",
       align: "center",
       render: (text, record) => {
         console.log(record, "recordrecordrecord");

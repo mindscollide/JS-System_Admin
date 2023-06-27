@@ -304,14 +304,14 @@ const UserLogin = () => {
       dataIndex: "firstName",
       key: "firstName",
       align: "center",
-      width: "150px",
+      width: "100px",
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
     {
       title: <label className="bottom-table-header">Last Name</label>,
       dataIndex: "lastName",
       key: "lastName",
-      width: "150px",
+      width: "100px",
       align: "center",
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
@@ -328,7 +328,7 @@ const UserLogin = () => {
       title: <label className="bottom-table-header">Bank Name</label>,
       dataIndex: "bankName",
       key: "bankName",
-      width: "150px",
+      width: "100px",
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -408,7 +408,7 @@ const UserLogin = () => {
       title: <label className="bottom-table-header">Total Span</label>,
       dataIndex: "totalSpan",
       key: "totalSpan",
-      width: "200px",
+      width: "180px",
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -459,7 +459,7 @@ const UserLogin = () => {
         </Col>
       </Row>
       <Row className="mt-3">
-        <Col lg={10} md={10} sm={12}>
+        <Col lg={12} md={12} sm={12}>
           <CustomPaper className="UserHistory-paper">
             <Row className="mt-3">
               <Col lg={4} md={4} sm={12}>
@@ -572,7 +572,7 @@ const UserLogin = () => {
             </Row>
           </CustomPaper>
         </Col>
-        <Col lg={2} md={2} sm={12}></Col>
+        {/* <Col lg={2} md={2} sm={12}></Col> */}
       </Row>
       {downloadReducer.Loading ? <Loader /> : null}
     </section>

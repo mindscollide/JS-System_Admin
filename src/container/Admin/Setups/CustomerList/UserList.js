@@ -338,6 +338,7 @@ const Userlist = () => {
       title: <label className="bottom-table-header">Category Name</label>,
       dataIndex: "categoryName",
       key: "categoryName",
+      width: "100px",
       align: "center",
       ellipsis: true,
       render: (text, record) => {
@@ -354,6 +355,7 @@ const Userlist = () => {
       dataIndex: "natureOfBussiness",
       key: "natureOfBussiness",
       align: "center",
+      width: "100px",
       ellipsis: true,
       render: (text, record) => {
         return (
@@ -367,6 +369,7 @@ const Userlist = () => {
       title: <label className="bottom-table-header">Edit</label>,
       dataIndex: "edit",
       key: "edit",
+      width: "100px",
       align: "center",
       ellipsis: true,
       render: (text, record) => {
