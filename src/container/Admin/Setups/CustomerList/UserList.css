@@ -6,6 +6,11 @@
   font-weight: 600;
 }
 
+.SectionContainer {
+  width: 100% !important;
+  margin: 0 25px 0 0;
+}
+
 .user-List-paper {
   border-radius: 4px;
   padding: 3px 10px !important;
@@ -70,7 +75,7 @@
 
 .User-List-table {
   max-width: 100vw;
-  max-height: 56vh !important;
+  max-height: auto !important;
   overflow: auto !important;
   overflow-y: hidden;
   border-radius: 0px !important;

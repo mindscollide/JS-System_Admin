@@ -642,7 +642,7 @@ const Customerlist = () => {
         console.log(record, "recordrecord");
         return (
           <label
-            className="table-columns"
+            className="Email_Coloumn"
             onClick={() => {
               openViewCustomerModal(record);
             }}
@@ -656,7 +656,7 @@ const Customerlist = () => {
       title: <label className="bottom-table-header">First Name</label>,
       dataIndex: "firstName",
       key: "firstName",
-      width: "150px",
+      width: "100px",
       align: "center",
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
@@ -664,7 +664,7 @@ const Customerlist = () => {
       title: <label className="bottom-table-header">Last Name</label>,
       dataIndex: "lastName",
       key: "lastName",
-      width: "150px",
+      width: "100px",
       align: "center",
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
@@ -672,7 +672,7 @@ const Customerlist = () => {
       title: <label className="bottom-table-header">Company</label>,
       dataIndex: "company",
       key: "company",
-      width: "100px",
+      width: "160px",
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -681,8 +681,8 @@ const Customerlist = () => {
       title: <label className="bottom-table-header">Status</label>,
       dataIndex: "statusId",
       key: "statusId",
+      width: "60px",
       align: "center",
-      width: "100px",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
@@ -690,121 +690,115 @@ const Customerlist = () => {
       title: <label className="bottom-table-header">Creation Date Time</label>,
       dataIndex: "creationDate",
       key: "creationDate",
-      width: "150px",
       align: "center",
+      width: "190px",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
   ];
 
   return (
-    <Fragment>
-      <section className="me-4">
-        <Row>
-          <Col lg={12} md={12} sm={12}>
-            <span className="customer-List-label">Customer User List</span>
-          </Col>
-        </Row>
-        <Row className="mt-3">
-          <Col lg={12} md={12} sm={12}>
-            <CustomPaper className="customer-List-paper">
-              <Row className="mt-3">
-                <Col lg={2} md={2} sm={12}>
-                  <TextField
-                    placeholder="First Name"
-                    name="FirstName"
-                    value={customerListFields.FirstName.value}
-                    onChange={customerListValidation}
-                    labelClass="d-none"
-                    className="textfields-customer-list-fontsize"
-                  />
-                </Col>
-                <Col lg={2} md={2} sm={12}>
-                  <TextField
-                    placeholder="Last Name"
-                    name="LastName"
-                    value={customerListFields.LastName.value}
-                    onChange={customerListValidation}
-                    labelClass="d-none"
-                    className="textfields-customer-list-fontsize"
-                  />
-                </Col>
-                <Col lg={2} md={2} sm={12}>
-                  <TextField
-                    placeholder="Email"
-                    name="Email"
-                    onBlur={handlerEmail}
-                    value={customerListFields.Email.value}
-                    onChange={customerListValidation}
-                    labelClass="d-none"
-                    className="textfields-customer-list-fontsize"
-                  />
-                </Col>
-                <Col lg={3} md={3} sm={12}>
-                  <Select
-                    placeholder="Company"
-                    name="corporateNames"
-                    options={companyDropdown}
-                    value={companyDropdownValue}
-                    isSearchable={true}
-                    onChange={selectBankCompanyOnchangeHandler}
-                    className="select-customer-list-fontsize"
-                  />
-                </Col>
-                <Col lg={3} md={3} sm={12}>
-                  <Select
-                    name="corporateCategoryID"
-                    options={selectAllCategory}
-                    value={selectAllCategoryValue}
-                    isSearchable={true}
-                    onChange={selectAllCategoryOnchangeHandler}
-                    placeholder="Select"
-                    className="select-customer-list-fontsize"
-                  />
-                </Col>
-              </Row>
+    <section className="SectionContainer">
+      <Row>
+        <Col lg={12} md={12} sm={12}>
+          <span className="customer-List-label">Customer User List</span>
+        </Col>
+      </Row>
+      <Row className="mt-3">
+        <Col lg={12} md={12} sm={12}>
+          <CustomPaper className="customer-List-paper">
+            <Row className="mt-3">
+              <Col lg={2} md={2} sm={12}>
+                <TextField
+                  placeholder="First Name"
+                  name="FirstName"
+                  value={customerListFields.FirstName.value}
+                  onChange={customerListValidation}
+                  labelClass="d-none"
+                  className="textfields-customer-list-fontsize"
+                />
+              </Col>
+              <Col lg={2} md={2} sm={12}>
+                <TextField
+                  placeholder="Last Name"
+                  name="LastName"
+                  value={customerListFields.LastName.value}
+                  onChange={customerListValidation}
+                  labelClass="d-none"
+                  className="textfields-customer-list-fontsize"
+                />
+              </Col>
+              <Col lg={2} md={2} sm={12}>
+                <TextField
+                  placeholder="Email"
+                  name="Email"
+                  onBlur={handlerEmail}
+                  value={customerListFields.Email.value}
+                  onChange={customerListValidation}
+                  labelClass="d-none"
+                  className="textfields-customer-list-fontsize"
+                />
+              </Col>
+              <Col lg={3} md={3} sm={12}>
+                <Select
+                  placeholder="Company"
+                  name="corporateNames"
+                  options={companyDropdown}
+                  value={companyDropdownValue}
+                  isSearchable={true}
+                  onChange={selectBankCompanyOnchangeHandler}
+                  className="select-customer-list-fontsize"
+                />
+              </Col>
+              <Col lg={3} md={3} sm={12}>
+                <Select
+                  name="corporateCategoryID"
+                  options={selectAllCategory}
+                  value={selectAllCategoryValue}
+                  isSearchable={true}
+                  onChange={selectAllCategoryOnchangeHandler}
+                  placeholder="Select"
+                  className="select-customer-list-fontsize"
+                />
+              </Col>
+            </Row>
 
-              <Row className="mt-3">
-                <Col
-                  lg={12}
-                  md={12}
-                  sm={12}
-                  className="customer-list-col-fields"
-                >
-                  <Button
-                    icon={<i className="icon-search icon-check-space"></i>}
-                    className="Search-customerUserList-btn"
-                    onClick={seacrhButtonHit}
-                    text="Search"
+            <Row className="mt-3">
+              <Col lg={12} md={12} sm={12} className="customer-list-col-fields">
+                <Button
+                  icon={<i className="icon-search icon-check-space"></i>}
+                  className="Search-customerUserList-btn"
+                  onClick={seacrhButtonHit}
+                  text="Search"
+                />
+                <Button
+                  icon={<i className="icon-refresh icon-check-space"></i>}
+                  className="customerUserList-Reset-btn"
+                  onClick={resetBtnHandler}
+                  text="Reset"
+                />
+              </Col>
+            </Row>
+            <Row className="mt-3">
+              <Col lg={12} md={12} sm={12}>
+                {systemReducer.Spinner === true ? (
+                  <span className="customer-list-user-spinner">
+                    <Spin size="large" />
+                  </span>
+                ) : (
+                  <Table
+                    column={columns}
+                    rows={rows}
+                    pagination={true}
+                    scroll={{ x: 500, y: 200 }}
+                    className="CustomerList-table"
                   />
-                  <Button
-                    icon={<i className="icon-refresh icon-check-space"></i>}
-                    className="customerUserList-Reset-btn"
-                    onClick={resetBtnHandler}
-                    text="Reset"
-                  />
-                </Col>
-              </Row>
-              <Row className="mt-3">
-                <Col lg={12} md={12} sm={12}>
-                  {systemReducer.Spinner === true ? (
-                    <span className="customer-list-user-spinner">
-                      <Spin size="large" />
-                    </span>
-                  ) : (
-                    <Table
-                      column={columns}
-                      rows={rows}
-                      pagination={false}
-                      className="CustomerList-table"
-                    />
-                  )}
-                </Col>
-              </Row>
-            </CustomPaper>
-          </Col>
-        </Row>
-      </section>
+                )}
+              </Col>
+            </Row>
+          </CustomPaper>
+        </Col>
+      </Row>
       {customerViewModal ? (
         <>
           <ViewCustomer
@@ -821,7 +815,7 @@ const Customerlist = () => {
         </>
       ) : null}
       {systemReducer.Loading ? <Loader /> : null}
-    </Fragment>
+    </section>
   );
 };
 

@@ -4,8 +4,7 @@
   font-size: 15px;
   color: #004990 !important;
   width: 100% !important;
-  height: 100vh !important;
-  border-top-right-radius: 16px !important;
+  height: 100% !important;
 }
 
 .menu-icons {
@@ -14,7 +13,7 @@
 
 .submenu-sidebar-icons {
   font-family: "Montserrat", sans-serif !important;
-  margin-left: -10px;
+  margin-left: -3px;
   width: 100% !important;
   padding: 6px 0px !important;
   border-radius: 0px !important;
@@ -24,6 +23,12 @@
 .submenu-sidebar-icons:active,
 .submenu-sidebar-icons::selection {
   color: #004990 !important;
+}
+
+:where(.css-dev-only-do-not-override-k7429z).ant-layout.ant-layout-has-sider {
+  height: 83.5vh !important;
+  border-top-right-radius: 10px;
+  border-top-right-radius: 20px !important;
 }
 
 .menu-items-sidebar {
@@ -73,4 +78,18 @@
   > .ant-menu-submenu-title
   > .ant-menu-submenu-arrow::after {
   transform: rotate(135deg) translateX(-2.5px) translateY(0px);
+}
+
+:where(
+    .css-dev-only-do-not-override-k7429z
+  ).ant-menu-light.ant-menu-root.ant-menu-inline,
+:where(.css-dev-only-do-not-override-k7429z).ant-menu-light
+  > .ant-menu.ant-menu-root.ant-menu-inline,
+:where(
+    .css-dev-only-do-not-override-k7429z
+  ).ant-menu-light.ant-menu-root.ant-menu-vertical,
+:where(.css-dev-only-do-not-override-k7429z).ant-menu-light
+  > .ant-menu.ant-menu-root.ant-menu-vertical {
+  border-top-right-radius: 10px !important;
+  border-inline-end: none !important;
 }
