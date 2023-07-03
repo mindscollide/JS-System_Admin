@@ -11,8 +11,7 @@ import { validateEmail } from "../../../../commen/functions/emailValidation";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getAllCategoriesCorporate, //this api is for category
-  getCustomerLoginHistory, //this api for data rendering in table
-  searchCompanyLogin, // this api is used for seacrh user login history
+  userSearhGetLoginHistory, //this api is used for rendering and searching
 } from "../../../../store/actions/Auth-Actions";
 import { corporateNameByBankId } from "../../../../store/actions/System-Admin";
 import { downloadCorporateLoginReports } from "../../../../store/actions/Download-Report";
@@ -79,7 +78,7 @@ const LoginHistory = () => {
     },
 
     corporateCategoryID: {
-      value: "",
+      value: 0,
       errorMessage: "",
       errorStatus: false,
     },
@@ -120,46 +119,44 @@ const LoginHistory = () => {
     });
   };
 
-  // dispatch getALLCategoryDropdown and customerLoginHistory API
+  useEffect(() => {
+    let newData = {
+      FirstName: "",
+      LastName: "",
+      CompanyName: "",
+      Email: "",
+      FromDate: "",
+      ToDate: "",
+      CategoryID: 0,
+      PageNumber: 1,
+      Length: 3,
+      CorporateID: 1,
+    };
+    dispatch(userSearhGetLoginHistory(navigate, newData));
+  }, []);
+
+  // this api is used for table data rendering
+  useEffect(() => {
+    if (
+      auth.corporateGetSearchLoginHistory.length > 0 &&
+      auth.corporateGetSearchLoginHistory !== null &&
+      auth.corporateGetSearchLoginHistory !== undefined
+    ) {
+      setRows(auth.corporateGetSearchLoginHistory);
+    } else {
+      setRows([]);
+    }
+  }, [auth.corporateGetSearchLoginHistory]);
+
+  // dispatch getALLCategoryDropdown and corporateNameByBankId API
   useEffect(() => {
     dispatch(getAllCategoriesCorporate(navigate));
-
     let corporateBank = {
       BankID: loginHistoryField.BankID.value,
     };
     dispatch(corporateNameByBankId(navigate, corporateBank));
-
-    let loginData = {
-      CorporateID: loginHistoryField.CorporateID.value,
-    };
-    dispatch(getCustomerLoginHistory(navigate, loginData));
   }, []);
   console.log(loginHistoryField, "loginHistoryFieldloginHistoryField");
-
-  // For search Btn Hit to check data inside table also after await we set the state empty when ever user
-  // hit the seacrh btn the fields should be empty if the value is true or not
-  const onSearchButtonHit = async () => {
-    let loginSearchData = {
-      FirstName: loginHistoryField.FirstName.value,
-      LastName: loginHistoryField.LastName.value,
-      CompanyName: loginHistoryField.corporateNames.label,
-      Email: loginHistoryField.Email.value,
-      FromDate:
-        loginHistoryField.startDate.value !== ""
-          ? moment(loginHistoryField.startDate.value).format("YYYYMMDD")
-          : "",
-      ToDate:
-        loginHistoryField.endDate.value !== ""
-          ? moment(loginHistoryField.endDate.value).format("YYYYMMDD")
-          : "",
-      CategoryID: 0,
-    };
-    console.log(
-      loginSearchData,
-      "loginSearchDataloginSearchDataloginSearchData"
-    );
-    await dispatch(searchCompanyLogin(navigate, loginSearchData));
-  };
 
   // validations on textfields onChange handler
   const customerListValidation = (e) => {
@@ -281,10 +278,42 @@ const LoginHistory = () => {
     });
     setSelectCategoryValue([]);
     setSelectCompanyValue([]);
-    let loginData = {
+    let newData = {
+      FirstName: "",
+      LastName: "",
+      CompanyName: "",
+      Email: "",
+      FromDate: "",
+      ToDate: "",
+      CategoryID: 0,
+      PageNumber: 1,
+      Length: 3,
       CorporateID: 1,
     };
-    dispatch(getCustomerLoginHistory(navigate, loginData));
+    dispatch(userSearhGetLoginHistory(navigate, newData));
+  };
+
+  // for search button we also hit userSearhGetLoginHistory
+  const onSearchButton = async () => {
+    let newSearchData = {
+      FirstName: loginHistoryField.FirstName.value,
+      LastName: loginHistoryField.LastName.value,
+      CompanyName: loginHistoryField.corporateNames.label,
+      Email: loginHistoryField.Email.value,
+      FromDate:
+        loginHistoryField.startDate.value !== ""
+          ? moment(loginHistoryField.startDate.value).format("YYYYMMDD")
+          : "",
+      ToDate:
+        loginHistoryField.endDate.value !== ""
+          ? moment(loginHistoryField.endDate.value).format("YYYYMMDD")
+          : "",
+      CategoryID: loginHistoryField.corporateCategoryID.value,
+      PageNumber: 1,
+      Length: 3,
+      CorporateID: loginHistoryField.CorporateID.value,
+    };
+    await dispatch(userSearhGetLoginHistory(navigate, newSearchData));
   };
 
   //email validation handler
@@ -392,7 +421,9 @@ const LoginHistory = () => {
       render: (_, record) => {
         return (
           <span>
-            {moment(record.logOutDate).format("YYYY-MM-DD")} {record.logOutTime}
+            {moment(`${record.logOutDate} ${record.logOutTime}`).format(
+              "YYYY-MM-DD HH:MM:ss"
+            )}
           </span>
         );
       },
@@ -446,32 +477,6 @@ const LoginHistory = () => {
       setSelectCompany(tem);
     }
   }, [systemReducer.corporateNameByBankId]);
-
-  useEffect(() => {
-    if (
-      auth.searchCompanyLogin.length > 0 &&
-      auth.searchCompanyLogin !== null &&
-      auth.searchCompanyLogin !== undefined
-    ) {
-      setRows(auth.searchCompanyLogin);
-    } else {
-      setRows([]);
-    }
-  }, [auth.searchCompanyLogin]);
-
-  //New Api Get All Corporate User Login History data Rendering also used for search
-  useEffect(() => {
-    if (
-      auth.customerLoginHistory !== null &&
-      auth.customerLoginHistory !== undefined &&
-      auth.customerLoginHistory.length > 0
-    ) {
-      setRows(auth.customerLoginHistory);
-    } else {
-      setRows([]);
-    }
-  }, [auth.customerLoginHistory]);
-  console.log("customerlisst", rows);
 
   return (
     <Fragment>
@@ -589,7 +594,7 @@ const LoginHistory = () => {
                 >
                   <Button
                     text="Search"
-                    onClick={onSearchButtonHit}
+                    onClick={onSearchButton}
                     icon={<i className="icon-search Icons-right"></i>}
                     className={"Search-HistoryLogin-btn"}
                   />
@@ -617,7 +622,7 @@ const LoginHistory = () => {
                     <Table
                       column={columns}
                       rows={rows}
-                      pagination={false}
+                      pagination={true}
                       // scroll={{ y: "500", x: "500" }}
                       className="LoginHistory-table"
                     />

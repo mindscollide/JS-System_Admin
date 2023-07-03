@@ -8,10 +8,7 @@ import {
   Loader,
 } from "../../../../components/elements";
 import { validateEmail } from "../../../../commen/functions/emailValidation";
-import {
-  bankUserLogin,
-  searchBankLogin,
-} from "../../../../store/actions/Auth-Actions";
+import { bankUserSeacrhGetLogin } from "../../../../store/actions/Auth-Actions";
 import { bankUserDownloadReport } from "../../../../store/actions/Download-Report";
 import Select from "react-select";
 import { useNavigate } from "react-router-dom";
@@ -27,6 +24,7 @@ const UserLogin = () => {
   const { auth, downloadReducer } = useSelector((state) => state);
   // state for set data from api in rows
   const [rows, setRows] = useState([]);
+  let bankUserBankId = localStorage.getItem("bankID");
 
   // state for category dropdown
   const [selectCategoryBank, setSelectCategoryBank] = useState([]);
@@ -76,13 +74,34 @@ const UserLogin = () => {
     },
   });
 
-  // useEffect for render data inside bank user login table
+  // dispatch api for bankSearchGet
   useEffect(() => {
-    let newData = {
-      BankID: userLoginHistory.BankID.value,
+    let newDataa = {
+      FirstName: "",
+      LastName: "",
+      BankName: "",
+      Email: "",
+      FromDate: "",
+      ToDate: "",
+      PageNumber: 1,
+      Length: 3,
+      BankID: parseInt(bankUserBankId),
     };
-    dispatch(bankUserLogin(navigate, newData));
+    dispatch(bankUserSeacrhGetLogin(navigate, newDataa));
   }, []);
+
+  // this api is used for table data rendering
+  useEffect(() => {
+    if (
+      auth.bankGetSearchLoginHistory.length > 0 &&
+      auth.bankGetSearchLoginHistory !== null &&
+      auth.bankGetSearchLoginHistory !== undefined
+    ) {
+      setRows(auth.bankGetSearchLoginHistory);
+    } else {
+      setRows([]);
+    }
+  }, [auth.bankGetSearchLoginHistory]);
 
   //start date state of multi datepicker
   const changeDateStartHandler = (date) => {
@@ -200,8 +219,8 @@ const UserLogin = () => {
     let seacrhBankData = {
       FirstName: userLoginHistory.FirstName.value,
       LastName: userLoginHistory.LastName.value,
-      Email: userLoginHistory.Email.value,
       BankName: userLoginHistory.BankName.value,
+      Email: userLoginHistory.Email.value,
       FromDate:
         userLoginHistory.startDate.value !== ""
           ? moment(userLoginHistory.startDate.value).format("YYYYMMDD")
@@ -210,8 +229,11 @@ const UserLogin = () => {
         userLoginHistory.endDate.value !== ""
           ? moment(userLoginHistory.endDate.value).format("YYYYMMDD")
           : "",
+      PageNumber: 1,
+      Length: 3,
+      BankID: parseInt(bankUserBankId),
     };
-    await dispatch(searchBankLogin(navigate, seacrhBankData));
+    await dispatch(bankUserSeacrhGetLogin(navigate, seacrhBankData));
   };
 
   // api hit on download report bank user
@@ -283,10 +305,18 @@ const UserLogin = () => {
         value: "",
       },
     });
-    let newData = {
-      BankID: userLoginHistory.BankID.value,
+    let newDataa = {
+      FirstName: "",
+      LastName: "",
+      BankName: "",
+      Email: "",
+      FromDate: "",
+      ToDate: "",
+      PageNumber: 1,
+      Length: 3,
+      BankID: parseInt(bankUserBankId),
     };
-    dispatch(bankUserLogin(navigate, newData));
+    dispatch(bankUserSeacrhGetLogin(navigate, newDataa));
   };
 
   // column for LoginHistory
@@ -364,14 +394,18 @@ const UserLogin = () => {
       title: <label className="bottom-table-header">LoggedIn Date</label>,
       dataIndex: "CombineLoginInTimeDate",
       key: "CombineLoginInTimeDate",
-      width: "150px",
+      width: "200px",
       align: "center",
       ellipsis: true,
-      render: (_, record) => (
-        <label className="issue-date-column">
-          {record.loginDate} {record.loginTime}
-        </label>
-      ),
+      render: (_, record) => {
+        return (
+          <span>
+            {moment(`${record.loginDate} ${record.loginTime}`).format(
+              "YYYY-MM-DD HH:MM:ss"
+            )}{" "}
+          </span>
+        );
+      },
     },
     // {
     //   title: <label className="bottom-table-header">LogOut Date</label>,
@@ -395,14 +429,18 @@ const UserLogin = () => {
       title: <label className="bottom-table-header">LoggOut Date</label>,
       dataIndex: "CombineLoggedOutTimeDate",
       key: "CombineLoggedOutTimeDate",
-      width: "150px",
+      width: "200px",
       align: "center",
       ellipsis: true,
-      render: (_, record) => (
-        <label className="issue-date-column">
-          {record.logOutDate} {record.logOutTime}
-        </label>
-      ),
+      render: (_, record) => {
+        return (
+          <span>
+            {moment(`${record.logOutDate} ${record.logOutTime}`).format(
+              "YYYY-MM-DD HH:MM:ss"
+            )}
+          </span>
+        );
+      },
     },
     {
       title: <label className="bottom-table-header">Total Span</label>,
@@ -424,32 +462,6 @@ const UserLogin = () => {
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
   ];
-
-  //this useEffect Condition is for when user hit search btn if data is same or not
-  useEffect(() => {
-    if (
-      auth.searchBankLogin !== null &&
-      auth.searchBankLogin !== undefined &&
-      auth.searchBankLogin.length > 0
-    ) {
-      setRows(auth.searchBankLogin);
-    } else {
-      setRows([]);
-    }
-  }, [auth.searchBankLogin]);
-
-  // render table inside table
-  useEffect(() => {
-    if (
-      auth.bankUserLoginHistory.length > 0 &&
-      auth.bankUserLoginHistory !== null &&
-      auth.bankUserLoginHistory !== undefined
-    ) {
-      setRows(auth.bankUserLoginHistory);
-    } else {
-      setRows([]);
-    }
-  }, [auth.bankUserLoginHistory]);
 
   return (
     <Fragment>

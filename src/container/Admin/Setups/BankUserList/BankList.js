@@ -19,6 +19,7 @@ import {
   getUserBank,
   searchBankUserList,
   updateByUserIdBank,
+  bankListGetSearchApi, // THIS API FOR RENDERING AND SEARCHING
 } from "../../../../store/actions/Security-Admin";
 import BankUserListModal from "../../AdminModal/Bank-User-list-Modal/BankUserListModal";
 import Select from "react-select";
@@ -57,16 +58,31 @@ const BankList = () => {
     dispatch(allUserRoles(navigate));
     dispatch(getStatusApi(navigate));
 
-    let bankUserSearch = {
+    let newDataBank = {
       FirstName: "",
       LastName: "",
       RoleID: 0,
       StatusID: 0,
       Email: "",
       Contact: "",
+      PageNumber: 1,
+      Length: 3,
     };
-    dispatch(searchBankUserList(navigate, bankUserSearch));
+    dispatch(bankListGetSearchApi(navigate, newDataBank));
   }, []);
+
+  // this api is used for table data rendering
+  useEffect(() => {
+    if (
+      securityReducer.searchGetBankUserList.length > 0 &&
+      securityReducer.searchGetBankUserList !== null &&
+      securityReducer.searchGetBankUserList !== undefined
+    ) {
+      setRows(securityReducer.searchGetBankUserList);
+    } else {
+      setRows([]);
+    }
+  }, [securityReducer.searchGetBankUserList]);
 
   //state for bank list fields
   const [bankListFields, setBankListFields] = useState({
@@ -317,40 +333,6 @@ const BankList = () => {
     setBankModal(true);
   };
 
-  // dispatch get all bank user list API
-  useEffect(() => {
-    let newBankList = {
-      BankId: bankListFields.BankId.value,
-    };
-    dispatch(getUserBank(navigate, newBankList));
-  }, []);
-
-  // dispatch search bank User api
-  useEffect(() => {
-    if (
-      securityReducer.searchBankUsers.length > 0 &&
-      securityReducer.searchBankUsers !== null &&
-      securityReducer.searchBankUsers !== undefined
-    ) {
-      setRows(securityReducer.searchBankUsers);
-    } else {
-      setRows([]);
-    }
-  }, [securityReducer.searchBankUsers]);
-
-  //this use Effect is used to show bank user list data in table
-  useEffect(() => {
-    if (
-      securityReducer.bankUserList !== null &&
-      securityReducer.bankUserList !== undefined &&
-      securityReducer.bankUserList.length > 0
-    ) {
-      setRows(securityReducer.bankUserList);
-    } else {
-      setRows([]);
-    }
-  }, [securityReducer.bankUserList]);
-
   // on search Button hit in bank user list
   const onSearchHit = async () => {
     let bankUserSearch = {
@@ -360,9 +342,10 @@ const BankList = () => {
       StatusID: bankListFields.userStatus.value,
       Email: bankListFields.Email.value,
       Contact: "",
+      PageNumber: 1,
+      Length: 3,
     };
-    console.log(bankUserSearch, "bankUserSearchbankUserSearch");
-    await dispatch(searchBankUserList(navigate, bankUserSearch));
+    await dispatch(bankListGetSearchApi(navigate, bankUserSearch));
   };
 
   //on update button click in bank view modal
@@ -377,9 +360,9 @@ const BankList = () => {
         UserID: bankViewField.userID.value,
       },
     };
-    let newBankList = {
-      BankId: bankListFields.BankId.value,
-    };
+    // let newBankList = {
+    //   BankId: bankListFields.BankId.value,
+    // };
     let bankUserSearch = {
       FirstName: "",
       LastName: "",
@@ -393,8 +376,8 @@ const BankList = () => {
         navigate,
         newBankUserData,
         setBankModal,
-        bankUserSearch,
-        newBankList
+        bankUserSearch
+        // newBankList
       )
     );
   };
@@ -526,11 +509,17 @@ const BankList = () => {
     });
     setSelectStatusValue([]);
     setSelectRoleValue([]);
-
-    let newBankList = {
-      BankId: bankListFields.BankId.value,
+    let newDataBank = {
+      FirstName: "",
+      LastName: "",
+      RoleID: 0,
+      StatusID: 0,
+      Email: "",
+      Contact: "",
+      PageNumber: 1,
+      Length: 3,
     };
-    dispatch(getUserBank(navigate, newBankList));
+    dispatch(bankListGetSearchApi(navigate, newDataBank));
   };
 
   //on change handler for user select role

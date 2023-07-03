@@ -296,7 +296,8 @@ const Customerlist = () => {
       Email: "",
       CompanyName: "",
       CategoryID: 0,
-      userID: 0,
+      PageNumber: 1,
+      Length: 3,
     };
     dispatch(searchUserCorporateApi(navigate, corporateSearchData));
   }, []);
@@ -314,7 +315,7 @@ const Customerlist = () => {
       setRows([]);
     }
   }, [systemReducer.searchCorporate]);
-  console.log("allcorporateee", rows);
+  console.log("searchCorporatesearchCorporate", rows);
 
   // for category Corporate in select drop down
   useEffect(() => {
@@ -347,19 +348,19 @@ const Customerlist = () => {
   }, [systemReducer.bankCorporates]);
 
   // for corporate company select drop down
-  useEffect(() => {
-    if (Object.keys(auth.allCorporateCompany).length > 0) {
-      let tem = [];
-      auth.allCorporateCompany.map((data, index) => {
-        console.log(data, "datadatadatadatassssss");
-        tem.push({
-          label: data.corporateName,
-          value: data.corporateID,
-        });
-      });
-      setSelectCompany(tem);
-    }
-  }, [auth.allCorporateCompany]);
+  // useEffect(() => {
+  //   if (Object.keys(auth.allCorporateCompany).length > 0) {
+  //     let tem = [];
+  //     auth.allCorporateCompany.map((data, index) => {
+  //       console.log(data, "datadatadatadatassssss");
+  //       tem.push({
+  //         label: data.corporateName,
+  //         value: data.corporateID,
+  //       });
+  //     });
+  //     setSelectCompany(tem);
+  //   }
+  // }, [auth.allCorporateCompany]);
 
   //ON CHANGE HANDLER FOR CATEGORY DROPDOWN
   const selectAllCategoryOnchangeHandler = async (selectedCategory) => {
@@ -439,6 +440,8 @@ const Customerlist = () => {
       Email: customerListFields.Email.value,
       CompanyName: customerListFields.corporateNames.label,
       CategoryID: 0,
+      PageNumber: 1,
+      Length: 3,
     };
     await dispatch(searchUserCorporateApi(navigate, corporateSearchData));
   };
@@ -569,7 +572,8 @@ const Customerlist = () => {
       Email: "",
       CompanyName: "",
       CategoryID: 0,
-      userID: 0,
+      PageNumber: 1,
+      Length: 3,
     };
     dispatch(searchUserCorporateApi(navigate, corporateSearchData));
   };
