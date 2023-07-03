@@ -99,12 +99,14 @@ const AddCategory = () => {
             <Button
               className="Update_button_category"
               text="Update"
-              onClick={UpdateCategory}
+              onClick={updateCategoryFunction}
+              //   onClick={UpdateCategory}
             />
             <Button
               className="Cancel_button_cateogry"
               text="Cancel"
-              onClick={() => CloseUpdateCategory(data.corporateID)}
+              onClick={addCategoryFunction}
+              //   onClick={() => CloseUpdateCategory(data.corporateID)}
             />
           </Col>
         </Row>

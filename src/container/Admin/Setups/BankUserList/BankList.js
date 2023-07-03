@@ -612,7 +612,7 @@ const BankList = () => {
       title: <label className="bottom-table-header">First Name</label>,
       dataIndex: "firstName",
       key: "firstName",
-      width: "150px",
+      width: "120px",
       align: "center",
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
@@ -620,7 +620,7 @@ const BankList = () => {
       title: <label className="bottom-table-header">Last Name</label>,
       dataIndex: "lastname",
       key: "lastname",
-      width: "150px",
+      width: "120px",
       align: "center",
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
@@ -628,7 +628,7 @@ const BankList = () => {
       title: <label className="bottom-table-header">LDAP Account</label>,
       dataIndex: "ldapAccount",
       key: "ldapAccount",
-      width: "100px",
+      width: "180px",
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -637,8 +637,8 @@ const BankList = () => {
       title: <label className="bottom-table-header">Role</label>,
       dataIndex: "userRoleID",
       key: "userRoleID",
+      width: "60px",
       align: "center",
-      width: "100px",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
@@ -646,7 +646,7 @@ const BankList = () => {
       title: <label className="bottom-table-header">Status</label>,
       dataIndex: "userStatusID",
       key: "userStatusID",
-      width: "150px",
+      width: "60px",
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -654,126 +654,120 @@ const BankList = () => {
   ];
 
   return (
-    <Fragment>
-      <section className="me-4">
-        <Row>
-          <Col lg={12} md={12} sm={12}>
-            <span className="customer-List-label">Bank User List</span>
-          </Col>
-        </Row>
-        <Row className="mt-3">
-          <Col lg={12} md={12} sm={12}>
-            <CustomPaper className="customer-List-paper">
-              <Row className="mt-3">
-                <Col lg={3} md={3} sm={12}>
-                  <TextField
-                    placeholder="First Name"
-                    name="FirstName"
-                    value={bankListFields.FirstName.value}
-                    onChange={bankListValidation}
-                    labelClass="d-none"
-                    className="textfields-customer-list-fontsize"
-                  />
-                </Col>
-                <Col lg={3} md={3} sm={12}>
-                  <TextField
-                    placeholder="Last Name"
-                    name="LastName"
-                    value={bankListFields.LastName.value}
-                    onChange={bankListValidation}
-                    labelClass="d-none"
-                    className="textfields-customer-list-fontsize"
-                  />
-                </Col>
-                <Col lg={3} md={3} sm={12}>
-                  <TextField
-                    placeholder="Email"
-                    name="Email"
-                    value={bankListFields.Email.value}
-                    onChange={bankListValidation}
-                    onBlur={handlerEmail}
-                    labelClass="d-none"
-                    className="textfields-customer-list-fontsize"
-                  />
-                </Col>
-                <Col lg={3} md={3} sm={12}>
-                  <TextField
-                    placeholder="LDAP Account"
-                    name="ldapAccount"
-                    value={bankListFields.ldapAccount.value}
-                    onChange={bankListValidation}
-                    labelClass="d-none"
-                    className="textfields-customer-list-fontsize"
-                  />
-                </Col>
-              </Row>
-              <Row className="mt-3">
-                <Col lg={3} md={3} sm={12}>
-                  <Select
-                    placeholder="Role"
-                    name="userRoles"
-                    onChange={selectRoleOnchangeHandler}
-                    options={selectRole}
-                    value={selectRoleValue}
-                    isSearchable={true}
-                    className="select-customer-list-fontsize"
-                  />
-                </Col>
-                <Col lg={3} md={3} sm={12}>
-                  <Select
-                    name="userStatus"
-                    isSearchable={true}
-                    options={selectStatus}
-                    value={selectStatusValue}
-                    onChange={selectUserStatusOnchangeHandler}
-                    placeholder="Status"
-                    className="select-customer-list-fontsize"
-                  />
-                </Col>
-                <Col lg={6} md={6} sm={12} />
-              </Row>
+    <section className="SectionContainer">
+      <Row>
+        <Col lg={12} md={12} sm={12}>
+          <span className="customer-List-label">Bank User List</span>
+        </Col>
+      </Row>
+      <Row className="mt-3">
+        <Col lg={12} md={12} sm={12}>
+          <CustomPaper className="customer-List-paper">
+            <Row className="mt-3">
+              <Col lg={3} md={3} sm={12}>
+                <TextField
+                  placeholder="First Name"
+                  name="FirstName"
+                  value={bankListFields.FirstName.value}
+                  onChange={bankListValidation}
+                  labelClass="d-none"
+                  className="textfields-customer-list-fontsize"
+                />
+              </Col>
+              <Col lg={3} md={3} sm={12}>
+                <TextField
+                  placeholder="Last Name"
+                  name="LastName"
+                  value={bankListFields.LastName.value}
+                  onChange={bankListValidation}
+                  labelClass="d-none"
+                  className="textfields-customer-list-fontsize"
+                />
+              </Col>
+              <Col lg={3} md={3} sm={12}>
+                <TextField
+                  placeholder="Email"
+                  name="Email"
+                  value={bankListFields.Email.value}
+                  onChange={bankListValidation}
+                  onBlur={handlerEmail}
+                  labelClass="d-none"
+                  className="textfields-customer-list-fontsize"
+                />
+              </Col>
+              <Col lg={3} md={3} sm={12}>
+                <TextField
+                  placeholder="LDAP Account"
+                  name="ldapAccount"
+                  value={bankListFields.ldapAccount.value}
+                  onChange={bankListValidation}
+                  labelClass="d-none"
+                  className="textfields-customer-list-fontsize"
+                />
+              </Col>
+            </Row>
+            <Row className="mt-3">
+              <Col lg={3} md={3} sm={12}>
+                <Select
+                  placeholder="Role"
+                  name="userRoles"
+                  onChange={selectRoleOnchangeHandler}
+                  options={selectRole}
+                  value={selectRoleValue}
+                  isSearchable={true}
+                  className="select-customer-list-fontsize"
+                />
+              </Col>
+              <Col lg={3} md={3} sm={12}>
+                <Select
+                  name="userStatus"
+                  isSearchable={true}
+                  options={selectStatus}
+                  value={selectStatusValue}
+                  onChange={selectUserStatusOnchangeHandler}
+                  placeholder="Status"
+                  className="select-customer-list-fontsize"
+                />
+              </Col>
+              <Col lg={6} md={6} sm={12} />
+            </Row>
 
-              <Row className="mt-3">
-                <Col
-                  lg={12}
-                  md={12}
-                  sm={12}
-                  className="customer-list-col-fields"
-                >
-                  <Button
-                    icon={<i className="icon-search icon-check-space"></i>}
-                    className="Search-btn-BankList"
-                    onClick={onSearchHit}
-                    text="Search"
+            <Row className="mt-3">
+              <Col lg={12} md={12} sm={12} className="customer-list-col-fields">
+                <Button
+                  icon={<i className="icon-search icon-check-space"></i>}
+                  className="Search-btn-BankList"
+                  onClick={onSearchHit}
+                  text="Search"
+                />
+                <Button
+                  icon={<i className="icon-refresh icon-check-space"></i>}
+                  onClick={bankResetHandler}
+                  className="Banklist-Reset-btn"
+                  text="Reset"
+                />
+              </Col>
+            </Row>
+            <Row className="mt-3">
+              <Col lg={12} md={12} sm={12}>
+                {securityReducer.Spinner === true ? (
+                  <span className="customer-login-user-spinner">
+                    <Spin size="large" />
+                  </span>
+                ) : (
+                  <Table
+                    column={columns}
+                    rows={rows}
+                    pagination={true}
+                    // scroll={{ x: 500, y: 200 }}
+                    className="BankUserList-table"
                   />
-                  <Button
-                    icon={<i className="icon-refresh icon-check-space"></i>}
-                    onClick={bankResetHandler}
-                    className="Banklist-Reset-btn"
-                    text="Reset"
-                  />
-                </Col>
-              </Row>
-              <Row className="mt-3">
-                <Col lg={12} md={12} sm={12}>
-                  {securityReducer.Spinner === true ? (
-                    <span className="customer-login-user-spinner">
-                      <Spin size="large" />
-                    </span>
-                  ) : (
-                    <Table
-                      column={columns}
-                      rows={rows}
-                      pagination={false}
-                      className="BankUserList-table"
-                    />
-                  )}
-                </Col>
-              </Row>
-            </CustomPaper>
-          </Col>
-        </Row>
-      </section>
+                )}
+              </Col>
+            </Row>
+          </CustomPaper>
+        </Col>
+      </Row>
       {bankModal ? (
         <Fragment>
           <BankUserListModal
@@ -789,7 +783,7 @@ const BankList = () => {
         </Fragment>
       ) : null}
       {securityReducer.Loading ? <Loader /> : null}
-    </Fragment>
+    </section>
   );
 };
 

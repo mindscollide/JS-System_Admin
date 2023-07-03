@@ -114,7 +114,7 @@ const Sidebar2 = () => {
 
   return (
     <Layout>
-      <Sider width={"100%"}>
+      <Sider width={250}>
         <Menu
           theme="light"
           defaultOpenKeys={[defaultOpenKey]}

@@ -135,8 +135,9 @@ const CounterLimit = () => {
       title: <label className="bottom-table-header">Company Name</label>,
       dataIndex: "corporateName",
       key: "corporateName",
+      width: "180px",
+      ellipsis: true,
       align: "left",
-      width: "450px",
       render: (text) => (
         <label className="counterLimit-company-text">{text}</label>
       ),
@@ -145,8 +146,8 @@ const CounterLimit = () => {
       title: <label className="bottom-table-header">View</label>,
       dataIndex: "view",
       key: "view",
-      width: "100px",
       align: "center",
+      width: "180px",
       render: (text, record) => {
         console.log(record, "recordrecordrecord");
         return (
@@ -162,50 +163,47 @@ const CounterLimit = () => {
   ];
 
   return (
-    <Fragment>
-      <section className="me-4">
-        <Row>
-          <Col lg={12} md={12} sm={12}>
-            <span className="counterLimit-label">Counter Party Limit</span>
-          </Col>
-        </Row>
-        <Row>
-          <Col lg={12} md={12} sm={12} className="d-flex justify-content-end">
-            <CustomUpload change={handlerUploadCounterFile} />
-            {/* <Button
+    <section className="SectionContainer">
+      <Row>
+        <Col lg={12} md={12} sm={12}>
+          <span className="counterLimit-label">Counter Party Limit</span>
+        </Col>
+      </Row>
+      <Row>
+        <Col lg={12} md={12} sm={12} className="d-flex justify-content-end">
+          <CustomUpload change={handlerUploadCounterFile} />
+          {/* <Button
               text="Upload Counter Party Limit"
               onClick={openUploadCounterParty}
               icon={<i className="icon-upload-cloud eyeicon-size"></i>}
               className="Upload-Excel-btn"
             /> */}
-          </Col>
-        </Row>
+        </Col>
+      </Row>
 
-        <Row className="mt-3">
-          <Col lg={12} md={12} sm={12}>
-            <CustomPaper className="counterLimit-paper">
-              <Row>
-                <Col lg={12} md={12} sm={12}>
-                  {systemReducer.Spinner === true ? (
-                    <span className="counter-Limit-user-spinner">
-                      <Spin size="large" />
-                    </span>
-                  ) : (
-                    <Table
-                      column={counterColumns}
-                      rows={rows}
-                      pagination={false}
-                      scroll={{ y: 390 }}
-                      className="counterLimit-table"
-                    />
-                  )}
-                </Col>
-              </Row>
-            </CustomPaper>
-          </Col>
-        </Row>
-      </section>
-
+      <Row className="mt-3">
+        <Col lg={12} md={12} sm={12}>
+          <CustomPaper className="counterLimit-paper">
+            <Row>
+              <Col lg={12} md={12} sm={12}>
+                {systemReducer.Spinner === true ? (
+                  <span className="counter-Limit-user-spinner">
+                    <Spin size="large" />
+                  </span>
+                ) : (
+                  <Table
+                    column={counterColumns}
+                    rows={rows}
+                    pagination={true}
+                    scroll={{ x: 500, y: 200 }}
+                    className="counterLimit-table"
+                  />
+                )}
+              </Col>
+            </Row>
+          </CustomPaper>
+        </Col>
+      </Row>
       {counterPartyModal ? (
         <>
           <CounterModal
@@ -224,7 +222,7 @@ const CounterLimit = () => {
         </>
       ) : null}
       {systemReducer.Loading || uploadReducer.Loading ? <Loader /> : null}
-    </Fragment>
+    </section>
   );
 };
 

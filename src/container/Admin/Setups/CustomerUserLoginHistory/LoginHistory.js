@@ -325,7 +325,7 @@ const LoginHistory = () => {
       title: <label>Email</label>,
       dataIndex: "email",
       key: "email",
-      width: "200px",
+      // width: "190px",
       align: "center",
       render: (text) => <label className="email-table-cursor">{text}</label>,
     },
@@ -334,7 +334,7 @@ const LoginHistory = () => {
       dataIndex: "firstName",
       key: "firstName",
       align: "center",
-      width: "150px",
+      width: "120px",
       render: (text) => <label>{text}</label>,
     },
     {
@@ -342,38 +342,38 @@ const LoginHistory = () => {
       dataIndex: "lastName",
       key: "lastName",
       align: "center",
-      width: "150px",
+      width: "120px",
       render: (text) => <label>{text}</label>,
     },
     {
       title: <label>Company</label>,
       dataIndex: "companyName",
       key: "companyName",
-      width: "100px",
+      width: "120px",
       align: "center",
-      ellipsis: true,
-      render: (text) => <label>{text}</label>,
+      // ellipsis: true,
+      render: (text) => <label className="w-100">{text}</label>,
     },
 
     {
       title: <label>Ip Address</label>,
       dataIndex: "ipAddress",
       key: "ipAddress",
-      width: "150px",
+      width: "140px",
       align: "center",
-      ellipsis: true,
-      render: (text) => <label>{text}</label>,
+      // ellipsis: true,
+      render: (text) => <label className="w-100">{text}</label>,
     },
     {
       title: <label>Logged Date</label>,
       dataIndex: "CombineLoginTimeDate",
       key: "CombineLoginTimeDate",
-      width: "200px",
+      width: "180px",
       align: "center",
-      ellipsis: true,
+      // ellipsis: true,
       render: (_, record) => {
         return (
-          <span>
+          <span className="w-100">
             {moment(`${record.loginDate} ${record.loginTime}`).format(
               "YYYY-MM-DD HH:MM:ss"
             )}{" "}
@@ -386,33 +386,29 @@ const LoginHistory = () => {
       title: <label>LoggedOut Date</label>,
       dataIndex: "CombineLoginOutTimeDate",
       key: "CombineLoginOutTimeDate",
-      width: "200px",
+      width: "180px",
       align: "center",
-      ellipsis: true,
+      // ellipsis: false,
       render: (_, record) => {
-        return (
-          <span>
-            {moment(record.logOutDate).format("YYYY-MM-DD")} {record.logOutTime}
-          </span>
-        );
+        return <span>{moment(record.logOutDate).format("YYYY-MM-DD")}</span>;
       },
     },
     {
       title: <label>Total Span</label>,
       dataIndex: "totalSpan",
       key: "totalSpan",
-      width: "200px",
+      width: "120px",
       align: "center",
-      ellipsis: true,
-      render: (text) => <label className="issue-date-column">{text}</label>,
+      // ellipsis: true,
+      render: (text) => <label className="issue-date-column ">{text}</label>,
     },
     {
       title: <label>Interface</label>,
       dataIndex: "interface",
       key: "interface",
-      width: "200px",
+      width: "188px",
       align: "center",
-      ellipsis: true,
+      // ellipsis: true,
       render: (text) => <label>{text}</label>,
     },
   ];
@@ -474,43 +470,41 @@ const LoginHistory = () => {
   console.log("customerlisst", rows);
 
   return (
-    <Fragment>
-      <section className="me-4">
-        <Row>
-          <Col lg={12} md={12} sm={12}>
-            <span className="LoginHistory-label">
-              Customer User Login History
-            </span>
-          </Col>
-        </Row>
+    <section className="sectionConctainerClass">
+      <Row>
+        <Col lg={12} md={12} sm={12}>
+          <span className="LoginHistory-label">
+            Customer User Login History
+          </span>
+        </Col>
+      </Row>
 
-        <Row className="mt-3">
-          <Col lg={12} md={12} sm={12}>
-            <CustomPaper className="LoginHistory-paper">
-              <Row className="mt-3">
-                <Col lg={3} md={3} sm={12}>
-                  <TextField
-                    placeholder="FirstName"
-                    name="FirstName"
-                    value={loginHistoryField.FirstName.value}
-                    onChange={customerListValidation}
-                    labelClass="d-none"
-                    className="loginHistor-textField-fontsize"
-                  />
-                </Col>
-
-                <Col lg={3} md={3} sm={12}>
-                  <TextField
-                    placeholder="LastName"
-                    name="LastName"
-                    value={loginHistoryField.LastName.value}
-                    onChange={customerListValidation}
-                    labelClass="d-none"
-                    className="loginHistor-textField-fontsize"
-                  />
-                </Col>
-                <Col lg={3} md={3} sm={12}>
-                  {/* <TextField
+      <Row className="mt-2">
+        <Col lg={12} md={12} sm={12}>
+          <CustomPaper className="LoginHistory-paper">
+            <Row className="mt-3">
+              <Col lg={3} md={3} sm={12}>
+                <TextField
+                  placeholder="FirstName"
+                  name="FirstName"
+                  value={loginHistoryField.FirstName.value}
+                  onChange={customerListValidation}
+                  labelClass="d-none"
+                  className="loginHistor-textField-fontsize"
+                />
+              </Col>
+              <Col lg={3} md={3} sm={12}>
+                <TextField
+                  placeholder="LastName"
+                  name="LastName"
+                  value={loginHistoryField.LastName.value}
+                  onChange={customerListValidation}
+                  labelClass="d-none"
+                  className="loginHistor-textField-fontsize"
+                />
+              </Col>
+              <Col lg={3} md={3} sm={12}>
+                {/* <TextField
                         placeholder="Company Name"
                         name="CompanyName"
                         value={loginHistoryField.CompanyName.value}
@@ -518,118 +512,118 @@ const LoginHistory = () => {
                         labelClass="d-none"
                         className="loginHistor-textField-fontsize"
                       /> */}
-                  <Select
-                    name="corporateNames"
-                    options={selectCompany}
-                    value={selectCompanyValue}
-                    isSearchable={true}
-                    onChange={corporateBankIdSelectOnchangeHandler}
-                    placeholder="Company"
-                    className="loginHistor-textField-fontsize"
-                  />
-                </Col>
-                <Col lg={3} md={3} sm={12}>
-                  <TextField
-                    placeholder="Email"
-                    name="Email"
-                    value={loginHistoryField.Email.value}
-                    onBlur={handlerEmail}
-                    onChange={customerListValidation}
-                    labelClass="d-none"
-                    className="loginHistor-textField-fontsize"
-                  />
-                </Col>
-              </Row>
-              <Row className="mt-3">
-                <Col lg={3} md={3} sm={12}>
-                  <Select
-                    name="corporateCategoryID"
-                    options={selectCategory}
-                    value={selectCategoryValue}
-                    isSearchable={true}
-                    onChange={selectCategoryOnchangeHandler}
-                    placeholder="Category"
-                    className="loginHistor-textField-fontsize"
-                  />
-                </Col>
-                <Col lg={8} md={8} sm={12} className="LoginHistory-Datepicker">
-                  <DatePicker
-                    // {...startDateProps}
-                    // onPropsChange={setStartDateProps}
-                    value={loginHistoryField.startDate.value}
-                    placeholder="Start date"
-                    showOtherDays={true}
-                    onChange={(value) =>
-                      changeDateStartHandler(value?.toDate?.().toString())
-                    }
-                    inputClass="LoginHistory-Datepicker-left"
-                  />
-                  <label className="LoginHistory-date-to">to</label>
+                <Select
+                  name="corporateNames"
+                  options={selectCompany}
+                  value={selectCompanyValue}
+                  isSearchable={true}
+                  onChange={corporateBankIdSelectOnchangeHandler}
+                  placeholder="Company"
+                  className="loginHistor-textField-fontsize"
+                />
+              </Col>
+              <Col lg={3} md={3} sm={12}>
+                <TextField
+                  placeholder="Email"
+                  name="Email"
+                  value={loginHistoryField.Email.value}
+                  onBlur={handlerEmail}
+                  onChange={customerListValidation}
+                  labelClass="d-none"
+                  className="loginHistor-textField-fontsize"
+                />
+              </Col>
+            </Row>
 
-                  <DatePicker
-                    // {...endDateProps}
-                    // onPropsChange={setEndDateProps}
-                    value={loginHistoryField.endDate.value}
-                    placeholder="End Date"
-                    showOtherDays={true}
-                    onChange={(value) =>
-                      changeDateEndHandler(value?.toDate?.().toString())
-                    }
-                    inputClass="LoginHistory-Datepicker-right"
+            <Row className="mt-3">
+              <Col lg={3} md={3} sm={12}>
+                <Select
+                  name="corporateCategoryID"
+                  options={selectCategory}
+                  value={selectCategoryValue}
+                  isSearchable={true}
+                  onChange={selectCategoryOnchangeHandler}
+                  placeholder="Category"
+                  className="loginHistor-textField-fontsize"
+                />
+              </Col>
+              <Col lg={9} md={9} sm={12} className="LoginHistory-Datepicker">
+                <DatePicker
+                  // {...startDateProps}
+                  // onPropsChange={setStartDateProps}
+                  value={loginHistoryField.startDate.value}
+                  placeholder="Start date"
+                  showOtherDays={true}
+                  onChange={(value) =>
+                    changeDateStartHandler(value?.toDate?.().toString())
+                  }
+                  inputClass="LoginHistory-Datepicker-left"
+                />
+                <label className="LoginHistory-date-to">to</label>
+
+                <DatePicker
+                  // {...endDateProps}
+                  // onPropsChange={setEndDateProps}
+                  value={loginHistoryField.endDate.value}
+                  placeholder="End Date"
+                  showOtherDays={true}
+                  onChange={(value) =>
+                    changeDateEndHandler(value?.toDate?.().toString())
+                  }
+                  inputClass="LoginHistory-Datepicker-right"
+                />
+              </Col>
+              {/* <Col lg={1} md={1} sm={12} /> */}
+            </Row>
+            <Row className="mt-3">
+              <Col
+                lg={12}
+                md={12}
+                sm={12}
+                className="d-flex justify-content-center gap-2"
+              >
+                <Button
+                  text="Search"
+                  onClick={onSearchButtonHit}
+                  icon={<i className="icon-search Icons-right"></i>}
+                  className={"Search-HistoryLogin-btn"}
+                />
+                <Button
+                  text="Reset"
+                  icon={<i className="icon-refresh Icons-right"></i>}
+                  onClick={loginResetHandler}
+                  className={"Reset-btn-login"}
+                />
+                <Button
+                  text="Downlaod Excel"
+                  onClick={downloadExcelReport}
+                  icon={<i className="icon-download-excel Icons-right"></i>}
+                  className={"Download-Excel-btn"}
+                />
+              </Col>
+            </Row>
+            <Row className="mt-3">
+              <Col lg={12} md={12} sm={12}>
+                {auth.Spinner === true ? (
+                  <span className="customer-login-user-spinner">
+                    <Spin size="large" />
+                  </span>
+                ) : (
+                  <Table
+                    column={columns}
+                    rows={rows}
+                    pagination={false}
+                    scroll={{ x: 500, y: 200 }}
+                    className={"LoginHistory-table"}
                   />
-                </Col>
-                <Col lg={1} md={1} sm={12} />
-              </Row>
-              <Row className="mt-3">
-                <Col
-                  lg={12}
-                  md={12}
-                  sm={12}
-                  className="col-search-download-btn"
-                >
-                  <Button
-                    text="Search"
-                    onClick={onSearchButtonHit}
-                    icon={<i className="icon-search Icons-right"></i>}
-                    className={"Search-HistoryLogin-btn"}
-                  />
-                  <Button
-                    text="Reset"
-                    icon={<i className="icon-refresh Icons-right"></i>}
-                    onClick={loginResetHandler}
-                    className={"Reset-btn-login"}
-                  />
-                  <Button
-                    text="Downlaod Excel"
-                    onClick={downloadExcelReport}
-                    icon={<i className="icon-download-excel Icons-right"></i>}
-                    className={"Download-Excel-btn"}
-                  />
-                </Col>
-              </Row>
-              <Row className="mt-3">
-                <Col lg={12} md={12} sm={12}>
-                  {auth.Spinner === true ? (
-                    <span className="customer-login-user-spinner">
-                      <Spin size="large" />
-                    </span>
-                  ) : (
-                    <Table
-                      column={columns}
-                      rows={rows}
-                      pagination={false}
-                      // scroll={{ y: "500", x: "500" }}
-                      className="LoginHistory-table"
-                    />
-                  )}
-                </Col>
-              </Row>
-            </CustomPaper>
-          </Col>
-        </Row>
-      </section>
+                )}
+              </Col>
+            </Row>
+          </CustomPaper>
+        </Col>
+      </Row>
       {downloadReducer.Loading ? <Loader /> : null}
-    </Fragment>
+    </section>
   );
 };
 

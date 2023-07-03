@@ -3,26 +3,39 @@
   /* margin: 0 50px 0 0 !important; */
 }
 
+:where(.css-dev-only-do-not-override-k7429z).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-k7429z).ant-table-wrapper
+  .ant-table-tbody
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-k7429z).ant-table-wrapper
+  .ant-table-tbody
+  > tr
+  > td,
+:where(.css-dev-only-do-not-override-k7429z).ant-table-wrapper tfoot > tr > th,
+:where(.css-dev-only-do-not-override-k7429z).ant-table-wrapper tfoot > tr > td {
+  font-family: "Montserrat", sans-serif !important;
+}
+
 .LoginHistory-label {
-  display: flex;
-  justify-content: start;
   font-size: 18px;
   color: #004990;
   font-weight: 600;
+}
+.sectionConctainerClass {
+  width: 100% !important;
+  margin: 0 50px 0 0 !important;
 }
 
 .LoginHistory-paper {
   border-radius: 4px;
   width: 100% !important;
-  overflow: hidden !important;
+  overflow-x: hidden !important;
   padding: 3px 10px !important;
   background-color: #ffffff !important;
-}
-
-.col-search-download-btn {
-  display: flex;
-  justify-content: center !important;
-  gap: 10px !important;
 }
 
 .Search-HistoryLogin-btn {
@@ -53,9 +66,8 @@
 }
 
 .LoginHistory-table {
-  width: 100%;
-  max-height: 50vh !important;
-  overflow: auto !important;
+  max-width: 76.8vw;
+  max-height: auto !important;
   overflow-y: hidden;
   border-radius: 0px !important;
 }
@@ -63,6 +75,7 @@
 .LoginHistory-table th.ant-table-cell {
   color: #ffffff !important;
   border-radius: 0% !important;
+  border-color: #5b67cd !important;
   background: linear-gradient(to bottom, #5b67cd 0%, #2a38af 100%) !important;
 }
 
@@ -211,4 +224,28 @@
 
 .Icons-right {
   margin-right: 5px;
+}
+.email-table-cursor {
+  width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+:where(.css-dev-only-do-not-override-k7429z).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-k7429z).ant-table-wrapper
+  .ant-table-tbody
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-k7429z).ant-table-wrapper
+  .ant-table-tbody
+  > tr
+  > td,
+:where(.css-dev-only-do-not-override-k7429z).ant-table-wrapper tfoot > tr > th,
+:where(.css-dev-only-do-not-override-k7429z).ant-table-wrapper tfoot > tr > td {
+  padding: 7px !important;
+  font-size: 14px;
 }
