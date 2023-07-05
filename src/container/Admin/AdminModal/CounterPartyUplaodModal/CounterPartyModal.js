@@ -174,7 +174,7 @@ const CounterPartyModal = ({ uploadCounterModal, setUploadCounterModal }) => {
                       column={InValidColumn}
                       rows={invalidCorporates}
                       pagination={false}
-                      scroll={{ y: 200 }}
+                      // scroll={{ y: 200 }}
                       className="Counter-Party-Modal-table"
                     />
                   </Col>

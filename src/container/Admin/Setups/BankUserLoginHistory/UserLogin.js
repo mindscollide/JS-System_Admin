@@ -12,7 +12,7 @@ import { bankUserSeacrhGetLogin } from "../../../../store/actions/Auth-Actions";
 import { bankUserDownloadReport } from "../../../../store/actions/Download-Report";
 import Select from "react-select";
 import { useNavigate } from "react-router-dom";
-import { Spin } from "antd";
+import { Spin, Pagination } from "antd";
 import "./UserLogin.css";
 import moment from "moment";
 import DatePicker from "react-multi-date-picker";
@@ -21,10 +21,18 @@ import { useSelector, useDispatch } from "react-redux";
 const UserLogin = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [totalRecords, setTotalRecord] = useState(0);
   const { auth, downloadReducer } = useSelector((state) => state);
   // state for set data from api in rows
   const [rows, setRows] = useState([]);
   let bankUserBankId = localStorage.getItem("bankID");
+
+  let currentPageSize = localStorage.getItem("BankLoginHistorySize")
+    ? localStorage.getItem("BankLoginHistorySize")
+    : 50;
+  let currentPage = localStorage.getItem("BankLoginHistoryPage")
+    ? localStorage.getItem("BankLoginHistoryPage")
+    : 1;
 
   // state for category dropdown
   const [selectCategoryBank, setSelectCategoryBank] = useState([]);
@@ -84,7 +92,7 @@ const UserLogin = () => {
       FromDate: "",
       ToDate: "",
       PageNumber: 1,
-      Length: 3,
+      Length: 50,
       BankID: parseInt(bankUserBankId),
     };
     dispatch(bankUserSeacrhGetLogin(navigate, newDataa));
@@ -229,8 +237,8 @@ const UserLogin = () => {
         userLoginHistory.endDate.value !== ""
           ? moment(userLoginHistory.endDate.value).format("YYYYMMDD")
           : "",
-      PageNumber: 1,
-      Length: 3,
+      PageNumber: currentPage !== null ? parseInt(currentPage) : 1,
+      Length: currentPageSize !== null ? parseInt(currentPageSize) : 50,
       BankID: parseInt(bankUserBankId),
     };
     await dispatch(bankUserSeacrhGetLogin(navigate, seacrhBankData));
@@ -313,10 +321,34 @@ const UserLogin = () => {
       FromDate: "",
       ToDate: "",
       PageNumber: 1,
-      Length: 3,
+      Length: 50,
       BankID: parseInt(bankUserBankId),
     };
     dispatch(bankUserSeacrhGetLogin(navigate, newDataa));
+  };
+
+  // onChange Handler for pagination
+  const BankLoginPagination = async (current, pageSize) => {
+    let seacrhBankData = {
+      FirstName: userLoginHistory.FirstName.value,
+      LastName: userLoginHistory.LastName.value,
+      BankName: userLoginHistory.BankName.value,
+      Email: userLoginHistory.Email.value,
+      FromDate:
+        userLoginHistory.startDate.value !== ""
+          ? moment(userLoginHistory.startDate.value).format("YYYYMMDD")
+          : "",
+      ToDate:
+        userLoginHistory.endDate.value !== ""
+          ? moment(userLoginHistory.endDate.value).format("YYYYMMDD")
+          : "",
+      PageNumber: current !== null ? parseInt(current) : 1,
+      Length: pageSize !== null ? parseInt(pageSize) : 50,
+      BankID: parseInt(bankUserBankId),
+    };
+    localStorage.setItem("BankLoginHistorySize", pageSize);
+    localStorage.setItem("BankLoginHistoryPage", current);
+    await dispatch(bankUserSeacrhGetLogin(navigate, seacrhBankData));
   };
 
   // column for LoginHistory
@@ -326,7 +358,8 @@ const UserLogin = () => {
       dataIndex: "email",
       key: "email",
       align: "center",
-      width: "250px",
+      width: "150px",
+      ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
     {
@@ -334,31 +367,24 @@ const UserLogin = () => {
       dataIndex: "firstName",
       key: "firstName",
       align: "center",
-      width: "100px",
+      // width: "100px",
+      ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
     {
       title: <label className="bottom-table-header">Last Name</label>,
       dataIndex: "lastName",
       key: "lastName",
-      width: "100px",
+      // width: "100px",
+      ellipsis: true,
       align: "center",
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
-    // {
-    //   title: <label className="bottom-table-header">Company</label>,
-    //   dataIndex: "companyName",
-    //   key: "companyName",
-    //   width: "100px",
-    //   align: "center",
-    //   ellipsis: true,
-    //   render: (text) => <label className="issue-date-column">{text}</label>,
-    // },
     {
       title: <label className="bottom-table-header">Bank Name</label>,
       dataIndex: "bankName",
       key: "bankName",
-      width: "100px",
+      // width: "100px",
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -367,34 +393,16 @@ const UserLogin = () => {
       title: <label className="bottom-table-header">Ip Address</label>,
       dataIndex: "ipAddress",
       key: "ipAddress",
-      width: "100px",
+      // width: "100px",
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
-    // {
-    //   title: <label className="bottom-table-header">LogIn Date</label>,
-    //   dataIndex: "loginDate",
-    //   key: "loginDate",
-    //   width: "150px",
-    //   align: "center",
-    //   ellipsis: true,
-    //   render: (text) => <label className="issue-date-column">{text}</label>,
-    // },
-    // {
-    //   title: <label className="bottom-table-header">Logged In Time</label>,
-    //   dataIndex: "loginTime",
-    //   key: "loginTime",
-    //   align: "center",
-    //   width: "150px",
-    //   ellipsis: true,
-    //   render: (text) => <label className="issue-date-column">{text}</label>,
-    // },
     {
       title: <label className="bottom-table-header">LoggedIn Date</label>,
       dataIndex: "CombineLoginInTimeDate",
       key: "CombineLoginInTimeDate",
-      width: "200px",
+      // width: "200px",
       align: "center",
       ellipsis: true,
       render: (_, record) => {
@@ -407,29 +415,11 @@ const UserLogin = () => {
         );
       },
     },
-    // {
-    //   title: <label className="bottom-table-header">LogOut Date</label>,
-    //   dataIndex: "logOutDate",
-    //   key: "logOutDate",
-    //   width: "200px",
-    //   align: "center",
-    //   ellipsis: true,
-    //   render: (text) => <label className="issue-date-column">{text}</label>,
-    // },
-    // {
-    //   title: <label className="bottom-table-header">Logged Out Time</label>,
-    //   dataIndex: "logOutTime",
-    //   key: "logOutTime",
-    //   width: "200px",
-    //   align: "center",
-    //   ellipsis: true,
-    //   render: (text) => <label className="issue-date-column">{text}</label>,
-    // },
     {
       title: <label className="bottom-table-header">LoggOut Date</label>,
       dataIndex: "CombineLoggedOutTimeDate",
       key: "CombineLoggedOutTimeDate",
-      width: "200px",
+      // width: "200px",
       align: "center",
       ellipsis: true,
       render: (_, record) => {
@@ -446,17 +436,16 @@ const UserLogin = () => {
       title: <label className="bottom-table-header">Total Span</label>,
       dataIndex: "totalSpan",
       key: "totalSpan",
-      width: "180px",
+      // width: "180px",
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
-
     {
       title: <label className="bottom-table-header">Interface</label>,
       dataIndex: "interface",
       key: "interface",
-      width: "188px",
+      // width: "188px",
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -575,11 +564,24 @@ const UserLogin = () => {
                   <Table
                     column={userColumns}
                     rows={rows}
-                    pagination={true}
-                    scroll={{ x: 500, y: 200 }}
+                    pagination={false}
+                    // scroll={{ x: 500, y: 200 }}
                     className="UserHistory-table"
                   />
                 )}
+              </Col>
+            </Row>
+            <Row className="mt-2">
+              <Col lg={12} md={12} sm={12}>
+                <Pagination
+                  total={totalRecords}
+                  onChange={BankLoginPagination}
+                  current={currentPage !== null ? currentPage : 1}
+                  showSizeChanger
+                  pageSizeOptions={[50, 100, 200]}
+                  pageSize={currentPageSize !== null ? currentPageSize : 50}
+                  className="PaginationStyle-CustomerLogin"
+                />
               </Col>
             </Row>
           </CustomPaper>

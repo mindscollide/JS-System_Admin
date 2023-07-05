@@ -16,16 +16,25 @@ import {
 } from "../../../../store/actions/Auth-Actions";
 import { corporateNameByBankId } from "../../../../store/actions/System-Admin";
 import { bankCorporateAPI } from "../../../../store/actions/System-Admin";
-import { Spin } from "antd";
+import { Spin, Pagination } from "antd";
 import "./UserList.css";
 import { useEffect } from "react";
 
 const Userlist = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [totalRecords, setTotalRecord] = useState(0);
+
   const { systemReducer, auth } = useSelector((state) => state);
   // state for table rows
   const [rows, setRows] = useState([]);
+
+  let currentPageSize = localStorage.getItem("CustomerListSize")
+    ? localStorage.getItem("CustomerListSize")
+    : 50;
+  let currentPage = localStorage.getItem("CustomerListPage")
+    ? localStorage.getItem("CustomerListPage")
+    : 1;
 
   // for edit modal in customer list
   const [editCustomerListModal, setEditCustomerListModal] = useState(false);
@@ -57,16 +66,16 @@ const Userlist = () => {
 
   // dispatch API in for bank Corporate
   useEffect(() => {
-    let Data = {
+    let newData = {
       BankID: 1,
       CorporateName: "",
       NatureOfBussinessId: 0,
       AssetTypeID: 0,
       CategoryId: 0,
       PageNumber: 1,
-      Length: 3,
+      Length: 50,
     };
-    dispatch(bankCorporateAPI(navigate, Data));
+    dispatch(bankCorporateAPI(navigate, newData));
     dispatch(getAllCategoriesCorporate(navigate));
     dispatch(getNatureBusiness(navigate));
   }, []);
@@ -242,10 +251,27 @@ const Userlist = () => {
       NatureOfBussinessId: userListFields.natureofBusinesses.value,
       AssetTypeID: 0,
       CategoryId: userListFields.corporateCategoryID.value,
-      PageNumber: 1,
-      Length: 3,
+      PageNumber: currentPage !== null ? parseInt(currentPage) : 1,
+      Length: currentPageSize !== null ? parseInt(currentPageSize) : 50,
     };
     console.log("bankCorporateAPI", newData);
+    await dispatch(bankCorporateAPI(navigate, newData));
+  };
+
+  // onChange Handler for pagination
+  const CustomerPagination = async (current, pageSize) => {
+    let newData = {
+      BankID: parseInt(customerListBankId),
+      CorporateName: userListFields.corporateNames.label,
+      NatureOfBussinessId: userListFields.natureofBusinesses.value,
+      AssetTypeID: 0,
+      CategoryId: userListFields.corporateCategoryID.value,
+      PageNumber: current != null ? parseInt(current) : 1,
+      Length: pageSize != null ? parseInt(pageSize) : 50,
+    };
+    console.log("bankCorporateAPI", newData);
+    localStorage.setItem("CustomerListSize", pageSize);
+    localStorage.setItem("CustomerListPage", current);
     await dispatch(bankCorporateAPI(navigate, newData));
   };
 
@@ -292,30 +318,34 @@ const Userlist = () => {
   const resetBtnHandler = () => {
     setUserListFields({
       ...userListFields,
-      corporateName: {
+      corporateNames: {
         value: "",
+        label: "",
+        errorMessage: "",
+        errorStatus: false,
       },
-      LastName: {
-        value: "",
+      natureofBusinesses: {
+        value: 0,
+        errorMessage: "",
+        errorStatus: false,
       },
-      companyName: {
-        value: "",
-      },
-      Email: {
-        value: "",
+      corporateCategoryID: {
+        value: 0,
+        errorMessage: "",
+        errorStatus: false,
       },
     });
-    let Data = {
+    let newData = {
       BankID: 1,
       CorporateName: "",
       NatureOfBussinessId: 0,
       AssetTypeID: 0,
       CategoryId: 0,
       PageNumber: 1,
-      Length: 3,
+      Length: 50,
     };
-    dispatch(bankCorporateAPI(navigate, Data));
-    console.log("bankCorporateAPI", Data);
+    dispatch(bankCorporateAPI(navigate, newData));
+    console.log("bankCorporateAPI", newData);
     setSelectCategoryValue([]);
     setSelectNatureBusinessValue([]);
     setSelectCorporateCompanyValue([]);
@@ -458,11 +488,24 @@ const Userlist = () => {
                   <Table
                     column={columns}
                     rows={rows}
-                    pagination={true}
-                    scroll={{ x: 500, y: 200 }}
+                    pagination={false}
+                    // scroll={{ x: 500, y: 200 }}
                     className="User-List-table"
                   />
                 )}
+              </Col>
+            </Row>
+            <Row className="mt-2">
+              <Col lg={12} md={12} sm={12}>
+                <Pagination
+                  total={totalRecords}
+                  onChange={CustomerPagination}
+                  current={currentPage !== null ? currentPage : 1}
+                  showSizeChanger
+                  pageSizeOptions={[50, 100, 200]}
+                  pageSize={currentPageSize !== null ? currentPageSize : 50}
+                  className="PaginationStyle-CustomerLogin"
+                />
               </Col>
             </Row>
           </CustomPaper>

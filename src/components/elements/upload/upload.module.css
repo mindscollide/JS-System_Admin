@@ -63,6 +63,7 @@
 }
 .Heading {
   margin-left: 7px !important;
+  font-weight: 700 !important;
 }
 .ButtonForUpload:hover {
   background: linear-gradient(to bottom, #5b67cd 0%, #2a38af 100%) !important;

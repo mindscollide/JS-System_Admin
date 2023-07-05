@@ -131,13 +131,14 @@ const bankListSearchGetFail = (message) => {
   };
 };
 
-const bankListGetSearchApi = (navigate, newDataBank, bankUserSearch) => {
+const bankListGetSearchApi = (navigate, bankUserSearch) => {
   let token = JSON.parse(localStorage.getItem("token"));
+  console.log("bankListGetSearchApi", bankUserSearch);
   return (dispatch) => {
     dispatch(bankListSearchGetInit());
     let form = new FormData();
     form.append("RequestMethod", searchGetBankUserList.RequestMethod);
-    form.append("RequestData", JSON.stringify(newDataBank, bankUserSearch));
+    form.append("RequestData", JSON.stringify(bankUserSearch));
     axios({
       method: "POST",
       url: securityAdminAPI,
@@ -150,7 +151,7 @@ const bankListGetSearchApi = (navigate, newDataBank, bankUserSearch) => {
         console.log("userloginuserlogin", response);
         if (response.data.responseCode === 417) {
           await dispatch(RefreshToken(navigate));
-          dispatch(bankListGetSearchApi(navigate, newDataBank, bankUserSearch));
+          dispatch(bankListGetSearchApi(navigate, bankUserSearch));
         } else if (response.data.responseCode === 200) {
           if (response.data.responseResult.isExecuted === true) {
             if (

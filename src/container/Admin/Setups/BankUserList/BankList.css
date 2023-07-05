@@ -83,10 +83,12 @@
 }
 
 .BankUserList-table {
+  max-height: 45vh !important;
   max-width: 100vw;
-  max-height: auto !important;
-  overflow: auto !important;
-  overflow-y: hidden;
+  /* max-height: auto !important; */
+  /* overflow: auto !important; */
+  overflow-x: auto !important;
+  overflow-y: auto;
   border-radius: 0px !important;
 }
 
@@ -112,7 +114,7 @@
 .table-columns {
   color: black !important;
   display: flex;
-  justify-content: start !important;
+  justify-content: center !important;
   font-weight: 500;
   font-size: 15px !important;
   cursor: pointer;

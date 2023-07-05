@@ -510,11 +510,11 @@ const RefreshToken = (navigate) => {
 // signUp Api for userRole List
 const allUserRoles = (navigate) => {
   let token = JSON.parse(localStorage.getItem("token"));
-  return (dispatch) => {
+  return async (dispatch) => {
     dispatch(rolesInit());
     let form = new FormData();
     form.append("RequestMethod", authenticationRoleList.RequestMethod);
-    axios({
+    await axios({
       method: "POST",
       url: authenticationAPI,
       data: form,
@@ -872,12 +872,12 @@ const getAllStatusFail = (message) => {
 
 const getStatusApi = (navigate) => {
   let token = JSON.parse(localStorage.getItem("token"));
-  return (dispatch) => {
+  return async (dispatch) => {
     dispatch(getAllStatusInit());
     let form = new FormData();
     form.append("RequestMethod", getAllUserStatusERMAdmin.RequestMethod);
     form.append("RequestData", JSON.stringify());
-    axios({
+    await axios({
       method: "POST",
       url: authenticationAPI,
       data: form,
@@ -1437,8 +1437,10 @@ const userLoginFail = (message) => {
   };
 };
 
-const userSearhGetLoginHistory = (navigate, newData, newSearchData) => {
+const userSearhGetLoginHistory = (navigate, newData) => {
+  console.log(newData, "newDatanewDatanewData");
   let token = JSON.parse(localStorage.getItem("token"));
+
   return (dispatch) => {
     dispatch(userLoginInit());
     let form = new FormData();
@@ -1446,7 +1448,7 @@ const userSearhGetLoginHistory = (navigate, newData, newSearchData) => {
       "RequestMethod",
       searchGetCompanyUserLoginHistory.RequestMethod
     );
-    form.append("RequestData", JSON.stringify(newData, newSearchData));
+    form.append("RequestData", JSON.stringify(newData));
     axios({
       method: "POST",
       url: authenticationAPI,
@@ -1459,7 +1461,7 @@ const userSearhGetLoginHistory = (navigate, newData, newSearchData) => {
         console.log("userloginuserlogin", response);
         if (response.data.responseCode === 417) {
           await dispatch(RefreshToken(navigate));
-          dispatch(userSearhGetLoginHistory(navigate, newData, newSearchData));
+          dispatch(userSearhGetLoginHistory(navigate, newData));
         } else if (response.data.responseCode === 200) {
           if (response.data.responseResult.isExecuted === true) {
             if (
@@ -1533,13 +1535,14 @@ const bankUserLoginFail = (message) => {
   };
 };
 
-const bankUserSeacrhGetLogin = (navigate, newData, seacrhBankData) => {
+const bankUserSeacrhGetLogin = (navigate, newDataa, seacrhBankData) => {
   let token = JSON.parse(localStorage.getItem("token"));
+
   return (dispatch) => {
     dispatch(bankUserLoginInit());
     let form = new FormData();
     form.append("RequestMethod", searchGetBankUserLoginHistory.RequestMethod);
-    form.append("RequestData", JSON.stringify(newData, seacrhBankData));
+    form.append("RequestData", JSON.stringify(newDataa, seacrhBankData));
     axios({
       method: "POST",
       url: authenticationAPI,
@@ -1552,7 +1555,7 @@ const bankUserSeacrhGetLogin = (navigate, newData, seacrhBankData) => {
         console.log("userloginuserlogin", response);
         if (response.data.responseCode === 417) {
           await dispatch(RefreshToken(navigate));
-          dispatch(bankUserSeacrhGetLogin(navigate, newData, seacrhBankData));
+          dispatch(bankUserSeacrhGetLogin(navigate, newDataa, seacrhBankData));
         } else if (response.data.responseCode === 200) {
           if (response.data.responseResult.isExecuted === true) {
             if (

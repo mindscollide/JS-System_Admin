@@ -143,7 +143,7 @@ const searchGetBankUserLoginHistory = {
 
 // search bank User List this API is used for data rendering or Searching(both)
 const searchGetBankUserList = {
-  RequestMethod: "ServiceManager.SearchUsers",
+  RequestMethod: "ServiceManager.SearchBankUsers",
 };
 
 export {

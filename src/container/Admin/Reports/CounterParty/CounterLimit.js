@@ -25,6 +25,13 @@ const CounterLimit = () => {
   const { systemReducer, uploadReducer } = useSelector((state) => state);
   console.log(systemReducer, "systemReducersystemReducer");
 
+  //get bankID from local storage
+  let CounterPartyModalBankId =
+    localStorage.getItem("bankID") != undefined &&
+    localStorage.getItem("bankID") != null
+      ? localStorage.getItem("bankID")
+      : 1;
+
   // state for row in which table data set
   const [rows, setRows] = useState([]);
 
@@ -88,7 +95,7 @@ const CounterLimit = () => {
   // dispatch corporate Name by Bank ID
   useEffect(() => {
     let corporateBank = {
-      BankID: 1,
+      BankID: parseInt(CounterPartyModalBankId ? CounterPartyModalBankId : 1),
     };
     dispatch(corporateNameByBankId(navigate, corporateBank));
   }, []);
@@ -105,7 +112,6 @@ const CounterLimit = () => {
         counterPartyUpload(navigate, counteruploadedFile, setCounterUploadModal)
       );
     } else {
-      // alert("Invalid type");
       console.log("Invaid Type File");
     }
   };
@@ -135,7 +141,7 @@ const CounterLimit = () => {
       title: <label className="bottom-table-header">Company Name</label>,
       dataIndex: "corporateName",
       key: "corporateName",
-      width: "180px",
+      width: "300px",
       ellipsis: true,
       align: "left",
       render: (text) => (
@@ -164,13 +170,14 @@ const CounterLimit = () => {
 
   return (
     <section className="SectionContainer">
-      <Row>
-        <Col lg={12} md={12} sm={12}>
+      {/* <Row>
+        <Col lg={12} md={12} sm={12}></Col>
+      </Row> */}
+      <Row className="mt-2">
+        <Col lg={6} md={6} sm={12} className="mt-2">
           <span className="counterLimit-label">Counter Party Limit</span>
         </Col>
-      </Row>
-      <Row>
-        <Col lg={12} md={12} sm={12} className="d-flex justify-content-end">
+        <Col lg={6} md={6} sm={12} className="d-flex justify-content-end">
           <CustomUpload change={handlerUploadCounterFile} />
           {/* <Button
               text="Upload Counter Party Limit"
@@ -194,8 +201,8 @@ const CounterLimit = () => {
                   <Table
                     column={counterColumns}
                     rows={rows}
-                    pagination={true}
-                    scroll={{ x: 500, y: 200 }}
+                    pagination={false}
+                    // scroll={{ x: 500, y: 350 }}
                     className="counterLimit-table"
                   />
                 )}

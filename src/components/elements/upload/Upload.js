@@ -29,7 +29,7 @@ const CustomUpload = ({
         htmlFor="contained-button-file"
         className={styles["ButtonForUpload"]}
       >
-        <i className={`${styles["icon-upload-cloud"]} ${"icon-upload-cloud"}`}>
+        <i>
           <span className={styles["Heading"]}>Upload Counter Party Limit</span>
         </i>
       </label>

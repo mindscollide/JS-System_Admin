@@ -25,7 +25,8 @@ import {
 } from "../../../../store/actions/Auth-Actions";
 
 import Select from "react-select";
-import { Spin } from "antd";
+import moment from "moment";
+import { Spin, Pagination } from "antd";
 import "./Customerlist.css";
 import { useEffect } from "react";
 
@@ -34,6 +35,23 @@ const Customerlist = () => {
   const dispatch = useDispatch();
   const { systemReducer, auth } = useSelector((state) => state);
   console.log(systemReducer, "systemAdminsystemAdmin");
+
+  const [totalRecords, setTotalRecord] = useState(0);
+
+  //get bankID from local storage
+  let CustomerUserListBankId =
+    localStorage.getItem("bankID") != undefined &&
+    localStorage.getItem("bankID") != null
+      ? localStorage.getItem("bankID")
+      : 1;
+
+  let currentPageSize = localStorage.getItem("CustomerUserListSize")
+    ? localStorage.getItem("CustomerUserListSize")
+    : 50;
+  let currentPage = localStorage.getItem("CustomerUserListPage")
+    ? localStorage.getItem("CustomerUserListPage")
+    : 1;
+
   // state for modal customer List View
   const [customerViewModal, setCustomerViewModal] = useState(false);
 
@@ -82,7 +100,7 @@ const Customerlist = () => {
     },
 
     corporateCategoryID: {
-      value: "",
+      value: 0,
       errorMessage: "",
       errorStatus: false,
     },
@@ -94,7 +112,7 @@ const Customerlist = () => {
       errorStatus: false,
     },
     BankID: {
-      value: 1,
+      value: CustomerUserListBankId ? CustomerUserListBankId : 1,
       errorMessage: "",
       errorStatus: false,
     },
@@ -109,7 +127,7 @@ const Customerlist = () => {
   // show data in company name dropdown
   useEffect(() => {
     let corporateBank = {
-      BankID: customerListFields.BankID.value,
+      BankID: parseInt(customerListFields.BankID.value),
     };
     dispatch(corporateNameByBankId(navigate, corporateBank));
   }, []);
@@ -244,7 +262,8 @@ const Customerlist = () => {
       Email: "",
       CompanyName: "",
       CategoryID: 0,
-      userID: 0,
+      PageNumber: 1,
+      Length: 50,
     };
     dispatch(
       updateCorporateAPI(
@@ -280,7 +299,7 @@ const Customerlist = () => {
     dispatch(getAllCategoriesCorporate(navigate));
     dispatch(getAllCorporateCompany(navigate));
     let newData = {
-      BankID: 1,
+      BankID: CustomerUserListBankId ? CustomerUserListBankId : 1,
       CorporateName: "",
       NatureOfBussinessId: 0,
       AssetTypeID: 0,
@@ -297,7 +316,7 @@ const Customerlist = () => {
       CompanyName: "",
       CategoryID: 0,
       PageNumber: 1,
-      Length: 3,
+      Length: 50,
     };
     dispatch(searchUserCorporateApi(navigate, corporateSearchData));
   }, []);
@@ -348,19 +367,19 @@ const Customerlist = () => {
   }, [systemReducer.bankCorporates]);
 
   // for corporate company select drop down
-  // useEffect(() => {
-  //   if (Object.keys(auth.allCorporateCompany).length > 0) {
-  //     let tem = [];
-  //     auth.allCorporateCompany.map((data, index) => {
-  //       console.log(data, "datadatadatadatassssss");
-  //       tem.push({
-  //         label: data.corporateName,
-  //         value: data.corporateID,
-  //       });
-  //     });
-  //     setSelectCompany(tem);
-  //   }
-  // }, [auth.allCorporateCompany]);
+  useEffect(() => {
+    if (Object.keys(auth.allCorporateCompany).length > 0) {
+      let tem = [];
+      auth.allCorporateCompany.map((data, index) => {
+        console.log(data, "datadatadatadatassssss");
+        tem.push({
+          label: data.corporateName,
+          value: data.corporateID,
+        });
+      });
+      setSelectCompany(tem);
+    }
+  }, [auth.allCorporateCompany]);
 
   //ON CHANGE HANDLER FOR CATEGORY DROPDOWN
   const selectAllCategoryOnchangeHandler = async (selectedCategory) => {
@@ -439,10 +458,27 @@ const Customerlist = () => {
       LastName: customerListFields.LastName.value,
       Email: customerListFields.Email.value,
       CompanyName: customerListFields.corporateNames.label,
-      CategoryID: 0,
-      PageNumber: 1,
-      Length: 3,
+      CategoryID: customerListFields.corporateCategoryID.value,
+      PageNumber: currentPage !== null ? parseInt(currentPage) : 1,
+      Length: currentPageSize !== null ? parseInt(currentPageSize) : 50,
     };
+    await dispatch(searchUserCorporateApi(navigate, corporateSearchData));
+  };
+
+  //customer List Onchange for Pagination
+
+  const CustomerListPagination = async (current, pageSize) => {
+    let corporateSearchData = {
+      FirstName: customerListFields.FirstName.value,
+      LastName: customerListFields.LastName.value,
+      Email: customerListFields.Email.value,
+      CompanyName: customerListFields.corporateNames.label,
+      CategoryID: customerListFields.corporateCategoryID.value,
+      PageNumber: current !== null ? parseInt(current) : 1,
+      Length: pageSize !== null ? parseInt(pageSize) : 50,
+    };
+    localStorage.setItem("CustomerUserListSize", pageSize);
+    localStorage.setItem("CustomerUserListPage", current);
     await dispatch(searchUserCorporateApi(navigate, corporateSearchData));
   };
 
@@ -539,9 +575,9 @@ const Customerlist = () => {
   const handlerEmail = () => {
     if (customerListFields.Email.value !== "") {
       if (validateEmail(customerListFields.Email.value)) {
-        alert("Email verified");
+        console.log("Email verified");
       } else {
-        alert("Email Not Verified");
+        console.log("Email Not Verified");
       }
     }
   };
@@ -552,15 +588,36 @@ const Customerlist = () => {
       ...customerListFields,
       FirstName: {
         value: "",
+        errorMessage: "",
+        errorStatus: false,
       },
       LastName: {
         value: "",
+        errorMessage: "",
+        errorStatus: false,
       },
-      companyName: {
+
+      corporateNames: {
         value: "",
+        errorMessage: "",
+        errorStatus: false,
       },
+
       Email: {
         value: "",
+        errorMessage: "",
+        errorStatus: false,
+      },
+
+      corporateCategoryID: {
+        value: 0,
+        errorMessage: "",
+        errorStatus: false,
+      },
+      BankID: {
+        value: CustomerUserListBankId ? CustomerUserListBankId : 1,
+        errorMessage: "",
+        errorStatus: false,
       },
     });
     setSelectAllCategoryValue([]);
@@ -573,7 +630,7 @@ const Customerlist = () => {
       CompanyName: "",
       CategoryID: 0,
       PageNumber: 1,
-      Length: 3,
+      Length: 50,
     };
     dispatch(searchUserCorporateApi(navigate, corporateSearchData));
   };
@@ -638,6 +695,8 @@ const Customerlist = () => {
       dataIndex: "email",
       key: "email",
       width: "150px",
+      ellipsis: true,
+      align: "center",
       render: (text, record) => {
         console.log(record, "recordrecord");
         return (
@@ -656,7 +715,7 @@ const Customerlist = () => {
       title: <label className="bottom-table-header">First Name</label>,
       dataIndex: "firstName",
       key: "firstName",
-      width: "100px",
+      ellipsis: true,
       align: "center",
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
@@ -664,7 +723,7 @@ const Customerlist = () => {
       title: <label className="bottom-table-header">Last Name</label>,
       dataIndex: "lastName",
       key: "lastName",
-      width: "100px",
+      ellipsis: true,
       align: "center",
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
@@ -672,7 +731,7 @@ const Customerlist = () => {
       title: <label className="bottom-table-header">Company</label>,
       dataIndex: "company",
       key: "company",
-      width: "160px",
+      ellipsis: true,
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -681,7 +740,7 @@ const Customerlist = () => {
       title: <label className="bottom-table-header">Status</label>,
       dataIndex: "statusId",
       key: "statusId",
-      width: "60px",
+      ellipsis: true,
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -691,9 +750,16 @@ const Customerlist = () => {
       dataIndex: "creationDate",
       key: "creationDate",
       align: "center",
-      width: "190px",
       ellipsis: true,
-      render: (text) => <label className="issue-date-column">{text}</label>,
+      render: (_, record) => {
+        return (
+          <span className="w-100">
+            {moment(`${record.creationDate} ${record.creationTime}`).format(
+              "YYYY-MM-DD HH:MM:ss"
+            )}{" "}
+          </span>
+        );
+      },
     },
   ];
 
@@ -752,12 +818,12 @@ const Customerlist = () => {
               </Col>
               <Col lg={3} md={3} sm={12}>
                 <Select
+                  placeholder="Category"
                   name="corporateCategoryID"
                   options={selectAllCategory}
                   value={selectAllCategoryValue}
                   isSearchable={true}
                   onChange={selectAllCategoryOnchangeHandler}
-                  placeholder="Select"
                   className="select-customer-list-fontsize"
                 />
               </Col>
@@ -789,11 +855,24 @@ const Customerlist = () => {
                   <Table
                     column={columns}
                     rows={rows}
-                    pagination={true}
-                    scroll={{ x: 500, y: 200 }}
+                    pagination={false}
+                    // scroll={{ x: 500, y: 200 }}
                     className="CustomerList-table"
                   />
                 )}
+              </Col>
+            </Row>
+            <Row className="mt-2">
+              <Col lg={12} md={12} sm={12}>
+                <Pagination
+                  total={totalRecords}
+                  onChange={CustomerListPagination}
+                  current={currentPage !== null ? currentPage : 1}
+                  showSizeChanger
+                  pageSizeOptions={[50, 100, 200]}
+                  pageSize={currentPageSize !== null ? currentPageSize : 50}
+                  className="PaginationStyle-CustomerLogin"
+                />
               </Col>
             </Row>
           </CustomPaper>

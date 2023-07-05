@@ -140,7 +140,7 @@ const BankUserListModal = ({
                         <TextField
                           // placeholder="aunnaqvi123@gmail.com"
                           name="ldapAccount"
-                          value={bankViewField.ldapAccount.value}
+                          value={bankViewField.LDAPAccount.value}
                           disable={true}
                           className="disable-BankUserfield-Name"
                           labelClass="d-none"
@@ -251,6 +251,7 @@ const BankUserListModal = ({
                 />
                 <Button
                   text="Discard"
+                  onClick={closeViewBankModal}
                   className="Bank-List-Cancel-btn"
                   icon={<i class="icon-close Upload-BankList-modal"></i>}
                 />

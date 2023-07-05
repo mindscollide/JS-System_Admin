@@ -23,7 +23,7 @@ import {
 } from "../../../../store/actions/Security-Admin";
 import BankUserListModal from "../../AdminModal/Bank-User-list-Modal/BankUserListModal";
 import Select from "react-select";
-import { Spin } from "antd";
+import { Spin, Pagination } from "antd";
 import "./BankList.css";
 import { useEffect } from "react";
 
@@ -32,9 +32,22 @@ const BankList = () => {
   const dispatch = useDispatch();
   const { auth, securityReducer } = useSelector((state) => state);
   console.log(auth, securityReducer, "systemAdminsystemAdmin");
+  let bankUserBankId =
+    localStorage.getItem("bankID") != undefined &&
+    localStorage.getItem("bankID") != null
+      ? localStorage.getItem("bankID")
+      : 1;
+
+  let currentPageSize = localStorage.getItem("BankListSize")
+    ? localStorage.getItem("BankListSize")
+    : 50;
+  let currentPage = localStorage.getItem("BankListPage")
+    ? localStorage.getItem("BankListPage")
+    : 1;
 
   // state for table rows
   const [rows, setRows] = useState([]);
+  const [totalRecords, setTotalRecord] = useState(0);
 
   //state for user Roles
   const [selectRole, setSelectRole] = useState([]);
@@ -57,17 +70,18 @@ const BankList = () => {
   useEffect(() => {
     dispatch(allUserRoles(navigate));
     dispatch(getStatusApi(navigate));
-
     let newDataBank = {
       FirstName: "",
       LastName: "",
       RoleID: 0,
       StatusID: 0,
+      LDAPAccount: "",
       Email: "",
-      Contact: "",
       PageNumber: 1,
-      Length: 3,
+      Length: 50,
     };
+    localStorage.setItem("BankListSize", 50);
+    localStorage.setItem("BankListPage", 1);
     dispatch(bankListGetSearchApi(navigate, newDataBank));
   }, []);
 
@@ -97,7 +111,7 @@ const BankList = () => {
       errorStatus: false,
     },
 
-    ldapAccount: {
+    LDAPAccount: {
       value: "",
       errorMessage: "",
       errorStatus: false,
@@ -122,7 +136,7 @@ const BankList = () => {
     },
 
     BankId: {
-      value: 1,
+      value: bankUserBankId ? bankUserBankId : 1,
       errorMessage: "",
       errorStatus: false,
     },
@@ -154,23 +168,20 @@ const BankList = () => {
       errorMessage: "",
       errorStatus: false,
     },
+
     userID: {
       value: 0,
       errorMessage: "",
       errorStatus: false,
     },
+
     userStatus: {
       value: 0,
       errorMessage: "",
       errorStatus: false,
     },
-    contactNumber: {
-      value: "",
-      errorMessage: "",
-      errorStatus: false,
-    },
 
-    ldapAccount: {
+    LDAPAccount: {
       value: "",
       errorMessage: "",
       errorStatus: false,
@@ -263,25 +274,7 @@ const BankList = () => {
 
   // func to open viewBankModal
   const openViewModal = async (record) => {
-    let newStatus;
     console.log(record, "recordrecord");
-
-    // try {
-    //   if (Object.keys(auth.allUserStatus).length > 0) {
-    //     await auth.allUserStatus.map((data, index) => {
-    //       console.log(data, record, "openViewCustomerModal");
-    //       if (data.corporateName === record.userStatusID) {
-    //         newStatus = {
-    //           label: data.corporateName,
-    //           value: data.statusID,
-    //         };
-    //       }
-    //     });
-    //   }
-    // } catch {
-    //   console.log("error on company Corporate select");
-    // }
-
     try {
       if (Object.keys(record).length > 0) {
         console.log(record, "openViewCustomerModal");
@@ -315,22 +308,20 @@ const BankList = () => {
           },
           userRoleID: {
             value: record.userRoleID,
-          },
-          contactNumber: {
-            value: record.contactNumber,
             errorMessage: "",
             errorStatus: false,
           },
-
-          ldapAccount: {
+          LDAPAccount: {
             value: record.ldapAccount,
+            errorMessage: "",
+            errorStatus: false,
           },
         });
       }
+      setBankModal(true);
     } catch {
       console.log("error on TextFields");
     }
-    setBankModal(true);
   };
 
   // on search Button hit in bank user list
@@ -340,11 +331,28 @@ const BankList = () => {
       LastName: bankListFields.LastName.value,
       RoleID: bankListFields.userRoles.value,
       StatusID: bankListFields.userStatus.value,
+      LDAPAccount: bankListFields.LDAPAccount.value,
       Email: bankListFields.Email.value,
-      Contact: "",
-      PageNumber: 1,
-      Length: 3,
+      PageNumber: currentPage !== null ? parseInt(currentPage) : 1,
+      Length: currentPageSize !== null ? parseInt(currentPageSize) : 50,
     };
+    await dispatch(bankListGetSearchApi(navigate, bankUserSearch));
+  };
+
+  // onchange of bankList Pagination Handler
+  const BankListPagination = async (current, pageSize) => {
+    let bankUserSearch = {
+      FirstName: bankListFields.FirstName.value,
+      LastName: bankListFields.LastName.value,
+      RoleID: bankListFields.userRoles.value,
+      StatusID: bankListFields.userStatus.value,
+      LDAPAccount: bankListFields.LDAPAccount.value,
+      Email: bankListFields.Email.value,
+      PageNumber: current !== null ? parseInt(current) : 1,
+      Length: pageSize !== null ? parseInt(pageSize) : 50,
+    };
+    localStorage.setItem("BankListSize", pageSize);
+    localStorage.setItem("BankListPage", current);
     await dispatch(bankListGetSearchApi(navigate, bankUserSearch));
   };
 
@@ -355,21 +363,20 @@ const BankList = () => {
         FirstName: bankViewField.FirstName.value,
         Lastname: bankViewField.LastName.value,
         UserRoleID: bankViewField.userRoleID.value,
-        ContactNumber: bankViewField.contactNumber.value,
         Email: bankViewField.Email.value,
         UserID: bankViewField.userID.value,
       },
     };
-    // let newBankList = {
-    //   BankId: bankListFields.BankId.value,
-    // };
+
     let bankUserSearch = {
       FirstName: "",
       LastName: "",
       RoleID: 0,
       StatusID: 0,
+      LDAPAccount: "",
       Email: "",
-      Contact: "",
+      PageNumber: 1,
+      Length: 50,
     };
     dispatch(
       updateByUserIdBank(
@@ -427,22 +434,22 @@ const BankList = () => {
       });
     }
 
-    if (name === "ldapAccount" && value !== "") {
+    if (name === "LDAPAccount" && value !== "") {
       console.log("valuevalueemailvaluevalueemail", value);
       if (value !== "") {
         setBankListFields({
           ...bankListFields,
-          ldapAccount: {
+          LDAPAccount: {
             value: value.trimStart(),
             errorMessage: "",
             errorStatus: false,
           },
         });
       }
-    } else if (name === "ldapAccount" && value === "") {
+    } else if (name === "LDAPAccount" && value === "") {
       setBankListFields({
         ...bankListFields,
-        ldapAccount: {
+        LDAPAccount: {
           value: "",
           errorMessage: "",
           errorStatus: true,
@@ -493,18 +500,43 @@ const BankList = () => {
       ...bankListFields,
       FirstName: {
         value: "",
+        errorMessage: "",
+        errorStatus: false,
       },
-
       LastName: {
         value: "",
+        errorMessage: "",
+        errorStatus: false,
       },
 
-      ldapAccount: {
+      LDAPAccount: {
         value: "",
+        errorMessage: "",
+        errorStatus: false,
       },
 
       Email: {
         value: "",
+        errorMessage: "",
+        errorStatus: false,
+      },
+
+      userRoles: {
+        value: 0,
+        errorMessage: "",
+        errorStatus: false,
+      },
+
+      userStatus: {
+        value: 0,
+        errorMessage: "",
+        errorStatus: false,
+      },
+
+      BankId: {
+        value: bankUserBankId ? bankUserBankId : 1,
+        errorMessage: "",
+        errorStatus: false,
       },
     });
     setSelectStatusValue([]);
@@ -514,11 +546,13 @@ const BankList = () => {
       LastName: "",
       RoleID: 0,
       StatusID: 0,
+      LDAPAccount: "",
       Email: "",
-      Contact: "",
       PageNumber: 1,
-      Length: 3,
+      Length: 50,
     };
+    localStorage.setItem("BankListSize", 50);
+    localStorage.setItem("BankListPage", 1);
     dispatch(bankListGetSearchApi(navigate, newDataBank));
   };
 
@@ -585,6 +619,8 @@ const BankList = () => {
       dataIndex: "email",
       key: "email",
       width: "200px",
+      align: "center",
+      ellipsis: true,
       render: (text, record) => {
         console.log(record, "recordrecord");
         return (
@@ -601,7 +637,7 @@ const BankList = () => {
       title: <label className="bottom-table-header">First Name</label>,
       dataIndex: "firstName",
       key: "firstName",
-      width: "120px",
+      ellipsis: true,
       align: "center",
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
@@ -609,7 +645,7 @@ const BankList = () => {
       title: <label className="bottom-table-header">Last Name</label>,
       dataIndex: "lastname",
       key: "lastname",
-      width: "120px",
+      ellipsis: true,
       align: "center",
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
@@ -617,7 +653,7 @@ const BankList = () => {
       title: <label className="bottom-table-header">LDAP Account</label>,
       dataIndex: "ldapAccount",
       key: "ldapAccount",
-      width: "180px",
+      ellipsis: true,
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -626,7 +662,7 @@ const BankList = () => {
       title: <label className="bottom-table-header">Role</label>,
       dataIndex: "userRoleID",
       key: "userRoleID",
-      width: "60px",
+      ellipsis: true,
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -635,7 +671,7 @@ const BankList = () => {
       title: <label className="bottom-table-header">Status</label>,
       dataIndex: "userStatusID",
       key: "userStatusID",
-      width: "60px",
+      ellipsis: true,
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -687,8 +723,8 @@ const BankList = () => {
               <Col lg={3} md={3} sm={12}>
                 <TextField
                   placeholder="LDAP Account"
-                  name="ldapAccount"
-                  value={bankListFields.ldapAccount.value}
+                  name="LDAPAccount"
+                  value={bankListFields.LDAPAccount.value}
                   onChange={bankListValidation}
                   labelClass="d-none"
                   className="textfields-customer-list-fontsize"
@@ -747,11 +783,24 @@ const BankList = () => {
                   <Table
                     column={columns}
                     rows={rows}
-                    pagination={true}
+                    pagination={false}
                     // scroll={{ x: 500, y: 200 }}
                     className="BankUserList-table"
                   />
                 )}
+              </Col>
+            </Row>
+            <Row className="mt-2">
+              <Col lg={12} md={12} sm={12}>
+                <Pagination
+                  total={totalRecords}
+                  onChange={BankListPagination}
+                  current={currentPage !== null ? currentPage : 1}
+                  showSizeChanger
+                  pageSizeOptions={[50, 100, 200]}
+                  pageSize={currentPageSize !== null ? currentPageSize : 50}
+                  className="PaginationStyle-CustomerLogin"
+                />
               </Col>
             </Row>
           </CustomPaper>
@@ -771,7 +820,7 @@ const BankList = () => {
           />
         </Fragment>
       ) : null}
-      {securityReducer.Loading ? <Loader /> : null}
+      {securityReducer.Loading || auth.Loading ? <Loader /> : null}
     </section>
   );
 };
