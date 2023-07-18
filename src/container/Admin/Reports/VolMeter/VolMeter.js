@@ -182,7 +182,7 @@ const VolMeter = () => {
         </Col>
       </Row>
 
-      <Row className="mt-3">
+      <Row className="mt-2">
         <Col lg={12} md={12} sm={12}>
           <CustomPaper className="volMeter-paper">
             <Row className="mt-4">

@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect, useRef } from "react";
 import { Col, Row, Container } from "react-bootstrap";
 import {
   CustomPaper,
@@ -29,6 +29,9 @@ const LoginHistory = () => {
   const { auth, systemReducer, downloadReducer } = useSelector(
     (state) => state
   );
+
+  //this the email Ref for copy paste handler
+  const emailRef = useRef(null);
 
   //get bankID from local storage
   let CustomerLoginBankId =
@@ -110,6 +113,9 @@ const LoginHistory = () => {
       errorStatus: false,
     },
   });
+
+  // select current date
+  const minDate = new Date();
 
   //start date state of multi datepicker
   const changeDateStartHandler = (date) => {
@@ -246,6 +252,27 @@ const LoginHistory = () => {
         },
       });
     }
+  };
+
+  // this is the paste handler for email in which extra space doesn't paste
+  const emailHandlerPaste = (event) => {
+    event.preventDefault();
+    const clipboardData = event.clipboardData || window.clipboardData;
+    const pastedText = clipboardData.getData("text/plain");
+    const trimmedText = pastedText.trim();
+
+    // Insert the trimmed text into the text field
+    const input = emailRef.current;
+    document.execCommand("insertText", false, trimmedText);
+    input.dispatchEvent(new Event("input", { bubbles: true })); // Trigger an 'input' event manually
+  };
+
+  // this is the copy handler in which copy doesn't allow to copy extra space
+  const emailHandlerCopy = (event) => {
+    event.preventDefault();
+    const input = emailRef.current;
+    input.select();
+    document.execCommand("copy");
   };
 
   //ON CHANGE HANDLER FOR CATEGORY DROPDOWN
@@ -431,7 +458,7 @@ const LoginHistory = () => {
       title: <label className="bottom-table-header">Email</label>,
       dataIndex: "email",
       key: "email",
-      width: "150px",
+      width: "220px",
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -440,6 +467,7 @@ const LoginHistory = () => {
       title: <label className="bottom-table-header">First Name</label>,
       dataIndex: "firstName",
       key: "firstName",
+      width: "100px",
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -448,6 +476,7 @@ const LoginHistory = () => {
       title: <label className="bottom-table-header">Last Name</label>,
       dataIndex: "lastName",
       key: "lastName",
+      width: "100px",
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -456,6 +485,7 @@ const LoginHistory = () => {
       title: <label className="bottom-table-header">Company</label>,
       dataIndex: "companyName",
       key: "companyName",
+      width: "150px",
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -465,6 +495,7 @@ const LoginHistory = () => {
       dataIndex: "ipAddress",
       key: "ipAddress",
       align: "center",
+      width: "150px",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
@@ -473,6 +504,7 @@ const LoginHistory = () => {
       dataIndex: "CombineLoginTimeDate",
       key: "CombineLoginTimeDate",
       align: "center",
+      width: "200px",
       ellipsis: true,
       render: (_, record) => {
         return (
@@ -489,6 +521,7 @@ const LoginHistory = () => {
       dataIndex: "CombineLoginOutTimeDate",
       key: "CombineLoginOutTimeDate",
       align: "center",
+      width: "200px",
       ellipsis: true,
       render: (_, record) => {
         return (
@@ -505,6 +538,7 @@ const LoginHistory = () => {
       dataIndex: "totalSpan",
       key: "totalSpan",
       align: "center",
+      width: "100px",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
@@ -513,7 +547,7 @@ const LoginHistory = () => {
       dataIndex: "interface",
       key: "interface",
       align: "center",
-      width: "180px",
+      width: "200px",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
@@ -591,7 +625,7 @@ const LoginHistory = () => {
                   isSearchable={true}
                   onChange={corporateBankIdSelectOnchangeHandler}
                   placeholder="Company"
-                  className="loginHistor-textField-fontsize"
+                  className="loginHistory-select-fontsize"
                 />
               </Col>
               <Col lg={3} md={3} sm={12}>
@@ -601,6 +635,9 @@ const LoginHistory = () => {
                   value={loginHistoryField.Email.value}
                   onBlur={handlerEmail}
                   onChange={customerListValidation}
+                  onPaste={emailHandlerPaste}
+                  onCopy={emailHandlerCopy}
+                  ref={emailRef}
                   labelClass="d-none"
                   className="loginHistor-textField-fontsize"
                 />
@@ -616,13 +653,16 @@ const LoginHistory = () => {
                   isSearchable={true}
                   onChange={selectCategoryOnchangeHandler}
                   placeholder="Category"
-                  className="loginHistor-textField-fontsize"
+                  className="loginHistory-select-fontsize"
                 />
               </Col>
               <Col lg={9} md={9} sm={12} className="LoginHistory-Datepicker">
                 <DatePicker
+                  highlightToday={true}
+                  onOpenPickNewDate={false}
                   value={loginHistoryField.startDate.value}
                   placeholder="Start date"
+                  minDate={minDate}
                   showOtherDays={true}
                   onChange={(value) =>
                     changeDateStartHandler(value?.toDate?.().toString())
@@ -632,9 +672,13 @@ const LoginHistory = () => {
                 <label className="LoginHistory-date-to">to</label>
 
                 <DatePicker
+                  highlightToday={true}
+                  onOpenPickNewDate={false}
                   value={loginHistoryField.endDate.value}
                   placeholder="End Date"
                   showOtherDays={true}
+                  minDate={minDate}
+                  autoComplete="off"
                   onChange={(value) =>
                     changeDateEndHandler(value?.toDate?.().toString())
                   }
@@ -680,7 +724,7 @@ const LoginHistory = () => {
                     column={columns}
                     rows={rows}
                     pagination={false}
-                    // scroll={{ x: 500, y: 200 }}
+                    // scroll={{ x: true }}
                     className={"LoginHistory-table"}
                   />
                 )}

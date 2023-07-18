@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect, useRef } from "react";
 import { Col, Row, Container } from "react-bootstrap";
 import {
   CustomPaper,
@@ -23,8 +23,16 @@ const UserLogin = () => {
   const dispatch = useDispatch();
   const [totalRecords, setTotalRecord] = useState(0);
   const { auth, downloadReducer } = useSelector((state) => state);
+
   // state for set data from api in rows
   const [rows, setRows] = useState([]);
+
+  //this the email Ref for copy paste handler
+  const emailRef = useRef(null);
+
+  // select current date
+  const minDate = new Date();
+
   let bankUserBankId = localStorage.getItem("bankID");
 
   let currentPageSize = localStorage.getItem("BankLoginHistorySize")
@@ -222,6 +230,26 @@ const UserLogin = () => {
     }
   };
 
+  // this is the paste handler for email in which extra space doesn't paste
+  const emailHandlerPaste = (event) => {
+    event.preventDefault();
+    const clipboardData = event.clipboardData || window.clipboardData;
+    const pastedText = clipboardData.getData("text/plain");
+    const trimmedText = pastedText.trim();
+
+    const input = emailRef.current;
+    document.execCommand("insertText", false, trimmedText);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+  };
+
+  // this is the copy handler in which copy doesn't allow to copy extra space
+  const emailHandlerCopy = (event) => {
+    event.preventDefault();
+    const input = emailRef.current;
+    input.select();
+    document.execCommand("copy");
+  };
+
   // api hit on seacrh btn
   const searchButtonHit = async () => {
     let seacrhBankData = {
@@ -358,7 +386,7 @@ const UserLogin = () => {
       dataIndex: "email",
       key: "email",
       align: "center",
-      width: "150px",
+      width: "200px",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
@@ -367,7 +395,7 @@ const UserLogin = () => {
       dataIndex: "firstName",
       key: "firstName",
       align: "center",
-      // width: "100px",
+      width: "100px",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
@@ -375,7 +403,7 @@ const UserLogin = () => {
       title: <label className="bottom-table-header">Last Name</label>,
       dataIndex: "lastName",
       key: "lastName",
-      // width: "100px",
+      width: "100px",
       ellipsis: true,
       align: "center",
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -384,7 +412,7 @@ const UserLogin = () => {
       title: <label className="bottom-table-header">Bank Name</label>,
       dataIndex: "bankName",
       key: "bankName",
-      // width: "100px",
+      width: "150px",
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -393,7 +421,7 @@ const UserLogin = () => {
       title: <label className="bottom-table-header">Ip Address</label>,
       dataIndex: "ipAddress",
       key: "ipAddress",
-      // width: "100px",
+      width: "150px",
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -402,7 +430,7 @@ const UserLogin = () => {
       title: <label className="bottom-table-header">LoggedIn Date</label>,
       dataIndex: "CombineLoginInTimeDate",
       key: "CombineLoginInTimeDate",
-      // width: "200px",
+      width: "200px",
       align: "center",
       ellipsis: true,
       render: (_, record) => {
@@ -419,7 +447,7 @@ const UserLogin = () => {
       title: <label className="bottom-table-header">LoggOut Date</label>,
       dataIndex: "CombineLoggedOutTimeDate",
       key: "CombineLoggedOutTimeDate",
-      // width: "200px",
+      width: "200px",
       align: "center",
       ellipsis: true,
       render: (_, record) => {
@@ -436,7 +464,7 @@ const UserLogin = () => {
       title: <label className="bottom-table-header">Total Span</label>,
       dataIndex: "totalSpan",
       key: "totalSpan",
-      // width: "180px",
+      width: "180px",
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -445,7 +473,7 @@ const UserLogin = () => {
       title: <label className="bottom-table-header">Interface</label>,
       dataIndex: "interface",
       key: "interface",
-      // width: "188px",
+      width: "180px",
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -459,7 +487,7 @@ const UserLogin = () => {
           <span className="UserHistory-label"> Bank User Login History</span>
         </Col>
       </Row>
-      <Row className="mt-3">
+      <Row className="mt-2">
         <Col lg={12} md={12} sm={12}>
           <CustomPaper className="UserHistory-paper">
             <Row className="mt-3">
@@ -490,6 +518,9 @@ const UserLogin = () => {
                   value={userLoginHistory.Email.value}
                   onBlur={handlerEmail}
                   onChange={userLoginValidation}
+                  onPaste={emailHandlerPaste}
+                  onCopy={emailHandlerCopy}
+                  ref={emailRef}
                   labelClass="d-none"
                   className="UserHistory-textField-fontsize"
                 />
@@ -504,9 +535,12 @@ const UserLogin = () => {
                 className="userLoginHistory-Datepicker"
               >
                 <DatePicker
+                  highlightToday={true}
+                  onOpenPickNewDate={false}
                   value={userLoginHistory.startDate.value}
                   placeholder="Start date"
                   showOtherDays={true}
+                  minDate={minDate}
                   onChange={(value) =>
                     changeDateStartHandler(value?.toDate?.().toString())
                   }
@@ -515,8 +549,11 @@ const UserLogin = () => {
                 <label className="userLoginHistory-date-to">to</label>
 
                 <DatePicker
+                  highlightToday={true}
+                  onOpenPickNewDate={false}
                   value={userLoginHistory.endDate.value}
                   placeholder="End Date"
+                  minDate={minDate}
                   showOtherDays={true}
                   onChange={(value) =>
                     changeDateEndHandler(value?.toDate?.().toString())
@@ -537,7 +574,7 @@ const UserLogin = () => {
                 <Button
                   text="Search"
                   onClick={searchButtonHit}
-                  icon={<i className="icon-search"></i>}
+                  icon={<i className="icon-search Icons-right"></i>}
                   className={"Search-BankUserHistory-btn"}
                 />
                 <Button
@@ -549,7 +586,7 @@ const UserLogin = () => {
                 <Button
                   text="Downlaod Excel"
                   onClick={downloadExcelBankReport}
-                  icon={<i className="icon-download-excel"></i>}
+                  icon={<i className="icon-download-excel Icons-right"></i>}
                   className={"Download-Bank-Excel-btn"}
                 />
               </Col>

@@ -1,28 +1,35 @@
 import React, { Fragment, useState } from "react";
 import { Col, Row, Container } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
+
 import { useNavigate } from "react-router-dom";
 import {
   CustomPaper,
   Table,
   Loader,
   CustomUpload,
+  Button,
 } from "../../../../components/elements";
 import { counterPartyUpload } from "../../../../store/actions/Upload-Action";
+import { counterPartyDownloadReport } from "../../../../store/actions/Download-Report";
 import {
   corporateNameByBankId,
   counterPartyLimitCorporate,
 } from "../../../../store/actions/System-Admin";
 import CounterModal from "../../AdminModal/CounterPartyModal/CounterModal";
 import CounterPartyModal from "../../AdminModal/CounterPartyUplaodModal/CounterPartyModal";
-import { Spin } from "antd";
+import { Spin, Upload } from "antd";
 import "./CounterLimit.css";
 import { useEffect } from "react";
 
 const CounterLimit = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { systemReducer, uploadReducer } = useSelector((state) => state);
+  const [file, setFile] = useState(null);
+  console.log(file, "filefile");
+  const { systemReducer, uploadReducer, downloadReducer } = useSelector(
+    (state) => state
+  );
   console.log(systemReducer, "systemReducersystemReducer");
 
   //get bankID from local storage
@@ -43,6 +50,11 @@ const CounterLimit = () => {
 
   // view Counter party modal
   const [viewCounterModal, setViewCounterModal] = useState({
+    counterFileType: {
+      value: 3,
+      errorMessage: "",
+      errorStatus: false,
+    },
     corporateName: {
       value: "",
       label: "",
@@ -77,9 +89,6 @@ const CounterLimit = () => {
     },
   });
 
-  // api for view icon
-  const onViewClick = () => {};
-
   //open counterParty modal on click
   const openCounterModal = (record) => {
     console.log(record, "recordrecordrecordrecordrecordrecord");
@@ -92,6 +101,14 @@ const CounterLimit = () => {
     // setCounterPartyModal(true);
   };
 
+  // download report in Add Bank user page
+  const downloadReportCounterParty = async () => {
+    let downloadCounterReport = {
+      FileTypeID: viewCounterModal.counterFileType.value,
+    };
+    await dispatch(counterPartyDownloadReport(downloadCounterReport));
+  };
+
   // dispatch corporate Name by Bank ID
   useEffect(() => {
     let corporateBank = {
@@ -100,20 +117,26 @@ const CounterLimit = () => {
     dispatch(corporateNameByBankId(navigate, corporateBank));
   }, []);
 
-  const handlerUploadCounterFile = (data) => {
-    console.log(data, "handlerUploadCounterFilehandlerUploadCounterFile");
-    const counterUploadFile = data.target.value;
-    const counteruploadedFile = data.target.files[0];
-    console.log("UploadFileUploadFile", counterUploadFile);
-    console.log("uploadedFileuploadedFile", counteruploadedFile);
-    var ext = counteruploadedFile.name.split(".").pop();
-    if (ext === "xls" || ext === "xlsx") {
-      dispatch(
-        counterPartyUpload(navigate, counteruploadedFile, setCounterUploadModal)
-      );
-    } else {
-      console.log("Invaid Type File");
-    }
+  const props = {
+    name: "file",
+    action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
+    headers: {
+      authorization: "authorization-text",
+    },
+    onChange(info) {
+      let counterUploadFile = info.file.originFileObj;
+      let ext = info.file.originFileObj.name.split(".").pop();
+      if (ext === "xls" || ext === "xlsx") {
+        dispatch(
+          counterPartyUpload(
+            navigate,
+            counterUploadFile,
+            setCounterUploadModal,
+            setFile
+          )
+        );
+      }
+    },
   };
 
   //New Api GetAllCorporateNameByBankID data Rendering
@@ -129,11 +152,6 @@ const CounterLimit = () => {
     }
   }, [systemReducer.corporateNameByBankId]);
   console.log("systemReducercorporateNameByBankId", rows);
-
-  //open Upload Counter party modal
-  const openUploadCounterParty = () => {
-    setCounterUploadModal(true);
-  };
 
   // column for Counter Limit
   const counterColumns = [
@@ -177,14 +195,18 @@ const CounterLimit = () => {
         <Col lg={6} md={6} sm={12} className="mt-2">
           <span className="counterLimit-label">Counter Party Limit</span>
         </Col>
-        <Col lg={6} md={6} sm={12} className="d-flex justify-content-end">
-          <CustomUpload change={handlerUploadCounterFile} />
-          {/* <Button
+        <Col lg={6} md={6} sm={12} className="col-upper-button-class">
+          <Button
+            text="Download excel format"
+            onClick={downloadReportCounterParty}
+            className="Counter-party-download-formater"
+          />
+          <Upload showUploadList={false} {...props}>
+            <Button
+              className="Counter-party-upload-modal"
               text="Upload Counter Party Limit"
-              onClick={openUploadCounterParty}
-              icon={<i className="icon-upload-cloud eyeicon-size"></i>}
-              className="Upload-Excel-btn"
-            /> */}
+            />
+          </Upload>
         </Col>
       </Row>
 
@@ -202,7 +224,6 @@ const CounterLimit = () => {
                     column={counterColumns}
                     rows={rows}
                     pagination={false}
-                    // scroll={{ x: 500, y: 350 }}
                     className="counterLimit-table"
                   />
                 )}
@@ -228,7 +249,11 @@ const CounterLimit = () => {
           />
         </>
       ) : null}
-      {systemReducer.Loading || uploadReducer.Loading ? <Loader /> : null}
+      {systemReducer.Loading ||
+      uploadReducer.Loading ||
+      downloadReducer.Loading ? (
+        <Loader />
+      ) : null}
     </section>
   );
 };

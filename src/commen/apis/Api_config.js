@@ -146,6 +146,16 @@ const searchGetBankUserList = {
   RequestMethod: "ServiceManager.SearchBankUsers",
 };
 
+// updateCorporateByCorporateId in system Admin on Customer List page to update NAture Business
+const updateCorporateIdApi = {
+  RequestMethod: "ServiceManager.UpdateCorporateByCorporateID",
+};
+
+// download counter party file
+const counterPartyDownloadApi = {
+  RequestMethod: "DownloadFile",
+};
+
 export {
   authenticationLogIn,
   authenticationSignUp,
@@ -178,4 +188,6 @@ export {
   searchGetCompanyUserLoginHistory,
   searchGetBankUserLoginHistory,
   searchGetBankUserList,
+  updateCorporateIdApi,
+  counterPartyDownloadApi,
 };

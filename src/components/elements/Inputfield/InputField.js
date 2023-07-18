@@ -30,6 +30,8 @@ const TextField = ({
   clickIcon,
   maxLength,
   autoFocus,
+  onPaste,
+  onCopy,
 }) => {
   return (
     <>
@@ -57,6 +59,8 @@ const TextField = ({
           disabled={disable}
           required={required}
           autoFocus={autoFocus}
+          onPaste={onPaste}
+          onCopy={onCopy}
         />
         <FormControl.Feedback className={iconClassName} onClick={clickIcon}>
           {inputIcon}

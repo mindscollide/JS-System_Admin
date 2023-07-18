@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useRef } from "react";
 import { Col, Row, Container } from "react-bootstrap";
 import {
   CustomPaper,
@@ -37,6 +37,9 @@ const Customerlist = () => {
   console.log(systemReducer, "systemAdminsystemAdmin");
 
   const [totalRecords, setTotalRecord] = useState(0);
+
+  //this the email Ref for copy paste handler
+  const emailRef = useRef(null);
 
   //get bankID from local storage
   let CustomerUserListBankId =
@@ -125,12 +128,12 @@ const Customerlist = () => {
   });
 
   // show data in company name dropdown
-  useEffect(() => {
-    let corporateBank = {
-      BankID: parseInt(customerListFields.BankID.value),
-    };
-    dispatch(corporateNameByBankId(navigate, corporateBank));
-  }, []);
+  // useEffect(() => {
+  //   let corporateBank = {
+  //     BankID: parseInt(customerListFields.BankID.value),
+  //   };
+  //   dispatch(corporateNameByBankId(navigate, corporateBank));
+  // }, []);
 
   // for corporate company in select drop down we use bankCorporate
   useEffect(() => {
@@ -292,14 +295,14 @@ const Customerlist = () => {
   // dispatch getALLCategoryDropdown API and getAllCompanyCorporate
   useEffect(() => {
     let corporateBank = {
-      BankID: customerListFields.BankID.value,
+      BankID: parseInt(customerListFields.BankID.value),
     };
     dispatch(corporateNameByBankId(navigate, corporateBank));
 
     dispatch(getAllCategoriesCorporate(navigate));
     dispatch(getAllCorporateCompany(navigate));
     let newData = {
-      BankID: CustomerUserListBankId ? CustomerUserListBankId : 1,
+      BankID: parseInt(CustomerUserListBankId ? CustomerUserListBankId : 1),
       CorporateName: "",
       NatureOfBussinessId: 0,
       AssetTypeID: 0,
@@ -463,6 +466,26 @@ const Customerlist = () => {
       Length: currentPageSize !== null ? parseInt(currentPageSize) : 50,
     };
     await dispatch(searchUserCorporateApi(navigate, corporateSearchData));
+  };
+
+  // this is the paste handler for email in which extra space doesn't paste
+  const emailHandlerPaste = (event) => {
+    event.preventDefault();
+    const clipboardData = event.clipboardData || window.clipboardData;
+    const pastedText = clipboardData.getData("text/plain");
+    const trimmedText = pastedText.trim();
+
+    const input = emailRef.current;
+    document.execCommand("insertText", false, trimmedText);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+  };
+
+  // this is the copy handler in which copy doesn't allow to copy extra space
+  const emailHandlerCopy = (event) => {
+    event.preventDefault();
+    const input = emailRef.current;
+    input.select();
+    document.execCommand("copy");
   };
 
   //customer List Onchange for Pagination
@@ -694,7 +717,7 @@ const Customerlist = () => {
       title: <label className="bottom-table-header">Email</label>,
       dataIndex: "email",
       key: "email",
-      width: "150px",
+      width: "220px",
       ellipsis: true,
       align: "center",
       render: (text, record) => {
@@ -716,6 +739,7 @@ const Customerlist = () => {
       dataIndex: "firstName",
       key: "firstName",
       ellipsis: true,
+      width: "100px",
       align: "center",
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
@@ -723,6 +747,7 @@ const Customerlist = () => {
       title: <label className="bottom-table-header">Last Name</label>,
       dataIndex: "lastName",
       key: "lastName",
+      width: "100px",
       ellipsis: true,
       align: "center",
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -733,7 +758,7 @@ const Customerlist = () => {
       key: "company",
       ellipsis: true,
       align: "center",
-      ellipsis: true,
+      width: "150px",
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
     {
@@ -742,7 +767,7 @@ const Customerlist = () => {
       key: "statusId",
       ellipsis: true,
       align: "center",
-      ellipsis: true,
+      width: "100px",
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
     {
@@ -750,6 +775,7 @@ const Customerlist = () => {
       dataIndex: "creationDate",
       key: "creationDate",
       align: "center",
+      width: "180px",
       ellipsis: true,
       render: (_, record) => {
         return (
@@ -770,7 +796,7 @@ const Customerlist = () => {
           <span className="customer-List-label">Customer User List</span>
         </Col>
       </Row>
-      <Row className="mt-3">
+      <Row className="mt-2">
         <Col lg={12} md={12} sm={12}>
           <CustomPaper className="customer-List-paper">
             <Row className="mt-3">
@@ -798,6 +824,9 @@ const Customerlist = () => {
                 <TextField
                   placeholder="Email"
                   name="Email"
+                  onPaste={emailHandlerPaste}
+                  onCopy={emailHandlerCopy}
+                  ref={emailRef}
                   onBlur={handlerEmail}
                   value={customerListFields.Email.value}
                   onChange={customerListValidation}

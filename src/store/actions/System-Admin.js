@@ -10,6 +10,7 @@ import {
   saveCounterPartyApi,
   VolatilityMeterAPI,
   addUpdateVolApi,
+  updateCorporateIdApi,
 } from "../../commen/apis/Api_config";
 import { RefreshToken } from "./Auth-Actions";
 import { systemAdminAPI } from "../../commen/apis/Api_ends_points";
@@ -921,6 +922,117 @@ const addUpdateVolMeterApi = (navigate, addData) => {
   };
 };
 
+// APi for updateCorporateApi in Customer List Page
+const updateCorporateByIdInit = () => {
+  return {
+    type: actions.UPDATE_CORPORATE_BY_CORPORATE_INIT,
+  };
+};
+
+const updateCorporateByIdSuccess = (response, message) => {
+  return {
+    type: actions.UPDATE_CORPORATE_BY_CORPORATE_SUCCESS,
+    response: response,
+    message: message,
+  };
+};
+
+const updateCorporateByIdFail = (message) => {
+  return {
+    type: actions.UPDATE_CORPORATE_BY_CORPORATE_FAIL,
+    message: message,
+  };
+};
+
+const updateCorporateByApi = (
+  navigate,
+  newUpdateButton,
+  setEditCustomerListModal,
+  newData,
+  newDataaa
+) => {
+  let token = JSON.parse(localStorage.getItem("token"));
+
+  return async (dispatch) => {
+    dispatch(updateCorporateByIdInit());
+    let form = new FormData();
+    form.append("RequestMethod", updateCorporateIdApi.RequestMethod);
+    form.append("RequestData", JSON.stringify(newUpdateButton));
+    await axios({
+      method: "post",
+      url: systemAdminAPI,
+      data: form,
+      headers: {
+        _token: token,
+      },
+    })
+      .then(async (response) => {
+        if (response.data.responseCode === 417) {
+          await dispatch(RefreshToken(navigate));
+          dispatch(
+            updateCorporateByApi(
+              navigate,
+              newUpdateButton,
+              setEditCustomerListModal,
+              newData,
+              newDataaa
+            )
+          );
+        } else if (response.data.responseCode === 200) {
+          if (response.data.responseResult.isExecuted === true) {
+            if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_UpdateCorporateByCorporateID_01".toLowerCase()
+                )
+            ) {
+              dispatch(
+                updateCorporateByIdSuccess(
+                  response.data.responseResult.responseMessage,
+                  "Record Updated"
+                )
+              );
+              await dispatch(bankCorporateAPI(navigate, newData, newDataaa));
+              setEditCustomerListModal(false);
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_UpdateCorporateByCorporateID_02".toLowerCase()
+                )
+            ) {
+              dispatch(updateCorporateByIdFail("No Record Updated"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_UpdateCorporateByCorporateID_03".toLowerCase()
+                )
+            ) {
+              dispatch(updateCorporateByIdFail("Invalid Role"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "SystemAdmin_SystemAdminManager_UpdateCorporateByCorporateID_04".toLowerCase()
+                )
+            ) {
+              dispatch(updateCorporateByIdFail("Exception Not Update"));
+            }
+          } else {
+            dispatch(updateCorporateByIdFail("Something went wrong"));
+          }
+        } else {
+          dispatch(updateCorporateByIdFail("Something went wrong"));
+        }
+      })
+      .catch((response) => {
+        dispatch(updateCorporateByIdFail("Something went wrong"));
+      });
+  };
+};
+
 export {
   getAllCorporateUserApi,
   searchUserCorporateApi,
@@ -931,4 +1043,5 @@ export {
   saveCounterParty,
   getVolMeter,
   addUpdateVolMeterApi,
+  updateCorporateByApi,
 };

@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useRef } from "react";
 import { Col, Row, Container } from "react-bootstrap";
 import {
   CustomPaper,
@@ -44,6 +44,9 @@ const BankList = () => {
   let currentPage = localStorage.getItem("BankListPage")
     ? localStorage.getItem("BankListPage")
     : 1;
+
+  //this the email Ref for copy paste handler
+  const emailRef = useRef(null);
 
   // state for table rows
   const [rows, setRows] = useState([]);
@@ -356,6 +359,26 @@ const BankList = () => {
     await dispatch(bankListGetSearchApi(navigate, bankUserSearch));
   };
 
+  // this is the paste handler for email in which extra space doesn't paste
+  const emailHandlerPaste = (event) => {
+    event.preventDefault();
+    const clipboardData = event.clipboardData || window.clipboardData;
+    const pastedText = clipboardData.getData("text/plain");
+    const trimmedText = pastedText.trim();
+
+    const input = emailRef.current;
+    document.execCommand("insertText", false, trimmedText);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+  };
+
+  // this is the copy handler in which copy doesn't allow to copy extra space
+  const emailHandlerCopy = (event) => {
+    event.preventDefault();
+    const input = emailRef.current;
+    input.select();
+    document.execCommand("copy");
+  };
+
   //on update button click in bank view modal
   const updateUserByBankIdOnClick = () => {
     let newBankUserData = {
@@ -625,7 +648,7 @@ const BankList = () => {
         console.log(record, "recordrecord");
         return (
           <label
-            className="table-columns"
+            className="table-columns-Banklist"
             onClick={() => openViewModal(record)}
           >
             {text}
@@ -637,6 +660,7 @@ const BankList = () => {
       title: <label className="bottom-table-header">First Name</label>,
       dataIndex: "firstName",
       key: "firstName",
+      width: "100px",
       ellipsis: true,
       align: "center",
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -645,6 +669,7 @@ const BankList = () => {
       title: <label className="bottom-table-header">Last Name</label>,
       dataIndex: "lastname",
       key: "lastname",
+      width: "100px",
       ellipsis: true,
       align: "center",
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -653,7 +678,7 @@ const BankList = () => {
       title: <label className="bottom-table-header">LDAP Account</label>,
       dataIndex: "ldapAccount",
       key: "ldapAccount",
-      ellipsis: true,
+      width: "150px",
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -662,8 +687,8 @@ const BankList = () => {
       title: <label className="bottom-table-header">Role</label>,
       dataIndex: "userRoleID",
       key: "userRoleID",
-      ellipsis: true,
       align: "center",
+      width: "100px",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
@@ -671,8 +696,8 @@ const BankList = () => {
       title: <label className="bottom-table-header">Status</label>,
       dataIndex: "userStatusID",
       key: "userStatusID",
-      ellipsis: true,
       align: "center",
+      width: "100px",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
@@ -685,7 +710,7 @@ const BankList = () => {
           <span className="customer-List-label">Bank User List</span>
         </Col>
       </Row>
-      <Row className="mt-3">
+      <Row className="mt-2">
         <Col lg={12} md={12} sm={12}>
           <CustomPaper className="customer-List-paper">
             <Row className="mt-3">
@@ -716,6 +741,9 @@ const BankList = () => {
                   value={bankListFields.Email.value}
                   onChange={bankListValidation}
                   onBlur={handlerEmail}
+                  onPaste={emailHandlerPaste}
+                  onCopy={emailHandlerCopy}
+                  ref={emailRef}
                   labelClass="d-none"
                   className="textfields-customer-list-fontsize"
                 />
@@ -784,6 +812,9 @@ const BankList = () => {
                     column={columns}
                     rows={rows}
                     pagination={false}
+                    // scroll={{
+                    //   y: 240,
+                    // }}
                     // scroll={{ x: 500, y: 200 }}
                     className="BankUserList-table"
                   />

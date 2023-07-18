@@ -12,6 +12,7 @@ const CustomerListEditModal = ({
   natureOfBusinessOnchange,
   natureOption,
   natureSelectValue,
+  updateButtonHit,
 }) => {
   const closeEditModal = () => {
     setEditCustomerModal(false);
@@ -70,6 +71,7 @@ const CustomerListEditModal = ({
                       options={natureOption}
                       value={editCustomerList.natureBusiness}
                       onChange={natureOfBusinessOnchange}
+                      menuPosition="fixed"
                       placeholder="Nature Business"
                       className="Edit-select-company"
                     />
@@ -92,6 +94,7 @@ const CustomerListEditModal = ({
                 <Button
                   text="Update"
                   className="Edit-Customer-List-Update-btn"
+                  onClick={updateButtonHit}
                   icon={<i class="icon-refresh Upload-Customer-modal"></i>}
                 />
                 <Button

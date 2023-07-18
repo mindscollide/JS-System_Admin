@@ -39,10 +39,10 @@
   width: 90px !important;
   height: 39px !important;
   background: linear-gradient(to bottom, #feac78 0%, #e97225 100%) !important;
-  border-top-right-radius: 0px;
-  border-bottom-left-radius: 0px;
-  border-top-left-radius: 8px;
-  border-bottom-right-radius: 8px;
+  border-top-right-radius: 0px !important;
+  border-bottom-left-radius: 0px !important;
+  border-top-left-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
   border: none !important;
 }
 
@@ -54,10 +54,10 @@
   width: 101px !important;
   height: 39px !important;
   background: linear-gradient(to bottom, #5b67cd 0%, #2a38af 100%) !important;
-  border-top-right-radius: 0px;
-  border-bottom-left-radius: 0px;
-  border-top-left-radius: 8px;
-  border-bottom-right-radius: 8px;
+  border-top-right-radius: 0px !important;
+  border-bottom-left-radius: 0px !important;
+  border-top-left-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
   border: none !important;
 }
 

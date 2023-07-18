@@ -4,7 +4,6 @@ import { Button, TextField, Loader } from "../../../components/elements";
 import jsLogo from "../../../assets/images/js-logo.png";
 import { useDispatch, useSelector } from "react-redux";
 import { logIn } from "../../../store/actions/Auth-Actions";
-import { authReducer } from "../../../store/reducers";
 // import { validationEmail } from "../../../assets/common/functions/validations";
 import { useNavigate } from "react-router-dom";
 import "./AdminLogin.css";

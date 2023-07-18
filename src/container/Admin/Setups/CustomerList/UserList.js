@@ -5,6 +5,7 @@ import {
   TextField,
   Button,
   Table,
+  Loader,
 } from "../../../../components/elements";
 import { useDispatch, useSelector } from "react-redux";
 import CustomerListEditModal from "../../AdminModal/EditCustomerListModal/CustomerListEditModal";
@@ -14,8 +15,11 @@ import {
   getAllCategoriesCorporate,
   getNatureBusiness,
 } from "../../../../store/actions/Auth-Actions";
-import { corporateNameByBankId } from "../../../../store/actions/System-Admin";
-import { bankCorporateAPI } from "../../../../store/actions/System-Admin";
+import {
+  corporateNameByBankId,
+  updateCorporateByApi,
+  bankCorporateAPI,
+} from "../../../../store/actions/System-Admin";
 import { Spin, Pagination } from "antd";
 import "./UserList.css";
 import { useEffect } from "react";
@@ -175,6 +179,7 @@ const Userlist = () => {
     },
 
     corporatesName: {
+      value: 0,
       label: "",
       errorMessage: "",
       errorStatus: false,
@@ -211,6 +216,7 @@ const Userlist = () => {
                 errorStatus: false,
               },
               corporatesName: {
+                value: record.corporateID,
                 label: record.corporateName,
               },
               corporatesCategory: {
@@ -256,6 +262,32 @@ const Userlist = () => {
     };
     console.log("bankCorporateAPI", newData);
     await dispatch(bankCorporateAPI(navigate, newData));
+  };
+
+  // update corporate by corporate Id on update button
+  const updateButtonHit = () => {
+    let newUpdateButton = {
+      NatureOfBussinessID: editCustomerList.natureBusiness.value,
+      CorporateId: editCustomerList.corporatesName.value,
+    };
+
+    let newDataaa = {
+      BankID: 1,
+      CorporateName: "",
+      NatureOfBussinessId: 0,
+      AssetTypeID: 0,
+      CategoryId: 0,
+      PageNumber: 1,
+      Length: 50,
+    };
+    dispatch(
+      updateCorporateByApi(
+        navigate,
+        newUpdateButton,
+        setEditCustomerListModal,
+        newDataaa
+      )
+    );
   };
 
   // onChange Handler for pagination
@@ -423,7 +455,7 @@ const Userlist = () => {
           <span className="user-List-label">Customer List</span>
         </Col>
       </Row>
-      <Row className="mt-3">
+      <Row className="mt-2">
         <Col lg={12} md={12} sm={12}>
           <CustomPaper className="user-List-paper">
             <Row className="mt-3">
@@ -524,9 +556,11 @@ const Userlist = () => {
             }
             natureOption={selectNatureBusiness}
             natureSelectValue={selectNatureBusinessValue}
+            updateButtonHit={updateButtonHit}
           />
         </Fragment>
       ) : null}
+      {systemReducer.Loading ? <Loader /> : null}
     </section>
   );
 };

@@ -22,7 +22,7 @@ const CustomUpload = ({
         disabled={disable}
         onClick={onClick}
         // size={1000}
-        // accept=".doc, .docx, .xls, .xlsx,.pdf,.png,.txt,.jpg, .jpeg,.gif"
+        accept=".doc, .docx, .xls, .xlsx,.pdf,.png,.txt,.jpg, .jpeg,.gif"
         // maxfilesize={10000000}
       />
       <label

@@ -242,6 +242,7 @@ const ViewCustomer = ({
                           isDisabled={enableSelectCompanyName ? true : false}
                           ref={corporateID}
                           name="corporateID"
+                          menuPosition="fixed"
                           className="select-company"
                           onChange={companyDropdownOnchange}
                           options={companySelectOption}

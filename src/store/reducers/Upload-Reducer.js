@@ -3,7 +3,7 @@ import * as actions from "../action_types";
 const initialState = {
   Loading: false,
   ResponseMessage: "",
-  uploadValidCorporates: [],
+  uploadValidCorporates: null,
 };
 
 const uploadReducer = (state = initialState, action) => {
@@ -23,7 +23,7 @@ const uploadReducer = (state = initialState, action) => {
       return {
         ...state,
         Loading: false,
-        uploadValidCorporates: [],
+        uploadValidCorporates: null,
         ResponseMessage: action.message,
       };
 
@@ -32,7 +32,7 @@ const uploadReducer = (state = initialState, action) => {
         ...state,
         Loading: false,
         ResponseMessage: action.response,
-        uploadValidCorporates: [],
+        uploadValidCorporates: null,
       };
 
     default:
