@@ -6,6 +6,7 @@ import {
   Button,
   Table,
   Loader,
+  Notification,
 } from "../../../../components/elements";
 import { validateEmail } from "../../../../commen/functions/emailValidation";
 import { useDispatch, useSelector } from "react-redux";
@@ -29,6 +30,15 @@ const LoginHistory = () => {
   const { auth, systemReducer, downloadReducer } = useSelector(
     (state) => state
   );
+
+  const [open, setOpen] = useState({
+    open: false,
+    message: "",
+  });
+
+  // state for disable the previous date from end date by selecting date from start date
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   //this the email Ref for copy paste handler
   const emailRef = useRef(null);
@@ -119,6 +129,8 @@ const LoginHistory = () => {
 
   //start date state of multi datepicker
   const changeDateStartHandler = (date) => {
+    setStartDate(date);
+    setEndDate(null);
     let newDate = moment(date).format("YYYY-MM-DD");
     setLoginHistoryField({
       ...loginHistoryField,
@@ -131,6 +143,7 @@ const LoginHistory = () => {
 
   //end date state of multi datepicker
   const changeDateEndHandler = (date) => {
+    setEndDate(date);
     let newEndDate = moment(date).format("YYYY-MM-DD");
     setLoginHistoryField({
       ...loginHistoryField,
@@ -139,6 +152,36 @@ const LoginHistory = () => {
       },
     });
   };
+
+  // for category Corporate in select drop down
+  useEffect(() => {
+    if (Object.keys(auth.getAllCorporate).length > 0) {
+      let tem = [];
+      auth.getAllCorporate.map((data, index) => {
+        console.log(data, "datadatadatadatassssss");
+        tem.push({
+          label: data.category,
+          value: data.corporateCategoryID,
+        });
+      });
+      setSelectCategory(tem);
+    }
+  }, [auth.getAllCorporate]);
+
+  // for corporate Name by bank Id dropdown
+  useEffect(() => {
+    if (Object.keys(systemReducer.corporateNameByBankId).length > 0) {
+      let tem = [];
+      systemReducer.corporateNameByBankId.map((data, index) => {
+        console.log(data, "corporateNameBank");
+        tem.push({
+          label: data.corporateName,
+          value: data.corporateName,
+        });
+      });
+      setSelectCompany(tem);
+    }
+  }, [systemReducer.corporateNameByBankId]);
 
   useEffect(() => {
     // dispatch getALLCategoryDropdown api
@@ -175,11 +218,22 @@ const LoginHistory = () => {
     if (
       auth.corporateGetSearchLoginHistory.length > 0 &&
       auth.corporateGetSearchLoginHistory !== null &&
-      auth.corporateGetSearchLoginHistory !== undefined
+      auth.corporateGetSearchLoginHistory !== undefined &&
+      auth.corporateGetSearchLoginHistory !== ""
     ) {
       setRows(auth.corporateGetSearchLoginHistory);
+      setOpen({
+        ...open,
+        open: true,
+        message: "Record Found",
+      });
     } else {
       setRows([]);
+      setOpen({
+        ...open,
+        open: true,
+        message: "No Record Found",
+      });
     }
   }, [auth.corporateGetSearchLoginHistory]);
 
@@ -425,6 +479,19 @@ const LoginHistory = () => {
           : "",
       CategoryID: 0,
     };
+    if (data !== "") {
+      setOpen({
+        ...open,
+        open: true,
+        message: "Download Successfully",
+      });
+    } else {
+      setOpen({
+        ...open,
+        open: true,
+        message: "Download Failed",
+      });
+    }
     dispatch(downloadCorporateLoginReports(data));
   };
 
@@ -553,36 +620,6 @@ const LoginHistory = () => {
     },
   ];
 
-  // for category Corporate in select drop down
-  useEffect(() => {
-    if (Object.keys(auth.getAllCorporate).length > 0) {
-      let tem = [];
-      auth.getAllCorporate.map((data, index) => {
-        console.log(data, "datadatadatadatassssss");
-        tem.push({
-          label: data.category,
-          value: data.corporateCategoryID,
-        });
-      });
-      setSelectCategory(tem);
-    }
-  }, [auth.getAllCorporate]);
-
-  // for corporate Name by bank Id dropdown
-  useEffect(() => {
-    if (Object.keys(systemReducer.corporateNameByBankId).length > 0) {
-      let tem = [];
-      systemReducer.corporateNameByBankId.map((data, index) => {
-        console.log(data, "corporateNameBank");
-        tem.push({
-          label: data.corporateName,
-          value: data.corporateName,
-        });
-      });
-      setSelectCompany(tem);
-    }
-  }, [systemReducer.corporateNameByBankId]);
-
   return (
     <section className="sectionConctainerClass">
       <Row>
@@ -658,11 +695,15 @@ const LoginHistory = () => {
               </Col>
               <Col lg={9} md={9} sm={12} className="LoginHistory-Datepicker">
                 <DatePicker
+                  selected={startDate}
                   highlightToday={true}
                   onOpenPickNewDate={false}
                   value={loginHistoryField.startDate.value}
                   placeholder="Start date"
-                  minDate={minDate}
+                  selectsStart
+                  startDate={startDate}
+                  endDate={endDate}
+                  minDate={new Date()}
                   showOtherDays={true}
                   onChange={(value) =>
                     changeDateStartHandler(value?.toDate?.().toString())
@@ -672,12 +713,18 @@ const LoginHistory = () => {
                 <label className="LoginHistory-date-to">to</label>
 
                 <DatePicker
+                  selected={endDate}
                   highlightToday={true}
                   onOpenPickNewDate={false}
                   value={loginHistoryField.endDate.value}
                   placeholder="End Date"
                   showOtherDays={true}
-                  minDate={minDate}
+                  selectsEnd
+                  startDate={startDate}
+                  endDate={endDate}
+                  minDate={
+                    startDate ? moment(startDate).add(1, "days").toDate() : null
+                  }
                   autoComplete="off"
                   onChange={(value) =>
                     changeDateEndHandler(value?.toDate?.().toString())
@@ -737,7 +784,7 @@ const LoginHistory = () => {
                   onChange={CustomerLoginPagination}
                   current={currentPage !== null ? currentPage : 1}
                   showSizeChanger
-                  pageSizeOptions={[50, 100, 200]}
+                  pageSizeOptions={[30, 50, 100, 200]}
                   pageSize={currentPageSize !== null ? currentPageSize : 50}
                   className="PaginationStyle-CustomerLogin"
                 />
@@ -746,6 +793,7 @@ const LoginHistory = () => {
           </CustomPaper>
         </Col>
       </Row>
+      <Notification setOpen={setOpen} open={open.open} message={open.message} />
       {downloadReducer.Loading ? <Loader /> : null}
     </section>
   );

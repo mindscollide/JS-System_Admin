@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import {
   CustomPaper,
   Table,
+  Notification,
   Loader,
   CustomUpload,
   Button,
@@ -41,6 +42,11 @@ const CounterLimit = () => {
 
   // state for row in which table data set
   const [rows, setRows] = useState([]);
+
+  const [open, setOpen] = useState({
+    open: false,
+    message: "",
+  });
 
   // modal for countery party limit state
   const [counterPartyModal, setCounterPartyModal] = useState(false);
@@ -89,6 +95,39 @@ const CounterLimit = () => {
     },
   });
 
+  //New Api GetAllCorporateNameByBankID data Rendering
+  useEffect(() => {
+    if (
+      systemReducer.corporateNameByBankId !== null &&
+      systemReducer.corporateNameByBankId !== undefined &&
+      systemReducer.corporateNameByBankId.length > 0 &&
+      systemReducer.corporateNameByBankId !== ""
+    ) {
+      setRows(systemReducer.corporateNameByBankId);
+      setOpen({
+        ...open,
+        open: true,
+        message: "Record Found",
+      });
+    } else {
+      setRows([]);
+      setOpen({
+        ...open,
+        open: true,
+        message: "No Record Found",
+      });
+    }
+  }, [systemReducer.corporateNameByBankId]);
+  console.log("systemReducercorporateNameByBankId", rows);
+
+  // dispatch corporate Name by Bank ID
+  useEffect(() => {
+    let corporateBank = {
+      BankID: parseInt(CounterPartyModalBankId ? CounterPartyModalBankId : 1),
+    };
+    dispatch(corporateNameByBankId(navigate, corporateBank));
+  }, []);
+
   //open counterParty modal on click
   const openCounterModal = (record) => {
     console.log(record, "recordrecordrecordrecordrecordrecord");
@@ -106,16 +145,22 @@ const CounterLimit = () => {
     let downloadCounterReport = {
       FileTypeID: viewCounterModal.counterFileType.value,
     };
+
+    if (downloadCounterReport !== "") {
+      setOpen({
+        ...open,
+        open: true,
+        message: "Download Successfully",
+      });
+    } else {
+      setOpen({
+        ...open,
+        open: true,
+        message: "Download Failed",
+      });
+    }
     await dispatch(counterPartyDownloadReport(downloadCounterReport));
   };
-
-  // dispatch corporate Name by Bank ID
-  useEffect(() => {
-    let corporateBank = {
-      BankID: parseInt(CounterPartyModalBankId ? CounterPartyModalBankId : 1),
-    };
-    dispatch(corporateNameByBankId(navigate, corporateBank));
-  }, []);
 
   const props = {
     name: "file",
@@ -138,20 +183,6 @@ const CounterLimit = () => {
       }
     },
   };
-
-  //New Api GetAllCorporateNameByBankID data Rendering
-  useEffect(() => {
-    if (
-      systemReducer.corporateNameByBankId !== null &&
-      systemReducer.corporateNameByBankId !== undefined &&
-      systemReducer.corporateNameByBankId.length > 0
-    ) {
-      setRows(systemReducer.corporateNameByBankId);
-    } else {
-      setRows([]);
-    }
-  }, [systemReducer.corporateNameByBankId]);
-  console.log("systemReducercorporateNameByBankId", rows);
 
   // column for Counter Limit
   const counterColumns = [
@@ -254,6 +285,7 @@ const CounterLimit = () => {
       downloadReducer.Loading ? (
         <Loader />
       ) : null}
+      <Notification setOpen={setOpen} open={open.open} message={open.message} />
     </section>
   );
 };

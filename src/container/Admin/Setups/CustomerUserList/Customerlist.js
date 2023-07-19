@@ -6,6 +6,7 @@ import {
   Button,
   Table,
   Loader,
+  Notification,
 } from "../../../../components/elements";
 import { useDispatch, useSelector } from "react-redux";
 import ViewCustomer from "../../AdminModal/View-CustomerUserList-Modal/ViewCustomer";
@@ -40,6 +41,11 @@ const Customerlist = () => {
 
   //this the email Ref for copy paste handler
   const emailRef = useRef(null);
+
+  const [open, setOpen] = useState({
+    open: false,
+    message: "",
+  });
 
   //get bankID from local storage
   let CustomerUserListBankId =
@@ -127,13 +133,46 @@ const Customerlist = () => {
     },
   });
 
-  // show data in company name dropdown
-  // useEffect(() => {
-  //   let corporateBank = {
-  //     BankID: parseInt(customerListFields.BankID.value),
-  //   };
-  //   dispatch(corporateNameByBankId(navigate, corporateBank));
-  // }, []);
+  //this useEffect Condition is for when user hit search btn if data isn't same
+  // as in the table then table should be empty
+  useEffect(() => {
+    if (
+      systemReducer.searchCorporate.length > 0 &&
+      systemReducer.searchCorporate !== null &&
+      systemReducer.searchCorporate !== undefined &&
+      systemReducer.searchCorporate !== ""
+    ) {
+      setRows(systemReducer.searchCorporate);
+      setOpen({
+        ...open,
+        open: true,
+        message: "Record Found",
+      });
+    } else {
+      setRows([]);
+      setOpen({
+        ...open,
+        open: true,
+        message: "No Record Found",
+      });
+    }
+  }, [systemReducer.searchCorporate]);
+  console.log("searchCorporatesearchCorporate", rows);
+
+  // for category Corporate in select drop down
+  useEffect(() => {
+    if (Object.keys(auth.getAllCorporate).length > 0) {
+      let tem = [];
+      auth.getAllCorporate.map((data, index) => {
+        console.log(data, "datadatadatadatassssss");
+        tem.push({
+          label: data.category,
+          value: data.corporateCategoryID,
+        });
+      });
+      setSelectAllCategory(tem);
+    }
+  }, [auth.getAllCorporate]);
 
   // for corporate company in select drop down we use bankCorporate
   useEffect(() => {
@@ -149,6 +188,69 @@ const Customerlist = () => {
       setCompanyDropdown(tem);
     }
   }, [systemReducer.corporateNameByBankId]);
+
+  // dispatch getALLCategoryDropdown API and getAllCompanyCorporate
+  useEffect(() => {
+    dispatch(getAllCorporateCompany(navigate));
+
+    let corporateBank = {
+      BankID: parseInt(customerListFields.BankID.value),
+    };
+    dispatch(corporateNameByBankId(navigate, corporateBank));
+
+    dispatch(getAllCategoriesCorporate(navigate));
+    let newData = {
+      BankID: parseInt(CustomerUserListBankId ? CustomerUserListBankId : 1),
+      CorporateName: "",
+      NatureOfBussinessId: 0,
+      AssetTypeID: 0,
+      CategoryId: 0,
+      PageNumber: 1,
+      Length: 3,
+    };
+    dispatch(bankCorporateAPI(navigate, newData));
+
+    let corporateSearchData = {
+      FirstName: "",
+      LastName: "",
+      Email: "",
+      CompanyName: "",
+      CategoryID: 0,
+      PageNumber: 1,
+      Length: 50,
+    };
+    dispatch(searchUserCorporateApi(navigate, corporateSearchData));
+  }, []);
+
+  // for bank corporate bank id dropdown useEffect
+  useEffect(() => {
+    if (Object.keys(systemReducer.bankCorporates).length > 0) {
+      let tem = [];
+      systemReducer.bankCorporates.map((data, index) => {
+        console.log(data, "datadatadatadatassssss");
+        tem.push({
+          // value: data.corporateID,
+          label: data.corporateName,
+        });
+      });
+      setSelectBankCorporate(tem);
+    }
+  }, [systemReducer.bankCorporates]);
+
+  // for corporate company select drop down
+  useEffect(() => {
+    if (Object.keys(auth.allCorporateCompany).length > 0) {
+      let tem = [];
+      auth.allCorporateCompany.map((data, index) => {
+        console.log(data, "datadatadatadatassssss");
+        tem.push({
+          label: data.corporateName,
+          value: data.corporateID,
+        });
+      });
+      setSelectCompany(tem);
+    }
+  }, [auth.allCorporateCompany]);
 
   //ON CHANGE HANDLER FOR CORPORATE COMPANY DROPDOWN
   const selectBankCompanyOnchangeHandler = async (selectedCompany) => {
@@ -278,112 +380,6 @@ const Customerlist = () => {
     );
   };
 
-  // onChange handle view customer modal in which we passing the props on modal
-  const selectCategoryViewModalHandler = (selectedViewCategory) => {
-    console.log("SelectModalCategory", selectedViewCategory);
-    setModalViewCustomerList({
-      ...modalViewCustomerList,
-      SelectCategory: {
-        value: selectedViewCategory.value,
-        label: selectedViewCategory.label,
-        errorMessage: "",
-        errorStatus: false,
-      },
-    });
-  };
-
-  // dispatch getALLCategoryDropdown API and getAllCompanyCorporate
-  useEffect(() => {
-    let corporateBank = {
-      BankID: parseInt(customerListFields.BankID.value),
-    };
-    dispatch(corporateNameByBankId(navigate, corporateBank));
-
-    dispatch(getAllCategoriesCorporate(navigate));
-    dispatch(getAllCorporateCompany(navigate));
-    let newData = {
-      BankID: parseInt(CustomerUserListBankId ? CustomerUserListBankId : 1),
-      CorporateName: "",
-      NatureOfBussinessId: 0,
-      AssetTypeID: 0,
-      CategoryId: 0,
-      PageNumber: 1,
-      Length: 3,
-    };
-    dispatch(bankCorporateAPI(navigate, newData));
-
-    let corporateSearchData = {
-      FirstName: "",
-      LastName: "",
-      Email: "",
-      CompanyName: "",
-      CategoryID: 0,
-      PageNumber: 1,
-      Length: 50,
-    };
-    dispatch(searchUserCorporateApi(navigate, corporateSearchData));
-  }, []);
-
-  //this useEffect Condition is for when user hit search btn if data isn't same
-  // as in the table then table should be empty
-  useEffect(() => {
-    if (
-      systemReducer.searchCorporate.length > 0 &&
-      systemReducer.searchCorporate !== null &&
-      systemReducer.searchCorporate !== undefined
-    ) {
-      setRows(systemReducer.searchCorporate);
-    } else {
-      setRows([]);
-    }
-  }, [systemReducer.searchCorporate]);
-  console.log("searchCorporatesearchCorporate", rows);
-
-  // for category Corporate in select drop down
-  useEffect(() => {
-    if (Object.keys(auth.getAllCorporate).length > 0) {
-      let tem = [];
-      auth.getAllCorporate.map((data, index) => {
-        console.log(data, "datadatadatadatassssss");
-        tem.push({
-          label: data.category,
-          value: data.corporateCategoryID,
-        });
-      });
-      setSelectAllCategory(tem);
-    }
-  }, [auth.getAllCorporate]);
-
-  // for bank corporate bank id dropdown useEffect
-  useEffect(() => {
-    if (Object.keys(systemReducer.bankCorporates).length > 0) {
-      let tem = [];
-      systemReducer.bankCorporates.map((data, index) => {
-        console.log(data, "datadatadatadatassssss");
-        tem.push({
-          // value: data.corporateID,
-          label: data.corporateName,
-        });
-      });
-      setSelectBankCorporate(tem);
-    }
-  }, [systemReducer.bankCorporates]);
-
-  // for corporate company select drop down
-  useEffect(() => {
-    if (Object.keys(auth.allCorporateCompany).length > 0) {
-      let tem = [];
-      auth.allCorporateCompany.map((data, index) => {
-        console.log(data, "datadatadatadatassssss");
-        tem.push({
-          label: data.corporateName,
-          value: data.corporateID,
-        });
-      });
-      setSelectCompany(tem);
-    }
-  }, [auth.allCorporateCompany]);
-
   //ON CHANGE HANDLER FOR CATEGORY DROPDOWN
   const selectAllCategoryOnchangeHandler = async (selectedCategory) => {
     console.log(selectedCategory, "selectedOptionselectedOption");
@@ -393,19 +389,6 @@ const Customerlist = () => {
       corporateCategoryID: {
         value: selectedCategory.value,
         label: selectedCategory.label,
-      },
-    });
-  };
-
-  //On Change handler for Corporate Bank Dropdown
-  const selectAllCorporateBankOnchangeHandler = async (selectBank) => {
-    console.log(selectBank, "selectBankselectBank");
-    setSelectBankCorporateValue(selectBank);
-    setCustomerListFields({
-      ...customerListFields,
-      corporates: {
-        // value: selectBank.value,
-        label: selectBank.label,
       },
     });
   };
@@ -898,7 +881,7 @@ const Customerlist = () => {
                   onChange={CustomerListPagination}
                   current={currentPage !== null ? currentPage : 1}
                   showSizeChanger
-                  pageSizeOptions={[50, 100, 200]}
+                  pageSizeOptions={[30, 50, 100, 200]}
                   pageSize={currentPageSize !== null ? currentPageSize : 50}
                   className="PaginationStyle-CustomerLogin"
                 />
@@ -922,6 +905,7 @@ const Customerlist = () => {
           />
         </>
       ) : null}
+      <Notification setOpen={setOpen} open={open.open} message={open.message} />
       {systemReducer.Loading ? <Loader /> : null}
     </section>
   );

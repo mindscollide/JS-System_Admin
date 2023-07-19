@@ -3,6 +3,7 @@ import { Col, Row, Container } from "react-bootstrap";
 import {
   CustomPaper,
   TextField,
+  Notification,
   Button,
   Table,
   Loader,
@@ -24,11 +25,20 @@ const UserLogin = () => {
   const [totalRecords, setTotalRecord] = useState(0);
   const { auth, downloadReducer } = useSelector((state) => state);
 
+  const [open, setOpen] = useState({
+    open: false,
+    message: "",
+  });
+
   // state for set data from api in rows
   const [rows, setRows] = useState([]);
 
   //this the email Ref for copy paste handler
   const emailRef = useRef(null);
+
+  // state for disable the previous date from end date by selecting date from start date
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   // select current date
   const minDate = new Date();
@@ -89,6 +99,7 @@ const UserLogin = () => {
       errorStatus: false,
     },
   });
+  console.log(userLoginHistory, "userLoginHistoryuserLoginHistory");
 
   // dispatch api for bankSearchGet
   useEffect(() => {
@@ -111,16 +122,29 @@ const UserLogin = () => {
     if (
       auth.bankGetSearchLoginHistory.length > 0 &&
       auth.bankGetSearchLoginHistory !== null &&
-      auth.bankGetSearchLoginHistory !== undefined
+      auth.bankGetSearchLoginHistory !== undefined &&
+      auth.bankGetSearchLoginHistory !== ""
     ) {
       setRows(auth.bankGetSearchLoginHistory);
+      setOpen({
+        ...open,
+        open: true,
+        message: "Record Found",
+      });
     } else {
       setRows([]);
+      setOpen({
+        ...open,
+        open: true,
+        message: "No Record Found",
+      });
     }
   }, [auth.bankGetSearchLoginHistory]);
 
   //start date state of multi datepicker
   const changeDateStartHandler = (date) => {
+    setStartDate(date);
+    setEndDate(null);
     let newDate = moment(date).format("YYYY-MM-DD");
     setUserLoginHistory({
       ...userLoginHistory,
@@ -133,6 +157,7 @@ const UserLogin = () => {
 
   //end date state of multi datepicker
   const changeDateEndHandler = (date) => {
+    setEndDate(date);
     let newEndDate = moment(date).format("YYYY-MM-DD");
     setUserLoginHistory({
       ...userLoginHistory,
@@ -140,6 +165,7 @@ const UserLogin = () => {
         value: newEndDate,
       },
     });
+    console.log(newEndDate, "changeDateEndHandler");
   };
 
   const userLoginValidation = (e) => {
@@ -288,6 +314,19 @@ const UserLogin = () => {
           ? moment(userLoginHistory.endDate.value).format("YYYYMMDD")
           : "",
     };
+    if (newReportData !== "") {
+      setOpen({
+        ...open,
+        open: true,
+        message: "Download Successfully",
+      });
+    } else {
+      setOpen({
+        ...open,
+        open: true,
+        message: "Download Failed",
+      });
+    }
     dispatch(bankUserDownloadReport(newReportData));
   };
 
@@ -535,12 +574,16 @@ const UserLogin = () => {
                 className="userLoginHistory-Datepicker"
               >
                 <DatePicker
+                  selected={startDate}
                   highlightToday={true}
                   onOpenPickNewDate={false}
                   value={userLoginHistory.startDate.value}
                   placeholder="Start date"
+                  selectsStart
+                  startDate={startDate}
+                  endDate={endDate}
+                  minDate={new Date()}
                   showOtherDays={true}
-                  minDate={minDate}
                   onChange={(value) =>
                     changeDateStartHandler(value?.toDate?.().toString())
                   }
@@ -549,11 +592,17 @@ const UserLogin = () => {
                 <label className="userLoginHistory-date-to">to</label>
 
                 <DatePicker
+                  selected={endDate}
                   highlightToday={true}
                   onOpenPickNewDate={false}
                   value={userLoginHistory.endDate.value}
                   placeholder="End Date"
-                  minDate={minDate}
+                  selectsEnd
+                  startDate={startDate}
+                  endDate={endDate}
+                  minDate={
+                    startDate ? moment(startDate).add(1, "days").toDate() : null
+                  }
                   showOtherDays={true}
                   onChange={(value) =>
                     changeDateEndHandler(value?.toDate?.().toString())
@@ -615,7 +664,7 @@ const UserLogin = () => {
                   onChange={BankLoginPagination}
                   current={currentPage !== null ? currentPage : 1}
                   showSizeChanger
-                  pageSizeOptions={[50, 100, 200]}
+                  pageSizeOptions={[30, 50, 100, 200]}
                   pageSize={currentPageSize !== null ? currentPageSize : 50}
                   className="PaginationStyle-CustomerLogin"
                 />
@@ -624,6 +673,7 @@ const UserLogin = () => {
           </CustomPaper>
         </Col>
       </Row>
+      <Notification setOpen={setOpen} open={open.open} message={open.message} />
       {downloadReducer.Loading ? <Loader /> : null}
     </section>
   );

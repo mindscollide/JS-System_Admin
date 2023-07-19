@@ -4,6 +4,7 @@ import {
   CustomPaper,
   TextField,
   Button,
+  Notification,
   Table,
   Loader,
 } from "../../../../components/elements";
@@ -32,6 +33,11 @@ const Userlist = () => {
   const { systemReducer, auth } = useSelector((state) => state);
   // state for table rows
   const [rows, setRows] = useState([]);
+
+  const [open, setOpen] = useState({
+    open: false,
+    message: "",
+  });
 
   let currentPageSize = localStorage.getItem("CustomerListSize")
     ? localStorage.getItem("CustomerListSize")
@@ -89,11 +95,22 @@ const Userlist = () => {
     if (
       systemReducer.bankCorporates.length > 0 &&
       systemReducer.bankCorporates !== null &&
-      systemReducer.bankCorporates !== undefined
+      systemReducer.bankCorporates !== undefined &&
+      systemReducer.bankCorporates !== ""
     ) {
       setRows(systemReducer.bankCorporates);
+      setOpen({
+        ...open,
+        open: true,
+        message: "Record Found",
+      });
     } else {
       setRows([]);
+      setOpen({
+        ...open,
+        open: true,
+        message: "No Record Found",
+      });
     }
   }, [systemReducer.bankCorporates]);
   console.log("bankCorporatessss", rows);
@@ -135,7 +152,7 @@ const Userlist = () => {
       systemReducer.corporateNameByBankId.map((data, index) => {
         console.log(data, "corporateNamecorporateName");
         tem.push({
-          // value: data.corporateID,
+          value: data.corporateID,
           label: data.corporateName,
         });
       });
@@ -340,7 +357,7 @@ const Userlist = () => {
     setUserListFields({
       ...userListFields,
       corporateNames: {
-        // value: selectedCompany.value,
+        value: selectedCompany.value,
         label: selectedCompany.label,
       },
     });
@@ -534,7 +551,7 @@ const Userlist = () => {
                   onChange={CustomerPagination}
                   current={currentPage !== null ? currentPage : 1}
                   showSizeChanger
-                  pageSizeOptions={[50, 100, 200]}
+                  pageSizeOptions={[30, 50, 100, 200]}
                   pageSize={currentPageSize !== null ? currentPageSize : 50}
                   className="PaginationStyle-CustomerLogin"
                 />
@@ -560,6 +577,7 @@ const Userlist = () => {
           />
         </Fragment>
       ) : null}
+      <Notification setOpen={setOpen} open={open.open} message={open.message} />
       {systemReducer.Loading ? <Loader /> : null}
     </section>
   );

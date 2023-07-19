@@ -966,7 +966,6 @@ const getAllCorporateCompany = (navigate) => {
     dispatch(categoryCompanyInit());
     let form = new FormData();
     form.append("RequestMethod", getAllCorporatesApiERM.RequestMethod);
-    form.append("RequestData", JSON.stringify());
     axios({
       method: "POST",
       url: authenticationAPI,
@@ -1053,7 +1052,6 @@ const getNatureBusiness = (navigate) => {
     dispatch(natureBusinessInit());
     let form = new FormData();
     form.append("RequestMethod", getAllNatureAPI.RequestMethod);
-    form.append("RequestData", JSON.stringify());
     axios({
       method: "POST",
       url: authenticationAPI,

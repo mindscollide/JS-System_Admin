@@ -3,6 +3,7 @@ import { Col, Row, Container } from "react-bootstrap";
 import {
   CustomPaper,
   TextField,
+  Notification,
   Button,
   Table,
   Loader,
@@ -47,6 +48,11 @@ const BankList = () => {
 
   //this the email Ref for copy paste handler
   const emailRef = useRef(null);
+
+  const [open, setOpen] = useState({
+    open: false,
+    message: "",
+  });
 
   // state for table rows
   const [rows, setRows] = useState([]);
@@ -93,11 +99,22 @@ const BankList = () => {
     if (
       securityReducer.searchGetBankUserList.length > 0 &&
       securityReducer.searchGetBankUserList !== null &&
-      securityReducer.searchGetBankUserList !== undefined
+      securityReducer.searchGetBankUserList !== undefined &&
+      securityReducer.searchGetBankUserList !== ""
     ) {
       setRows(securityReducer.searchGetBankUserList);
+      setOpen({
+        ...open,
+        open: true,
+        message: "Record Found",
+      });
     } else {
       setRows([]);
+      setOpen({
+        ...open,
+        open: true,
+        message: "No Record Found",
+      });
     }
   }, [securityReducer.searchGetBankUserList]);
 
@@ -828,7 +845,7 @@ const BankList = () => {
                   onChange={BankListPagination}
                   current={currentPage !== null ? currentPage : 1}
                   showSizeChanger
-                  pageSizeOptions={[50, 100, 200]}
+                  pageSizeOptions={[30, 50, 100, 200]}
                   pageSize={currentPageSize !== null ? currentPageSize : 50}
                   className="PaginationStyle-CustomerLogin"
                 />
@@ -851,6 +868,7 @@ const BankList = () => {
           />
         </Fragment>
       ) : null}
+      <Notification setOpen={setOpen} open={open.open} message={open.message} />
       {securityReducer.Loading || auth.Loading ? <Loader /> : null}
     </section>
   );

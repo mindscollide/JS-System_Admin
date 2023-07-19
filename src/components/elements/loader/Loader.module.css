@@ -9,13 +9,13 @@
   top: 0;
   backdrop-filter: blur(10px);
   left: 0;
-  z-index: 999999999;
+  z-index: 40 !important;
   min-height: 100vh !important;
   overflow: hidden;
 }
 
 .overlay-content {
-  z-index: 999999999;
+  z-index: 40 !important;
   overflow: hidden;
   padding: 20px;
   text-align: center;

@@ -1,6 +1,11 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Container, Col, Row, InputGroup, Form } from "react-bootstrap";
-import { Button, TextField, Loader } from "../../../components/elements";
+import {
+  Button,
+  TextField,
+  Loader,
+  Notification,
+} from "../../../components/elements";
 import jsLogo from "../../../assets/images/js-logo.png";
 import { useDispatch, useSelector } from "react-redux";
 import { logIn } from "../../../store/actions/Auth-Actions";
@@ -77,7 +82,7 @@ const AdminLogin = () => {
       setOpen({
         ...open,
         open: true,
-        message: "Please Fill All Credentials Fields",
+        message: "Please Enter All Credentials",
       });
     }
   };
@@ -170,6 +175,7 @@ const AdminLogin = () => {
           </Row>
         </Container>
       </Col>
+      <Notification setOpen={setOpen} open={open.open} message={open.message} />
       {auth.Loading ? <Loader /> : null}
     </Fragment>
   );
