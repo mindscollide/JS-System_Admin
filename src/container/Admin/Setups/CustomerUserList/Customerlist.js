@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useRef } from "react";
 import { Col, Row, Container } from "react-bootstrap";
 import {
   CustomPaper,
@@ -6,6 +6,7 @@ import {
   Button,
   Table,
   Loader,
+  Notification,
 } from "../../../../components/elements";
 import { useDispatch, useSelector } from "react-redux";
 import ViewCustomer from "../../AdminModal/View-CustomerUserList-Modal/ViewCustomer";
@@ -25,7 +26,8 @@ import {
 } from "../../../../store/actions/Auth-Actions";
 
 import Select from "react-select";
-import { Spin } from "antd";
+import moment from "moment";
+import { Spin, Pagination } from "antd";
 import "./Customerlist.css";
 import { useEffect } from "react";
 
@@ -34,6 +36,31 @@ const Customerlist = () => {
   const dispatch = useDispatch();
   const { systemReducer, auth } = useSelector((state) => state);
   console.log(systemReducer, "systemAdminsystemAdmin");
+
+  const [totalRecords, setTotalRecord] = useState(0);
+
+  //this the email Ref for copy paste handler
+  const emailRef = useRef(null);
+
+  const [open, setOpen] = useState({
+    open: false,
+    message: "",
+  });
+
+  //get bankID from local storage
+  let CustomerUserListBankId =
+    localStorage.getItem("bankID") != undefined &&
+    localStorage.getItem("bankID") != null
+      ? localStorage.getItem("bankID")
+      : 1;
+
+  let currentPageSize = localStorage.getItem("CustomerUserListSize")
+    ? localStorage.getItem("CustomerUserListSize")
+    : 50;
+  let currentPage = localStorage.getItem("CustomerUserListPage")
+    ? localStorage.getItem("CustomerUserListPage")
+    : 1;
+
   // state for modal customer List View
   const [customerViewModal, setCustomerViewModal] = useState(false);
 
@@ -82,7 +109,7 @@ const Customerlist = () => {
     },
 
     corporateCategoryID: {
-      value: "",
+      value: 0,
       errorMessage: "",
       errorStatus: false,
     },
@@ -94,7 +121,7 @@ const Customerlist = () => {
       errorStatus: false,
     },
     BankID: {
-      value: 1,
+      value: CustomerUserListBankId ? CustomerUserListBankId : 1,
       errorMessage: "",
       errorStatus: false,
     },
@@ -106,13 +133,46 @@ const Customerlist = () => {
     },
   });
 
-  // show data in company name dropdown
+  //this useEffect Condition is for when user hit search btn if data isn't same
+  // as in the table then table should be empty
   useEffect(() => {
-    let corporateBank = {
-      BankID: customerListFields.BankID.value,
-    };
-    dispatch(corporateNameByBankId(navigate, corporateBank));
-  }, []);
+    if (
+      systemReducer.searchCorporate.length > 0 &&
+      systemReducer.searchCorporate !== null &&
+      systemReducer.searchCorporate !== undefined &&
+      systemReducer.searchCorporate !== ""
+    ) {
+      setRows(systemReducer.searchCorporate);
+      setOpen({
+        ...open,
+        open: true,
+        message: "Record Found",
+      });
+    } else {
+      setRows([]);
+      setOpen({
+        ...open,
+        open: true,
+        message: "No Record Found",
+      });
+    }
+  }, [systemReducer.searchCorporate]);
+  console.log("searchCorporatesearchCorporate", rows);
+
+  // for category Corporate in select drop down
+  useEffect(() => {
+    if (Object.keys(auth.getAllCorporate).length > 0) {
+      let tem = [];
+      auth.getAllCorporate.map((data, index) => {
+        console.log(data, "datadatadatadatassssss");
+        tem.push({
+          label: data.category,
+          value: data.corporateCategoryID,
+        });
+      });
+      setSelectAllCategory(tem);
+    }
+  }, [auth.getAllCorporate]);
 
   // for corporate company in select drop down we use bankCorporate
   useEffect(() => {
@@ -128,6 +188,69 @@ const Customerlist = () => {
       setCompanyDropdown(tem);
     }
   }, [systemReducer.corporateNameByBankId]);
+
+  // dispatch getALLCategoryDropdown API and getAllCompanyCorporate
+  useEffect(() => {
+    dispatch(getAllCorporateCompany(navigate));
+
+    let corporateBank = {
+      BankID: parseInt(customerListFields.BankID.value),
+    };
+    dispatch(corporateNameByBankId(navigate, corporateBank));
+
+    dispatch(getAllCategoriesCorporate(navigate));
+    let newData = {
+      BankID: parseInt(CustomerUserListBankId ? CustomerUserListBankId : 1),
+      CorporateName: "",
+      NatureOfBussinessId: 0,
+      AssetTypeID: 0,
+      CategoryId: 0,
+      PageNumber: 1,
+      Length: 3,
+    };
+    dispatch(bankCorporateAPI(navigate, newData));
+
+    let corporateSearchData = {
+      FirstName: "",
+      LastName: "",
+      Email: "",
+      CompanyName: "",
+      CategoryID: 0,
+      PageNumber: 1,
+      Length: 50,
+    };
+    dispatch(searchUserCorporateApi(navigate, corporateSearchData));
+  }, []);
+
+  // for bank corporate bank id dropdown useEffect
+  useEffect(() => {
+    if (Object.keys(systemReducer.bankCorporates).length > 0) {
+      let tem = [];
+      systemReducer.bankCorporates.map((data, index) => {
+        console.log(data, "datadatadatadatassssss");
+        tem.push({
+          // value: data.corporateID,
+          label: data.corporateName,
+        });
+      });
+      setSelectBankCorporate(tem);
+    }
+  }, [systemReducer.bankCorporates]);
+
+  // for corporate company select drop down
+  useEffect(() => {
+    if (Object.keys(auth.allCorporateCompany).length > 0) {
+      let tem = [];
+      auth.allCorporateCompany.map((data, index) => {
+        console.log(data, "datadatadatadatassssss");
+        tem.push({
+          label: data.corporateName,
+          value: data.corporateID,
+        });
+      });
+      setSelectCompany(tem);
+    }
+  }, [auth.allCorporateCompany]);
 
   //ON CHANGE HANDLER FOR CORPORATE COMPANY DROPDOWN
   const selectBankCompanyOnchangeHandler = async (selectedCompany) => {
@@ -244,7 +367,8 @@ const Customerlist = () => {
       Email: "",
       CompanyName: "",
       CategoryID: 0,
-      userID: 0,
+      PageNumber: 1,
+      Length: 50,
     };
     dispatch(
       updateCorporateAPI(
@@ -256,111 +380,6 @@ const Customerlist = () => {
     );
   };
 
-  // onChange handle view customer modal in which we passing the props on modal
-  const selectCategoryViewModalHandler = (selectedViewCategory) => {
-    console.log("SelectModalCategory", selectedViewCategory);
-    setModalViewCustomerList({
-      ...modalViewCustomerList,
-      SelectCategory: {
-        value: selectedViewCategory.value,
-        label: selectedViewCategory.label,
-        errorMessage: "",
-        errorStatus: false,
-      },
-    });
-  };
-
-  // dispatch getALLCategoryDropdown API and getAllCompanyCorporate
-  useEffect(() => {
-    let corporateBank = {
-      BankID: customerListFields.BankID.value,
-    };
-    dispatch(corporateNameByBankId(navigate, corporateBank));
-
-    dispatch(getAllCategoriesCorporate(navigate));
-    dispatch(getAllCorporateCompany(navigate));
-    let newData = {
-      BankID: 1,
-      CorporateName: "",
-      NatureOfBussinessId: 0,
-      AssetTypeID: 0,
-      CategoryId: 0,
-      PageNumber: 1,
-      Length: 3,
-    };
-    dispatch(bankCorporateAPI(navigate, newData));
-
-    let corporateSearchData = {
-      FirstName: "",
-      LastName: "",
-      Email: "",
-      CompanyName: "",
-      CategoryID: 0,
-      userID: 0,
-    };
-    dispatch(searchUserCorporateApi(navigate, corporateSearchData));
-  }, []);
-
-  //this useEffect Condition is for when user hit search btn if data isn't same
-  // as in the table then table should be empty
-  useEffect(() => {
-    if (
-      systemReducer.searchCorporate.length > 0 &&
-      systemReducer.searchCorporate !== null &&
-      systemReducer.searchCorporate !== undefined
-    ) {
-      setRows(systemReducer.searchCorporate);
-    } else {
-      setRows([]);
-    }
-  }, [systemReducer.searchCorporate]);
-  console.log("allcorporateee", rows);
-
-  // for category Corporate in select drop down
-  useEffect(() => {
-    if (Object.keys(auth.getAllCorporate).length > 0) {
-      let tem = [];
-      auth.getAllCorporate.map((data, index) => {
-        console.log(data, "datadatadatadatassssss");
-        tem.push({
-          label: data.category,
-          value: data.corporateCategoryID,
-        });
-      });
-      setSelectAllCategory(tem);
-    }
-  }, [auth.getAllCorporate]);
-
-  // for bank corporate bank id dropdown useEffect
-  useEffect(() => {
-    if (Object.keys(systemReducer.bankCorporates).length > 0) {
-      let tem = [];
-      systemReducer.bankCorporates.map((data, index) => {
-        console.log(data, "datadatadatadatassssss");
-        tem.push({
-          // value: data.corporateID,
-          label: data.corporateName,
-        });
-      });
-      setSelectBankCorporate(tem);
-    }
-  }, [systemReducer.bankCorporates]);
-
-  // for corporate company select drop down
-  useEffect(() => {
-    if (Object.keys(auth.allCorporateCompany).length > 0) {
-      let tem = [];
-      auth.allCorporateCompany.map((data, index) => {
-        console.log(data, "datadatadatadatassssss");
-        tem.push({
-          label: data.corporateName,
-          value: data.corporateID,
-        });
-      });
-      setSelectCompany(tem);
-    }
-  }, [auth.allCorporateCompany]);
-
   //ON CHANGE HANDLER FOR CATEGORY DROPDOWN
   const selectAllCategoryOnchangeHandler = async (selectedCategory) => {
     console.log(selectedCategory, "selectedOptionselectedOption");
@@ -370,19 +389,6 @@ const Customerlist = () => {
       corporateCategoryID: {
         value: selectedCategory.value,
         label: selectedCategory.label,
-      },
-    });
-  };
-
-  //On Change handler for Corporate Bank Dropdown
-  const selectAllCorporateBankOnchangeHandler = async (selectBank) => {
-    console.log(selectBank, "selectBankselectBank");
-    setSelectBankCorporateValue(selectBank);
-    setCustomerListFields({
-      ...customerListFields,
-      corporates: {
-        // value: selectBank.value,
-        label: selectBank.label,
       },
     });
   };
@@ -438,8 +444,47 @@ const Customerlist = () => {
       LastName: customerListFields.LastName.value,
       Email: customerListFields.Email.value,
       CompanyName: customerListFields.corporateNames.label,
-      CategoryID: 0,
+      CategoryID: customerListFields.corporateCategoryID.value,
+      PageNumber: currentPage !== null ? parseInt(currentPage) : 1,
+      Length: currentPageSize !== null ? parseInt(currentPageSize) : 50,
     };
+    await dispatch(searchUserCorporateApi(navigate, corporateSearchData));
+  };
+
+  // this is the paste handler for email in which extra space doesn't paste
+  const emailHandlerPaste = (event) => {
+    event.preventDefault();
+    const clipboardData = event.clipboardData || window.clipboardData;
+    const pastedText = clipboardData.getData("text/plain");
+    const trimmedText = pastedText.trim();
+
+    const input = emailRef.current;
+    document.execCommand("insertText", false, trimmedText);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+  };
+
+  // this is the copy handler in which copy doesn't allow to copy extra space
+  const emailHandlerCopy = (event) => {
+    event.preventDefault();
+    const input = emailRef.current;
+    input.select();
+    document.execCommand("copy");
+  };
+
+  //customer List Onchange for Pagination
+
+  const CustomerListPagination = async (current, pageSize) => {
+    let corporateSearchData = {
+      FirstName: customerListFields.FirstName.value,
+      LastName: customerListFields.LastName.value,
+      Email: customerListFields.Email.value,
+      CompanyName: customerListFields.corporateNames.label,
+      CategoryID: customerListFields.corporateCategoryID.value,
+      PageNumber: current !== null ? parseInt(current) : 1,
+      Length: pageSize !== null ? parseInt(pageSize) : 50,
+    };
+    localStorage.setItem("CustomerUserListSize", pageSize);
+    localStorage.setItem("CustomerUserListPage", current);
     await dispatch(searchUserCorporateApi(navigate, corporateSearchData));
   };
 
@@ -536,9 +581,9 @@ const Customerlist = () => {
   const handlerEmail = () => {
     if (customerListFields.Email.value !== "") {
       if (validateEmail(customerListFields.Email.value)) {
-        alert("Email verified");
+        console.log("Email verified");
       } else {
-        alert("Email Not Verified");
+        console.log("Email Not Verified");
       }
     }
   };
@@ -549,15 +594,36 @@ const Customerlist = () => {
       ...customerListFields,
       FirstName: {
         value: "",
+        errorMessage: "",
+        errorStatus: false,
       },
       LastName: {
         value: "",
+        errorMessage: "",
+        errorStatus: false,
       },
-      companyName: {
+
+      corporateNames: {
         value: "",
+        errorMessage: "",
+        errorStatus: false,
       },
+
       Email: {
         value: "",
+        errorMessage: "",
+        errorStatus: false,
+      },
+
+      corporateCategoryID: {
+        value: 0,
+        errorMessage: "",
+        errorStatus: false,
+      },
+      BankID: {
+        value: CustomerUserListBankId ? CustomerUserListBankId : 1,
+        errorMessage: "",
+        errorStatus: false,
       },
     });
     setSelectAllCategoryValue([]);
@@ -569,7 +635,8 @@ const Customerlist = () => {
       Email: "",
       CompanyName: "",
       CategoryID: 0,
-      userID: 0,
+      PageNumber: 1,
+      Length: 50,
     };
     dispatch(searchUserCorporateApi(navigate, corporateSearchData));
   };
@@ -633,7 +700,9 @@ const Customerlist = () => {
       title: <label className="bottom-table-header">Email</label>,
       dataIndex: "email",
       key: "email",
-      width: "150px",
+      width: "220px",
+      ellipsis: true,
+      align: "center",
       render: (text, record) => {
         console.log(record, "recordrecord");
         return (
@@ -652,6 +721,7 @@ const Customerlist = () => {
       title: <label className="bottom-table-header">First Name</label>,
       dataIndex: "firstName",
       key: "firstName",
+      ellipsis: true,
       width: "100px",
       align: "center",
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -661,6 +731,7 @@ const Customerlist = () => {
       dataIndex: "lastName",
       key: "lastName",
       width: "100px",
+      ellipsis: true,
       align: "center",
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
@@ -668,18 +739,18 @@ const Customerlist = () => {
       title: <label className="bottom-table-header">Company</label>,
       dataIndex: "company",
       key: "company",
-      width: "160px",
-      align: "center",
       ellipsis: true,
+      align: "center",
+      width: "150px",
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
     {
       title: <label className="bottom-table-header">Status</label>,
       dataIndex: "statusId",
       key: "statusId",
-      width: "60px",
-      align: "center",
       ellipsis: true,
+      align: "center",
+      width: "100px",
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
     {
@@ -687,9 +758,17 @@ const Customerlist = () => {
       dataIndex: "creationDate",
       key: "creationDate",
       align: "center",
-      width: "190px",
+      width: "180px",
       ellipsis: true,
-      render: (text) => <label className="issue-date-column">{text}</label>,
+      render: (_, record) => {
+        return (
+          <span className="w-100">
+            {moment(`${record.creationDate} ${record.creationTime}`).format(
+              "YYYY-MM-DD HH:MM:ss"
+            )}{" "}
+          </span>
+        );
+      },
     },
   ];
 
@@ -700,7 +779,7 @@ const Customerlist = () => {
           <span className="customer-List-label">Customer User List</span>
         </Col>
       </Row>
-      <Row className="mt-3">
+      <Row className="mt-2">
         <Col lg={12} md={12} sm={12}>
           <CustomPaper className="customer-List-paper">
             <Row className="mt-3">
@@ -728,6 +807,9 @@ const Customerlist = () => {
                 <TextField
                   placeholder="Email"
                   name="Email"
+                  onPaste={emailHandlerPaste}
+                  onCopy={emailHandlerCopy}
+                  ref={emailRef}
                   onBlur={handlerEmail}
                   value={customerListFields.Email.value}
                   onChange={customerListValidation}
@@ -748,12 +830,12 @@ const Customerlist = () => {
               </Col>
               <Col lg={3} md={3} sm={12}>
                 <Select
+                  placeholder="Category"
                   name="corporateCategoryID"
                   options={selectAllCategory}
                   value={selectAllCategoryValue}
                   isSearchable={true}
                   onChange={selectAllCategoryOnchangeHandler}
-                  placeholder="Select"
                   className="select-customer-list-fontsize"
                 />
               </Col>
@@ -785,11 +867,24 @@ const Customerlist = () => {
                   <Table
                     column={columns}
                     rows={rows}
-                    pagination={true}
-                    scroll={{ x: 500, y: 200 }}
+                    pagination={false}
+                    // scroll={{ x: 500, y: 200 }}
                     className="CustomerList-table"
                   />
                 )}
+              </Col>
+            </Row>
+            <Row className="mt-2">
+              <Col lg={12} md={12} sm={12}>
+                <Pagination
+                  total={totalRecords}
+                  onChange={CustomerListPagination}
+                  current={currentPage !== null ? currentPage : 1}
+                  showSizeChanger
+                  pageSizeOptions={[30, 50, 100, 200]}
+                  pageSize={currentPageSize !== null ? currentPageSize : 50}
+                  className="PaginationStyle-CustomerLogin"
+                />
               </Col>
             </Row>
           </CustomPaper>
@@ -810,6 +905,7 @@ const Customerlist = () => {
           />
         </>
       ) : null}
+      <Notification setOpen={setOpen} open={open.open} message={open.message} />
       {systemReducer.Loading ? <Loader /> : null}
     </section>
   );

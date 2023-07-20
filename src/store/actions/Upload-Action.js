@@ -32,7 +32,7 @@ const resetCounterPartyUpload = () => {
   };
 };
 
-const counterPartyUpload = (navigate, data, setCounterUploadModal) => {
+const counterPartyUpload = (navigate, data, setCounterUploadModal, setFile) => {
   let token = JSON.parse(localStorage.getItem("token"));
   let form = new FormData();
   form.append("RequestMethod", uploadCounterPartyFile.RequestMethod);
@@ -81,6 +81,7 @@ const counterPartyUpload = (navigate, data, setCounterUploadModal) => {
                   "File Uploaded Successfully"
                 )
               );
+              setFile(null);
               setCounterUploadModal(true);
             } else if (
               response.data.responseResult.responseMessage

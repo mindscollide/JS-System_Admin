@@ -4,61 +4,12 @@ const initialState = {
   Loading: false,
   Spinner: false,
   ResponseMessage: "",
-  bankUserList: [],
-  searchBankUsers: [],
   updateUserByBank: "",
+  searchGetBankUserList: [],
 };
 
 const securityReducer = (state = initialState, action) => {
   switch (action.type) {
-    case actions.GET_ALL_BANK_USER_INIT:
-      return {
-        ...state,
-        Loading: true,
-        Spinner: true,
-      };
-
-    case actions.GET_ALL_BANK_USER_SUCCESS:
-      return {
-        ...state,
-        Loading: false,
-        Spinner: false,
-        bankUserList: action.response,
-        ResponseMessage: action.message,
-      };
-
-    case actions.GET_ALL_BANK_USER_FAIL:
-      return {
-        ...state,
-        Loading: false,
-        Spinner: false,
-        bankUserList: [],
-        ResponseMessage: action.message,
-      };
-
-    case actions.SEARCH_BANK_USER_INIT:
-      return {
-        ...state,
-        Loading: true,
-      };
-
-    case actions.SEARCH_BANK_USER_SUCCESS:
-      return {
-        ...state,
-        Loading: false,
-        Spinner: false,
-        searchBankUsers: action.response,
-        ResponseMessage: action.message,
-      };
-
-    case actions.SEARCH_BANK_USER_FAIL:
-      return {
-        ...state,
-        Loading: false,
-        searchBankUsers: [],
-        ResponseMessage: action.message,
-      };
-
     case actions.UPDATE_USER_BY_USERID_INIT:
       return {
         ...state,
@@ -78,6 +29,31 @@ const securityReducer = (state = initialState, action) => {
         ...state,
         Loading: false,
         updateUserByBank: "",
+        ResponseMessage: action.message,
+      };
+
+    case actions.SEARCH_GET_BANK_USER_LIST_INIT:
+      return {
+        ...state,
+        Loading: true,
+        Spinner: true,
+      };
+
+    case actions.SEARCH_GET_BANK_USER_LIST_SUCCESS:
+      return {
+        ...state,
+        Loading: false,
+        Spinner: false,
+        searchGetBankUserList: action.response,
+        ResponseMessage: action.message,
+      };
+
+    case actions.SEARCH_GET_BANK_USER_LIST_FAIL:
+      return {
+        ...state,
+        Loading: false,
+        Spinner: false,
+        searchGetBankUserList: [],
         ResponseMessage: action.message,
       };
 

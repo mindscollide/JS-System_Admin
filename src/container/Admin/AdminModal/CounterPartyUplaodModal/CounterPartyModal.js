@@ -17,14 +17,16 @@ const CounterPartyModal = ({ uploadCounterModal, setUploadCounterModal }) => {
   const dispatch = useDispatch();
   const { uploadReducer, systemReducer } = useSelector((state) => state);
   console.log(uploadReducer, "uploadReduceruploadReduceruploadReducer");
-  // for close modal handler
-  const closeUploadCounterPartyModal = () => {
-    setUploadCounterModal(false);
-  };
 
   const [validCorporates, setValidCorporates] = useState([]);
   const [invalidCorporates, setInvalidCorporates] = useState([]);
   console.log(validCorporates, invalidCorporates, "excelDataexcelData");
+  // for close modal handler
+  const closeUploadCounterPartyModal = () => {
+    setUploadCounterModal(false);
+    setValidCorporates([]);
+    setInvalidCorporates([]);
+  };
 
   // for save counter party modal API
   const onSaveHit = () => {
@@ -48,8 +50,7 @@ const CounterPartyModal = ({ uploadCounterModal, setUploadCounterModal }) => {
   useEffect(() => {
     if (
       uploadReducer.uploadValidCorporates !== null &&
-      uploadReducer.uploadValidCorporates !== undefined &&
-      Object.keys(uploadReducer.uploadValidCorporates).length > 0
+      uploadReducer.uploadValidCorporates !== undefined
     ) {
       if (uploadReducer.uploadValidCorporates.validCorporates.length > 0) {
         let validCor = [];
@@ -159,7 +160,7 @@ const CounterPartyModal = ({ uploadCounterModal, setUploadCounterModal }) => {
                       column={columns}
                       rows={validCorporates}
                       pagination={false}
-                      scroll={{ y: 150 }}
+                      // scroll={{ y: 150 }}
                       className="Counter-Party-Modal-table"
                     />
                   </Col>
@@ -174,7 +175,7 @@ const CounterPartyModal = ({ uploadCounterModal, setUploadCounterModal }) => {
                       column={InValidColumn}
                       rows={invalidCorporates}
                       pagination={false}
-                      scroll={{ y: 200 }}
+                      // scroll={{ y: 200 }}
                       className="Counter-Party-Modal-table"
                     />
                   </Col>

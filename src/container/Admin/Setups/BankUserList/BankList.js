@@ -1,8 +1,9 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useRef } from "react";
 import { Col, Row, Container } from "react-bootstrap";
 import {
   CustomPaper,
   TextField,
+  Notification,
   Button,
   Table,
   Loader,
@@ -19,10 +20,11 @@ import {
   getUserBank,
   searchBankUserList,
   updateByUserIdBank,
+  bankListGetSearchApi, // THIS API FOR RENDERING AND SEARCHING
 } from "../../../../store/actions/Security-Admin";
 import BankUserListModal from "../../AdminModal/Bank-User-list-Modal/BankUserListModal";
 import Select from "react-select";
-import { Spin } from "antd";
+import { Spin, Pagination } from "antd";
 import "./BankList.css";
 import { useEffect } from "react";
 
@@ -31,9 +33,30 @@ const BankList = () => {
   const dispatch = useDispatch();
   const { auth, securityReducer } = useSelector((state) => state);
   console.log(auth, securityReducer, "systemAdminsystemAdmin");
+  let bankUserBankId =
+    localStorage.getItem("bankID") != undefined &&
+    localStorage.getItem("bankID") != null
+      ? localStorage.getItem("bankID")
+      : 1;
+
+  let currentPageSize = localStorage.getItem("BankListSize")
+    ? localStorage.getItem("BankListSize")
+    : 50;
+  let currentPage = localStorage.getItem("BankListPage")
+    ? localStorage.getItem("BankListPage")
+    : 1;
+
+  //this the email Ref for copy paste handler
+  const emailRef = useRef(null);
+
+  const [open, setOpen] = useState({
+    open: false,
+    message: "",
+  });
 
   // state for table rows
   const [rows, setRows] = useState([]);
+  const [totalRecords, setTotalRecord] = useState(0);
 
   //state for user Roles
   const [selectRole, setSelectRole] = useState([]);
@@ -56,17 +79,44 @@ const BankList = () => {
   useEffect(() => {
     dispatch(allUserRoles(navigate));
     dispatch(getStatusApi(navigate));
-
-    let bankUserSearch = {
+    let newDataBank = {
       FirstName: "",
       LastName: "",
       RoleID: 0,
       StatusID: 0,
+      LDAPAccount: "",
       Email: "",
-      Contact: "",
+      PageNumber: 1,
+      Length: 50,
     };
-    dispatch(searchBankUserList(navigate, bankUserSearch));
+    localStorage.setItem("BankListSize", 50);
+    localStorage.setItem("BankListPage", 1);
+    dispatch(bankListGetSearchApi(navigate, newDataBank));
   }, []);
+
+  // this api is used for table data rendering
+  useEffect(() => {
+    if (
+      securityReducer.searchGetBankUserList.length > 0 &&
+      securityReducer.searchGetBankUserList !== null &&
+      securityReducer.searchGetBankUserList !== undefined &&
+      securityReducer.searchGetBankUserList !== ""
+    ) {
+      setRows(securityReducer.searchGetBankUserList);
+      setOpen({
+        ...open,
+        open: true,
+        message: "Record Found",
+      });
+    } else {
+      setRows([]);
+      setOpen({
+        ...open,
+        open: true,
+        message: "No Record Found",
+      });
+    }
+  }, [securityReducer.searchGetBankUserList]);
 
   //state for bank list fields
   const [bankListFields, setBankListFields] = useState({
@@ -81,7 +131,7 @@ const BankList = () => {
       errorStatus: false,
     },
 
-    ldapAccount: {
+    LDAPAccount: {
       value: "",
       errorMessage: "",
       errorStatus: false,
@@ -106,7 +156,7 @@ const BankList = () => {
     },
 
     BankId: {
-      value: 1,
+      value: bankUserBankId ? bankUserBankId : 1,
       errorMessage: "",
       errorStatus: false,
     },
@@ -138,23 +188,20 @@ const BankList = () => {
       errorMessage: "",
       errorStatus: false,
     },
+
     userID: {
       value: 0,
       errorMessage: "",
       errorStatus: false,
     },
+
     userStatus: {
       value: 0,
       errorMessage: "",
       errorStatus: false,
     },
-    contactNumber: {
-      value: "",
-      errorMessage: "",
-      errorStatus: false,
-    },
 
-    ldapAccount: {
+    LDAPAccount: {
       value: "",
       errorMessage: "",
       errorStatus: false,
@@ -247,25 +294,7 @@ const BankList = () => {
 
   // func to open viewBankModal
   const openViewModal = async (record) => {
-    let newStatus;
     console.log(record, "recordrecord");
-
-    // try {
-    //   if (Object.keys(auth.allUserStatus).length > 0) {
-    //     await auth.allUserStatus.map((data, index) => {
-    //       console.log(data, record, "openViewCustomerModal");
-    //       if (data.corporateName === record.userStatusID) {
-    //         newStatus = {
-    //           label: data.corporateName,
-    //           value: data.statusID,
-    //         };
-    //       }
-    //     });
-    //   }
-    // } catch {
-    //   console.log("error on company Corporate select");
-    // }
-
     try {
       if (Object.keys(record).length > 0) {
         console.log(record, "openViewCustomerModal");
@@ -299,57 +328,21 @@ const BankList = () => {
           },
           userRoleID: {
             value: record.userRoleID,
-          },
-          contactNumber: {
-            value: record.contactNumber,
             errorMessage: "",
             errorStatus: false,
           },
-
-          ldapAccount: {
+          LDAPAccount: {
             value: record.ldapAccount,
+            errorMessage: "",
+            errorStatus: false,
           },
         });
       }
+      setBankModal(true);
     } catch {
       console.log("error on TextFields");
     }
-    setBankModal(true);
   };
-
-  // dispatch get all bank user list API
-  useEffect(() => {
-    let newBankList = {
-      BankId: bankListFields.BankId.value,
-    };
-    dispatch(getUserBank(navigate, newBankList));
-  }, []);
-
-  // dispatch search bank User api
-  useEffect(() => {
-    if (
-      securityReducer.searchBankUsers.length > 0 &&
-      securityReducer.searchBankUsers !== null &&
-      securityReducer.searchBankUsers !== undefined
-    ) {
-      setRows(securityReducer.searchBankUsers);
-    } else {
-      setRows([]);
-    }
-  }, [securityReducer.searchBankUsers]);
-
-  //this use Effect is used to show bank user list data in table
-  useEffect(() => {
-    if (
-      securityReducer.bankUserList !== null &&
-      securityReducer.bankUserList !== undefined &&
-      securityReducer.bankUserList.length > 0
-    ) {
-      setRows(securityReducer.bankUserList);
-    } else {
-      setRows([]);
-    }
-  }, [securityReducer.bankUserList]);
 
   // on search Button hit in bank user list
   const onSearchHit = async () => {
@@ -358,11 +351,49 @@ const BankList = () => {
       LastName: bankListFields.LastName.value,
       RoleID: bankListFields.userRoles.value,
       StatusID: bankListFields.userStatus.value,
+      LDAPAccount: bankListFields.LDAPAccount.value,
       Email: bankListFields.Email.value,
-      Contact: "",
+      PageNumber: currentPage !== null ? parseInt(currentPage) : 1,
+      Length: currentPageSize !== null ? parseInt(currentPageSize) : 50,
     };
-    console.log(bankUserSearch, "bankUserSearchbankUserSearch");
-    await dispatch(searchBankUserList(navigate, bankUserSearch));
+    await dispatch(bankListGetSearchApi(navigate, bankUserSearch));
+  };
+
+  // onchange of bankList Pagination Handler
+  const BankListPagination = async (current, pageSize) => {
+    let bankUserSearch = {
+      FirstName: bankListFields.FirstName.value,
+      LastName: bankListFields.LastName.value,
+      RoleID: bankListFields.userRoles.value,
+      StatusID: bankListFields.userStatus.value,
+      LDAPAccount: bankListFields.LDAPAccount.value,
+      Email: bankListFields.Email.value,
+      PageNumber: current !== null ? parseInt(current) : 1,
+      Length: pageSize !== null ? parseInt(pageSize) : 50,
+    };
+    localStorage.setItem("BankListSize", pageSize);
+    localStorage.setItem("BankListPage", current);
+    await dispatch(bankListGetSearchApi(navigate, bankUserSearch));
+  };
+
+  // this is the paste handler for email in which extra space doesn't paste
+  const emailHandlerPaste = (event) => {
+    event.preventDefault();
+    const clipboardData = event.clipboardData || window.clipboardData;
+    const pastedText = clipboardData.getData("text/plain");
+    const trimmedText = pastedText.trim();
+
+    const input = emailRef.current;
+    document.execCommand("insertText", false, trimmedText);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+  };
+
+  // this is the copy handler in which copy doesn't allow to copy extra space
+  const emailHandlerCopy = (event) => {
+    event.preventDefault();
+    const input = emailRef.current;
+    input.select();
+    document.execCommand("copy");
   };
 
   //on update button click in bank view modal
@@ -372,29 +403,28 @@ const BankList = () => {
         FirstName: bankViewField.FirstName.value,
         Lastname: bankViewField.LastName.value,
         UserRoleID: bankViewField.userRoleID.value,
-        ContactNumber: bankViewField.contactNumber.value,
         Email: bankViewField.Email.value,
         UserID: bankViewField.userID.value,
       },
     };
-    let newBankList = {
-      BankId: bankListFields.BankId.value,
-    };
+
     let bankUserSearch = {
       FirstName: "",
       LastName: "",
       RoleID: 0,
       StatusID: 0,
+      LDAPAccount: "",
       Email: "",
-      Contact: "",
+      PageNumber: 1,
+      Length: 50,
     };
     dispatch(
       updateByUserIdBank(
         navigate,
         newBankUserData,
         setBankModal,
-        bankUserSearch,
-        newBankList
+        bankUserSearch
+        // newBankList
       )
     );
   };
@@ -444,22 +474,22 @@ const BankList = () => {
       });
     }
 
-    if (name === "ldapAccount" && value !== "") {
+    if (name === "LDAPAccount" && value !== "") {
       console.log("valuevalueemailvaluevalueemail", value);
       if (value !== "") {
         setBankListFields({
           ...bankListFields,
-          ldapAccount: {
+          LDAPAccount: {
             value: value.trimStart(),
             errorMessage: "",
             errorStatus: false,
           },
         });
       }
-    } else if (name === "ldapAccount" && value === "") {
+    } else if (name === "LDAPAccount" && value === "") {
       setBankListFields({
         ...bankListFields,
-        ldapAccount: {
+        LDAPAccount: {
           value: "",
           errorMessage: "",
           errorStatus: true,
@@ -510,27 +540,60 @@ const BankList = () => {
       ...bankListFields,
       FirstName: {
         value: "",
+        errorMessage: "",
+        errorStatus: false,
       },
-
       LastName: {
         value: "",
+        errorMessage: "",
+        errorStatus: false,
       },
 
-      ldapAccount: {
+      LDAPAccount: {
         value: "",
+        errorMessage: "",
+        errorStatus: false,
       },
 
       Email: {
         value: "",
+        errorMessage: "",
+        errorStatus: false,
+      },
+
+      userRoles: {
+        value: 0,
+        errorMessage: "",
+        errorStatus: false,
+      },
+
+      userStatus: {
+        value: 0,
+        errorMessage: "",
+        errorStatus: false,
+      },
+
+      BankId: {
+        value: bankUserBankId ? bankUserBankId : 1,
+        errorMessage: "",
+        errorStatus: false,
       },
     });
     setSelectStatusValue([]);
     setSelectRoleValue([]);
-
-    let newBankList = {
-      BankId: bankListFields.BankId.value,
+    let newDataBank = {
+      FirstName: "",
+      LastName: "",
+      RoleID: 0,
+      StatusID: 0,
+      LDAPAccount: "",
+      Email: "",
+      PageNumber: 1,
+      Length: 50,
     };
-    dispatch(getUserBank(navigate, newBankList));
+    localStorage.setItem("BankListSize", 50);
+    localStorage.setItem("BankListPage", 1);
+    dispatch(bankListGetSearchApi(navigate, newDataBank));
   };
 
   //on change handler for user select role
@@ -596,11 +659,13 @@ const BankList = () => {
       dataIndex: "email",
       key: "email",
       width: "200px",
+      align: "center",
+      ellipsis: true,
       render: (text, record) => {
         console.log(record, "recordrecord");
         return (
           <label
-            className="table-columns"
+            className="table-columns-Banklist"
             onClick={() => openViewModal(record)}
           >
             {text}
@@ -612,7 +677,8 @@ const BankList = () => {
       title: <label className="bottom-table-header">First Name</label>,
       dataIndex: "firstName",
       key: "firstName",
-      width: "120px",
+      width: "100px",
+      ellipsis: true,
       align: "center",
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
@@ -620,7 +686,8 @@ const BankList = () => {
       title: <label className="bottom-table-header">Last Name</label>,
       dataIndex: "lastname",
       key: "lastname",
-      width: "120px",
+      width: "100px",
+      ellipsis: true,
       align: "center",
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
@@ -628,7 +695,7 @@ const BankList = () => {
       title: <label className="bottom-table-header">LDAP Account</label>,
       dataIndex: "ldapAccount",
       key: "ldapAccount",
-      width: "180px",
+      width: "150px",
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -637,8 +704,8 @@ const BankList = () => {
       title: <label className="bottom-table-header">Role</label>,
       dataIndex: "userRoleID",
       key: "userRoleID",
-      width: "60px",
       align: "center",
+      width: "100px",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
@@ -646,8 +713,8 @@ const BankList = () => {
       title: <label className="bottom-table-header">Status</label>,
       dataIndex: "userStatusID",
       key: "userStatusID",
-      width: "60px",
       align: "center",
+      width: "100px",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
@@ -660,7 +727,7 @@ const BankList = () => {
           <span className="customer-List-label">Bank User List</span>
         </Col>
       </Row>
-      <Row className="mt-3">
+      <Row className="mt-2">
         <Col lg={12} md={12} sm={12}>
           <CustomPaper className="customer-List-paper">
             <Row className="mt-3">
@@ -691,6 +758,9 @@ const BankList = () => {
                   value={bankListFields.Email.value}
                   onChange={bankListValidation}
                   onBlur={handlerEmail}
+                  onPaste={emailHandlerPaste}
+                  onCopy={emailHandlerCopy}
+                  ref={emailRef}
                   labelClass="d-none"
                   className="textfields-customer-list-fontsize"
                 />
@@ -698,8 +768,8 @@ const BankList = () => {
               <Col lg={3} md={3} sm={12}>
                 <TextField
                   placeholder="LDAP Account"
-                  name="ldapAccount"
-                  value={bankListFields.ldapAccount.value}
+                  name="LDAPAccount"
+                  value={bankListFields.LDAPAccount.value}
                   onChange={bankListValidation}
                   labelClass="d-none"
                   className="textfields-customer-list-fontsize"
@@ -758,11 +828,27 @@ const BankList = () => {
                   <Table
                     column={columns}
                     rows={rows}
-                    pagination={true}
+                    pagination={false}
+                    // scroll={{
+                    //   y: 240,
+                    // }}
                     // scroll={{ x: 500, y: 200 }}
                     className="BankUserList-table"
                   />
                 )}
+              </Col>
+            </Row>
+            <Row className="mt-2">
+              <Col lg={12} md={12} sm={12}>
+                <Pagination
+                  total={totalRecords}
+                  onChange={BankListPagination}
+                  current={currentPage !== null ? currentPage : 1}
+                  showSizeChanger
+                  pageSizeOptions={[30, 50, 100, 200]}
+                  pageSize={currentPageSize !== null ? currentPageSize : 50}
+                  className="PaginationStyle-CustomerLogin"
+                />
               </Col>
             </Row>
           </CustomPaper>
@@ -782,7 +868,8 @@ const BankList = () => {
           />
         </Fragment>
       ) : null}
-      {securityReducer.Loading ? <Loader /> : null}
+      <Notification setOpen={setOpen} open={open.open} message={open.message} />
+      {securityReducer.Loading || auth.Loading ? <Loader /> : null}
     </section>
   );
 };

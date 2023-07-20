@@ -1,21 +1,19 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect, useRef } from "react";
 import { Col, Row, Container } from "react-bootstrap";
 import {
   CustomPaper,
   TextField,
+  Notification,
   Button,
   Table,
   Loader,
 } from "../../../../components/elements";
 import { validateEmail } from "../../../../commen/functions/emailValidation";
-import {
-  bankUserLogin,
-  searchBankLogin,
-} from "../../../../store/actions/Auth-Actions";
+import { bankUserSeacrhGetLogin } from "../../../../store/actions/Auth-Actions";
 import { bankUserDownloadReport } from "../../../../store/actions/Download-Report";
 import Select from "react-select";
 import { useNavigate } from "react-router-dom";
-import { Spin } from "antd";
+import { Spin, Pagination } from "antd";
 import "./UserLogin.css";
 import moment from "moment";
 import DatePicker from "react-multi-date-picker";
@@ -24,9 +22,35 @@ import { useSelector, useDispatch } from "react-redux";
 const UserLogin = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [totalRecords, setTotalRecord] = useState(0);
   const { auth, downloadReducer } = useSelector((state) => state);
+
+  const [open, setOpen] = useState({
+    open: false,
+    message: "",
+  });
+
   // state for set data from api in rows
   const [rows, setRows] = useState([]);
+
+  //this the email Ref for copy paste handler
+  const emailRef = useRef(null);
+
+  // state for disable the previous date from end date by selecting date from start date
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+
+  // select current date
+  const minDate = new Date();
+
+  let bankUserBankId = localStorage.getItem("bankID");
+
+  let currentPageSize = localStorage.getItem("BankLoginHistorySize")
+    ? localStorage.getItem("BankLoginHistorySize")
+    : 50;
+  let currentPage = localStorage.getItem("BankLoginHistoryPage")
+    ? localStorage.getItem("BankLoginHistoryPage")
+    : 1;
 
   // state for category dropdown
   const [selectCategoryBank, setSelectCategoryBank] = useState([]);
@@ -75,17 +99,52 @@ const UserLogin = () => {
       errorStatus: false,
     },
   });
+  console.log(userLoginHistory, "userLoginHistoryuserLoginHistory");
 
-  // useEffect for render data inside bank user login table
+  // dispatch api for bankSearchGet
   useEffect(() => {
-    let newData = {
-      BankID: userLoginHistory.BankID.value,
+    let newDataa = {
+      FirstName: "",
+      LastName: "",
+      BankName: "",
+      Email: "",
+      FromDate: "",
+      ToDate: "",
+      PageNumber: 1,
+      Length: 50,
+      BankID: parseInt(bankUserBankId),
     };
-    dispatch(bankUserLogin(navigate, newData));
+    dispatch(bankUserSeacrhGetLogin(navigate, newDataa));
   }, []);
+
+  // this api is used for table data rendering
+  useEffect(() => {
+    if (
+      auth.bankGetSearchLoginHistory.length > 0 &&
+      auth.bankGetSearchLoginHistory !== null &&
+      auth.bankGetSearchLoginHistory !== undefined &&
+      auth.bankGetSearchLoginHistory !== ""
+    ) {
+      setRows(auth.bankGetSearchLoginHistory);
+      setOpen({
+        ...open,
+        open: true,
+        message: "Record Found",
+      });
+    } else {
+      setRows([]);
+      setOpen({
+        ...open,
+        open: true,
+        message: "No Record Found",
+      });
+    }
+  }, [auth.bankGetSearchLoginHistory]);
 
   //start date state of multi datepicker
   const changeDateStartHandler = (date) => {
+    setStartDate(date);
+    setEndDate(null);
     let newDate = moment(date).format("YYYY-MM-DD");
     setUserLoginHistory({
       ...userLoginHistory,
@@ -98,6 +157,7 @@ const UserLogin = () => {
 
   //end date state of multi datepicker
   const changeDateEndHandler = (date) => {
+    setEndDate(date);
     let newEndDate = moment(date).format("YYYY-MM-DD");
     setUserLoginHistory({
       ...userLoginHistory,
@@ -105,6 +165,7 @@ const UserLogin = () => {
         value: newEndDate,
       },
     });
+    console.log(newEndDate, "changeDateEndHandler");
   };
 
   const userLoginValidation = (e) => {
@@ -195,13 +256,33 @@ const UserLogin = () => {
     }
   };
 
+  // this is the paste handler for email in which extra space doesn't paste
+  const emailHandlerPaste = (event) => {
+    event.preventDefault();
+    const clipboardData = event.clipboardData || window.clipboardData;
+    const pastedText = clipboardData.getData("text/plain");
+    const trimmedText = pastedText.trim();
+
+    const input = emailRef.current;
+    document.execCommand("insertText", false, trimmedText);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+  };
+
+  // this is the copy handler in which copy doesn't allow to copy extra space
+  const emailHandlerCopy = (event) => {
+    event.preventDefault();
+    const input = emailRef.current;
+    input.select();
+    document.execCommand("copy");
+  };
+
   // api hit on seacrh btn
   const searchButtonHit = async () => {
     let seacrhBankData = {
       FirstName: userLoginHistory.FirstName.value,
       LastName: userLoginHistory.LastName.value,
-      Email: userLoginHistory.Email.value,
       BankName: userLoginHistory.BankName.value,
+      Email: userLoginHistory.Email.value,
       FromDate:
         userLoginHistory.startDate.value !== ""
           ? moment(userLoginHistory.startDate.value).format("YYYYMMDD")
@@ -210,8 +291,11 @@ const UserLogin = () => {
         userLoginHistory.endDate.value !== ""
           ? moment(userLoginHistory.endDate.value).format("YYYYMMDD")
           : "",
+      PageNumber: currentPage !== null ? parseInt(currentPage) : 1,
+      Length: currentPageSize !== null ? parseInt(currentPageSize) : 50,
+      BankID: parseInt(bankUserBankId),
     };
-    await dispatch(searchBankLogin(navigate, seacrhBankData));
+    await dispatch(bankUserSeacrhGetLogin(navigate, seacrhBankData));
   };
 
   // api hit on download report bank user
@@ -230,6 +314,19 @@ const UserLogin = () => {
           ? moment(userLoginHistory.endDate.value).format("YYYYMMDD")
           : "",
     };
+    if (newReportData !== "") {
+      setOpen({
+        ...open,
+        open: true,
+        message: "Download Successfully",
+      });
+    } else {
+      setOpen({
+        ...open,
+        open: true,
+        message: "Download Failed",
+      });
+    }
     dispatch(bankUserDownloadReport(newReportData));
   };
 
@@ -283,10 +380,42 @@ const UserLogin = () => {
         value: "",
       },
     });
-    let newData = {
-      BankID: userLoginHistory.BankID.value,
+    let newDataa = {
+      FirstName: "",
+      LastName: "",
+      BankName: "",
+      Email: "",
+      FromDate: "",
+      ToDate: "",
+      PageNumber: 1,
+      Length: 50,
+      BankID: parseInt(bankUserBankId),
     };
-    dispatch(bankUserLogin(navigate, newData));
+    dispatch(bankUserSeacrhGetLogin(navigate, newDataa));
+  };
+
+  // onChange Handler for pagination
+  const BankLoginPagination = async (current, pageSize) => {
+    let seacrhBankData = {
+      FirstName: userLoginHistory.FirstName.value,
+      LastName: userLoginHistory.LastName.value,
+      BankName: userLoginHistory.BankName.value,
+      Email: userLoginHistory.Email.value,
+      FromDate:
+        userLoginHistory.startDate.value !== ""
+          ? moment(userLoginHistory.startDate.value).format("YYYYMMDD")
+          : "",
+      ToDate:
+        userLoginHistory.endDate.value !== ""
+          ? moment(userLoginHistory.endDate.value).format("YYYYMMDD")
+          : "",
+      PageNumber: current !== null ? parseInt(current) : 1,
+      Length: pageSize !== null ? parseInt(pageSize) : 50,
+      BankID: parseInt(bankUserBankId),
+    };
+    localStorage.setItem("BankLoginHistorySize", pageSize);
+    localStorage.setItem("BankLoginHistoryPage", current);
+    await dispatch(bankUserSeacrhGetLogin(navigate, seacrhBankData));
   };
 
   // column for LoginHistory
@@ -296,7 +425,8 @@ const UserLogin = () => {
       dataIndex: "email",
       key: "email",
       align: "center",
-      width: "250px",
+      width: "200px",
+      ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
     {
@@ -305,6 +435,7 @@ const UserLogin = () => {
       key: "firstName",
       align: "center",
       width: "100px",
+      ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
     {
@@ -312,23 +443,15 @@ const UserLogin = () => {
       dataIndex: "lastName",
       key: "lastName",
       width: "100px",
+      ellipsis: true,
       align: "center",
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
-    // {
-    //   title: <label className="bottom-table-header">Company</label>,
-    //   dataIndex: "companyName",
-    //   key: "companyName",
-    //   width: "100px",
-    //   align: "center",
-    //   ellipsis: true,
-    //   render: (text) => <label className="issue-date-column">{text}</label>,
-    // },
     {
       title: <label className="bottom-table-header">Bank Name</label>,
       dataIndex: "bankName",
       key: "bankName",
-      width: "100px",
+      width: "150px",
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
@@ -337,72 +460,44 @@ const UserLogin = () => {
       title: <label className="bottom-table-header">Ip Address</label>,
       dataIndex: "ipAddress",
       key: "ipAddress",
-      width: "100px",
+      width: "150px",
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
-    // {
-    //   title: <label className="bottom-table-header">LogIn Date</label>,
-    //   dataIndex: "loginDate",
-    //   key: "loginDate",
-    //   width: "150px",
-    //   align: "center",
-    //   ellipsis: true,
-    //   render: (text) => <label className="issue-date-column">{text}</label>,
-    // },
-    // {
-    //   title: <label className="bottom-table-header">Logged In Time</label>,
-    //   dataIndex: "loginTime",
-    //   key: "loginTime",
-    //   align: "center",
-    //   width: "150px",
-    //   ellipsis: true,
-    //   render: (text) => <label className="issue-date-column">{text}</label>,
-    // },
     {
       title: <label className="bottom-table-header">LoggedIn Date</label>,
       dataIndex: "CombineLoginInTimeDate",
       key: "CombineLoginInTimeDate",
-      width: "150px",
+      width: "200px",
       align: "center",
       ellipsis: true,
-      render: (_, record) => (
-        <label className="issue-date-column">
-          {record.loginDate} {record.loginTime}
-        </label>
-      ),
+      render: (_, record) => {
+        return (
+          <span>
+            {moment(`${record.loginDate} ${record.loginTime}`).format(
+              "YYYY-MM-DD HH:MM:ss"
+            )}{" "}
+          </span>
+        );
+      },
     },
-    // {
-    //   title: <label className="bottom-table-header">LogOut Date</label>,
-    //   dataIndex: "logOutDate",
-    //   key: "logOutDate",
-    //   width: "200px",
-    //   align: "center",
-    //   ellipsis: true,
-    //   render: (text) => <label className="issue-date-column">{text}</label>,
-    // },
-    // {
-    //   title: <label className="bottom-table-header">Logged Out Time</label>,
-    //   dataIndex: "logOutTime",
-    //   key: "logOutTime",
-    //   width: "200px",
-    //   align: "center",
-    //   ellipsis: true,
-    //   render: (text) => <label className="issue-date-column">{text}</label>,
-    // },
     {
       title: <label className="bottom-table-header">LoggOut Date</label>,
       dataIndex: "CombineLoggedOutTimeDate",
       key: "CombineLoggedOutTimeDate",
-      width: "150px",
+      width: "200px",
       align: "center",
       ellipsis: true,
-      render: (_, record) => (
-        <label className="issue-date-column">
-          {record.logOutDate} {record.logOutTime}
-        </label>
-      ),
+      render: (_, record) => {
+        return (
+          <span>
+            {moment(`${record.logOutDate} ${record.logOutTime}`).format(
+              "YYYY-MM-DD HH:MM:ss"
+            )}
+          </span>
+        );
+      },
     },
     {
       title: <label className="bottom-table-header">Total Span</label>,
@@ -413,43 +508,16 @@ const UserLogin = () => {
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
-
     {
       title: <label className="bottom-table-header">Interface</label>,
       dataIndex: "interface",
       key: "interface",
-      width: "188px",
+      width: "180px",
       align: "center",
       ellipsis: true,
       render: (text) => <label className="issue-date-column">{text}</label>,
     },
   ];
-
-  //this useEffect Condition is for when user hit search btn if data is same or not
-  useEffect(() => {
-    if (
-      auth.searchBankLogin !== null &&
-      auth.searchBankLogin !== undefined &&
-      auth.searchBankLogin.length > 0
-    ) {
-      setRows(auth.searchBankLogin);
-    } else {
-      setRows([]);
-    }
-  }, [auth.searchBankLogin]);
-
-  // render table inside table
-  useEffect(() => {
-    if (
-      auth.bankUserLoginHistory.length > 0 &&
-      auth.bankUserLoginHistory !== null &&
-      auth.bankUserLoginHistory !== undefined
-    ) {
-      setRows(auth.bankUserLoginHistory);
-    } else {
-      setRows([]);
-    }
-  }, [auth.bankUserLoginHistory]);
 
   return (
     <section className="SectionClasscontainer">
@@ -458,7 +526,7 @@ const UserLogin = () => {
           <span className="UserHistory-label"> Bank User Login History</span>
         </Col>
       </Row>
-      <Row className="mt-3">
+      <Row className="mt-2">
         <Col lg={12} md={12} sm={12}>
           <CustomPaper className="UserHistory-paper">
             <Row className="mt-3">
@@ -489,6 +557,9 @@ const UserLogin = () => {
                   value={userLoginHistory.Email.value}
                   onBlur={handlerEmail}
                   onChange={userLoginValidation}
+                  onPaste={emailHandlerPaste}
+                  onCopy={emailHandlerCopy}
+                  ref={emailRef}
                   labelClass="d-none"
                   className="UserHistory-textField-fontsize"
                 />
@@ -503,8 +574,15 @@ const UserLogin = () => {
                 className="userLoginHistory-Datepicker"
               >
                 <DatePicker
+                  selected={startDate}
+                  highlightToday={true}
+                  onOpenPickNewDate={false}
                   value={userLoginHistory.startDate.value}
                   placeholder="Start date"
+                  selectsStart
+                  startDate={startDate}
+                  endDate={endDate}
+                  minDate={new Date()}
                   showOtherDays={true}
                   onChange={(value) =>
                     changeDateStartHandler(value?.toDate?.().toString())
@@ -514,8 +592,17 @@ const UserLogin = () => {
                 <label className="userLoginHistory-date-to">to</label>
 
                 <DatePicker
+                  selected={endDate}
+                  highlightToday={true}
+                  onOpenPickNewDate={false}
                   value={userLoginHistory.endDate.value}
                   placeholder="End Date"
+                  selectsEnd
+                  startDate={startDate}
+                  endDate={endDate}
+                  minDate={
+                    startDate ? moment(startDate).add(1, "days").toDate() : null
+                  }
                   showOtherDays={true}
                   onChange={(value) =>
                     changeDateEndHandler(value?.toDate?.().toString())
@@ -536,7 +623,7 @@ const UserLogin = () => {
                 <Button
                   text="Search"
                   onClick={searchButtonHit}
-                  icon={<i className="icon-search"></i>}
+                  icon={<i className="icon-search Icons-right"></i>}
                   className={"Search-BankUserHistory-btn"}
                 />
                 <Button
@@ -548,7 +635,7 @@ const UserLogin = () => {
                 <Button
                   text="Downlaod Excel"
                   onClick={downloadExcelBankReport}
-                  icon={<i className="icon-download-excel"></i>}
+                  icon={<i className="icon-download-excel Icons-right"></i>}
                   className={"Download-Bank-Excel-btn"}
                 />
               </Col>
@@ -563,16 +650,30 @@ const UserLogin = () => {
                   <Table
                     column={userColumns}
                     rows={rows}
-                    pagination={true}
-                    scroll={{ x: 500, y: 200 }}
+                    pagination={false}
+                    // scroll={{ x: 500, y: 200 }}
                     className="UserHistory-table"
                   />
                 )}
               </Col>
             </Row>
+            <Row className="mt-2">
+              <Col lg={12} md={12} sm={12}>
+                <Pagination
+                  total={totalRecords}
+                  onChange={BankLoginPagination}
+                  current={currentPage !== null ? currentPage : 1}
+                  showSizeChanger
+                  pageSizeOptions={[30, 50, 100, 200]}
+                  pageSize={currentPageSize !== null ? currentPageSize : 50}
+                  className="PaginationStyle-CustomerLogin"
+                />
+              </Col>
+            </Row>
           </CustomPaper>
         </Col>
       </Row>
+      <Notification setOpen={setOpen} open={open.open} message={open.message} />
       {downloadReducer.Loading ? <Loader /> : null}
     </section>
   );

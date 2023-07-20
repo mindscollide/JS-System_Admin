@@ -13,6 +13,7 @@ const initialState = {
   saveValidCorporates: [],
   volGetMetersBankId: [],
   updateVolMeter: [],
+  updateCorporateByCorporateID: "",
 };
 
 const systemReducer = (state = initialState, action) => {
@@ -224,6 +225,28 @@ const systemReducer = (state = initialState, action) => {
         ...state,
         Loading: false,
         updateVolMeter: [],
+        ResponseMessage: action.message,
+      };
+
+    case actions.UPDATE_CORPORATE_BY_CORPORATE_INIT:
+      return {
+        ...state,
+        Loading: true,
+      };
+
+    case actions.UPDATE_CORPORATE_BY_CORPORATE_SUCCESS:
+      return {
+        ...state,
+        Loading: false,
+        updateCorporateByCorporateID: action.response,
+        ResponseMessage: action.message,
+      };
+
+    case actions.UPDATE_CORPORATE_BY_CORPORATE_FAIL:
+      return {
+        ...state,
+        Loading: false,
+        updateCorporateByCorporateID: "",
         ResponseMessage: action.message,
       };
 

@@ -4,7 +4,9 @@ import {
   CustomPaper,
   TextField,
   Button,
+  Notification,
   Table,
+  Loader,
 } from "../../../../components/elements";
 import { useDispatch, useSelector } from "react-redux";
 import CustomerListEditModal from "../../AdminModal/EditCustomerListModal/CustomerListEditModal";
@@ -14,18 +16,35 @@ import {
   getAllCategoriesCorporate,
   getNatureBusiness,
 } from "../../../../store/actions/Auth-Actions";
-import { corporateNameByBankId } from "../../../../store/actions/System-Admin";
-import { bankCorporateAPI } from "../../../../store/actions/System-Admin";
-import { Spin } from "antd";
+import {
+  corporateNameByBankId,
+  updateCorporateByApi,
+  bankCorporateAPI,
+} from "../../../../store/actions/System-Admin";
+import { Spin, Pagination } from "antd";
 import "./UserList.css";
 import { useEffect } from "react";
 
 const Userlist = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [totalRecords, setTotalRecord] = useState(0);
+
   const { systemReducer, auth } = useSelector((state) => state);
   // state for table rows
   const [rows, setRows] = useState([]);
+
+  const [open, setOpen] = useState({
+    open: false,
+    message: "",
+  });
+
+  let currentPageSize = localStorage.getItem("CustomerListSize")
+    ? localStorage.getItem("CustomerListSize")
+    : 50;
+  let currentPage = localStorage.getItem("CustomerListPage")
+    ? localStorage.getItem("CustomerListPage")
+    : 1;
 
   // for edit modal in customer list
   const [editCustomerListModal, setEditCustomerListModal] = useState(false);
@@ -57,16 +76,16 @@ const Userlist = () => {
 
   // dispatch API in for bank Corporate
   useEffect(() => {
-    let Data = {
+    let newData = {
       BankID: 1,
       CorporateName: "",
       NatureOfBussinessId: 0,
       AssetTypeID: 0,
       CategoryId: 0,
       PageNumber: 1,
-      Length: 3,
+      Length: 50,
     };
-    dispatch(bankCorporateAPI(navigate, Data));
+    dispatch(bankCorporateAPI(navigate, newData));
     dispatch(getAllCategoriesCorporate(navigate));
     dispatch(getNatureBusiness(navigate));
   }, []);
@@ -76,11 +95,22 @@ const Userlist = () => {
     if (
       systemReducer.bankCorporates.length > 0 &&
       systemReducer.bankCorporates !== null &&
-      systemReducer.bankCorporates !== undefined
+      systemReducer.bankCorporates !== undefined &&
+      systemReducer.bankCorporates !== ""
     ) {
       setRows(systemReducer.bankCorporates);
+      setOpen({
+        ...open,
+        open: true,
+        message: "Record Found",
+      });
     } else {
       setRows([]);
+      setOpen({
+        ...open,
+        open: true,
+        message: "No Record Found",
+      });
     }
   }, [systemReducer.bankCorporates]);
   console.log("bankCorporatessss", rows);
@@ -122,7 +152,7 @@ const Userlist = () => {
       systemReducer.corporateNameByBankId.map((data, index) => {
         console.log(data, "corporateNamecorporateName");
         tem.push({
-          // value: data.corporateID,
+          value: data.corporateID,
           label: data.corporateName,
         });
       });
@@ -166,6 +196,7 @@ const Userlist = () => {
     },
 
     corporatesName: {
+      value: 0,
       label: "",
       errorMessage: "",
       errorStatus: false,
@@ -202,6 +233,7 @@ const Userlist = () => {
                 errorStatus: false,
               },
               corporatesName: {
+                value: record.corporateID,
                 label: record.corporateName,
               },
               corporatesCategory: {
@@ -242,10 +274,53 @@ const Userlist = () => {
       NatureOfBussinessId: userListFields.natureofBusinesses.value,
       AssetTypeID: 0,
       CategoryId: userListFields.corporateCategoryID.value,
-      PageNumber: 1,
-      Length: 3,
+      PageNumber: currentPage !== null ? parseInt(currentPage) : 1,
+      Length: currentPageSize !== null ? parseInt(currentPageSize) : 50,
     };
     console.log("bankCorporateAPI", newData);
+    await dispatch(bankCorporateAPI(navigate, newData));
+  };
+
+  // update corporate by corporate Id on update button
+  const updateButtonHit = () => {
+    let newUpdateButton = {
+      NatureOfBussinessID: editCustomerList.natureBusiness.value,
+      CorporateId: editCustomerList.corporatesName.value,
+    };
+
+    let newDataaa = {
+      BankID: 1,
+      CorporateName: "",
+      NatureOfBussinessId: 0,
+      AssetTypeID: 0,
+      CategoryId: 0,
+      PageNumber: 1,
+      Length: 50,
+    };
+    dispatch(
+      updateCorporateByApi(
+        navigate,
+        newUpdateButton,
+        setEditCustomerListModal,
+        newDataaa
+      )
+    );
+  };
+
+  // onChange Handler for pagination
+  const CustomerPagination = async (current, pageSize) => {
+    let newData = {
+      BankID: parseInt(customerListBankId),
+      CorporateName: userListFields.corporateNames.label,
+      NatureOfBussinessId: userListFields.natureofBusinesses.value,
+      AssetTypeID: 0,
+      CategoryId: userListFields.corporateCategoryID.value,
+      PageNumber: current != null ? parseInt(current) : 1,
+      Length: pageSize != null ? parseInt(pageSize) : 50,
+    };
+    console.log("bankCorporateAPI", newData);
+    localStorage.setItem("CustomerListSize", pageSize);
+    localStorage.setItem("CustomerListPage", current);
     await dispatch(bankCorporateAPI(navigate, newData));
   };
 
@@ -282,7 +357,7 @@ const Userlist = () => {
     setUserListFields({
       ...userListFields,
       corporateNames: {
-        // value: selectedCompany.value,
+        value: selectedCompany.value,
         label: selectedCompany.label,
       },
     });
@@ -292,30 +367,34 @@ const Userlist = () => {
   const resetBtnHandler = () => {
     setUserListFields({
       ...userListFields,
-      corporateName: {
+      corporateNames: {
         value: "",
+        label: "",
+        errorMessage: "",
+        errorStatus: false,
       },
-      LastName: {
-        value: "",
+      natureofBusinesses: {
+        value: 0,
+        errorMessage: "",
+        errorStatus: false,
       },
-      companyName: {
-        value: "",
-      },
-      Email: {
-        value: "",
+      corporateCategoryID: {
+        value: 0,
+        errorMessage: "",
+        errorStatus: false,
       },
     });
-    let Data = {
+    let newData = {
       BankID: 1,
       CorporateName: "",
       NatureOfBussinessId: 0,
       AssetTypeID: 0,
       CategoryId: 0,
       PageNumber: 1,
-      Length: 3,
+      Length: 50,
     };
-    dispatch(bankCorporateAPI(navigate, Data));
-    console.log("bankCorporateAPI", Data);
+    dispatch(bankCorporateAPI(navigate, newData));
+    console.log("bankCorporateAPI", newData);
     setSelectCategoryValue([]);
     setSelectNatureBusinessValue([]);
     setSelectCorporateCompanyValue([]);
@@ -393,7 +472,7 @@ const Userlist = () => {
           <span className="user-List-label">Customer List</span>
         </Col>
       </Row>
-      <Row className="mt-3">
+      <Row className="mt-2">
         <Col lg={12} md={12} sm={12}>
           <CustomPaper className="user-List-paper">
             <Row className="mt-3">
@@ -458,11 +537,24 @@ const Userlist = () => {
                   <Table
                     column={columns}
                     rows={rows}
-                    pagination={true}
-                    scroll={{ x: 500, y: 200 }}
+                    pagination={false}
+                    // scroll={{ x: 500, y: 200 }}
                     className="User-List-table"
                   />
                 )}
+              </Col>
+            </Row>
+            <Row className="mt-2">
+              <Col lg={12} md={12} sm={12}>
+                <Pagination
+                  total={totalRecords}
+                  onChange={CustomerPagination}
+                  current={currentPage !== null ? currentPage : 1}
+                  showSizeChanger
+                  pageSizeOptions={[30, 50, 100, 200]}
+                  pageSize={currentPageSize !== null ? currentPageSize : 50}
+                  className="PaginationStyle-CustomerLogin"
+                />
               </Col>
             </Row>
           </CustomPaper>
@@ -481,9 +573,12 @@ const Userlist = () => {
             }
             natureOption={selectNatureBusiness}
             natureSelectValue={selectNatureBusinessValue}
+            updateButtonHit={updateButtonHit}
           />
         </Fragment>
       ) : null}
+      <Notification setOpen={setOpen} open={open.open} message={open.message} />
+      {systemReducer.Loading ? <Loader /> : null}
     </section>
   );
 };

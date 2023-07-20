@@ -5,6 +5,7 @@ import {
   TextField,
   Button,
   Loader,
+  Notification,
   Table,
 } from "../../../../components/elements";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,6 +24,11 @@ const VolMeter = () => {
   const { systemReducer } = useSelector((state) => state);
   console.log(systemReducer, "systemReducersystemReducer");
   let volBankId = localStorage.getItem("bankID");
+
+  const [open, setOpen] = useState({
+    open: false,
+    message: "",
+  });
 
   // state for volmeter array field
   const [volMeter, setVolMeter] = useState([]);
@@ -56,6 +62,19 @@ const VolMeter = () => {
     let newVolMeter = {
       BankId: parseInt(volBankId),
     };
+    if (newVolMeter !== "") {
+      setOpen({
+        ...open,
+        open: true,
+        message: "Record Found",
+      });
+    } else {
+      setOpen({
+        ...open,
+        open: true,
+        message: "No Record Found",
+      });
+    }
     dispatch(getVolMeter(navigate, newVolMeter));
   }, []);
 
@@ -182,7 +201,7 @@ const VolMeter = () => {
         </Col>
       </Row>
 
-      <Row className="mt-3">
+      <Row className="mt-2">
         <Col lg={12} md={12} sm={12}>
           <CustomPaper className="volMeter-paper">
             <Row className="mt-4">
@@ -252,6 +271,7 @@ const VolMeter = () => {
         </Col>
       </Row>
       {systemReducer.Loading ? <Loader /> : null}
+      <Notification setOpen={setOpen} open={open.open} message={open.message} />
     </section>
   );
 };

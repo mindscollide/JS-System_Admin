@@ -83,12 +83,6 @@ const Sidebar2 = () => {
     navigate("/AdminDashboard/Userlist");
   };
 
-  // const navigateToReport = () => {
-  //   localStorage.setItem("defaultOpenKey ", "sub1");
-  //   localStorage.setItem("defaultSelectedKey", "12");
-  //   navigate("/AdminDashboard/AssetBanking");
-  // };
-
   const navigateToCategoryManagement = () => {
     navigate("/AdminDashboard/categorymanagement");
     localStorage.setItem("defaultOpenKey ", "sub1");
@@ -107,11 +101,6 @@ const Sidebar2 = () => {
     navigate("/AdminDashboard/volMeter");
   };
 
-  //this will change the route on page refresh
-  // useEffect(() => {
-  //   navigate("/AdminDashboard/PropertyType");
-  // }, []);
-
   return (
     <Layout>
       <Sider width={250}>
@@ -128,28 +117,6 @@ const Sidebar2 = () => {
             title="Setup"
             className="submenu-sidebar-icons"
           >
-            {/* <Menu.Item
-                      className="menu-items-sidebar"
-                      key="3"
-                      onClick={navigateToProperty}
-                    >
-                      Property Type
-                    </Menu.Item> */}
-            {/* <Menu.Item
-                      className="menu-items-sidebar"
-                      key="4"
-                      onClick={navigateToApproval}
-                    >
-                      Approval Reason
-                    </Menu.Item> */}
-            {/* <Menu.Item
-                      className="menu-items-sidebar"
-                      key="5"
-                      onClick={navigateToRejection}
-                    >
-                      Rejection Reason
-                    </Menu.Item> */}
-
             <Menu.Item
               className="menu-items-sidebar"
               key="6"
@@ -195,14 +162,6 @@ const Sidebar2 = () => {
             >
               Category Management
             </Menu.Item>
-            {/* <Menu.Item
-                      className="menu-items-sidebar"
-                      key="12"
-                      onClick={navigateToReport}
-                    >
-                      Non-Banking Assets
-                    </Menu.Item> */}
-
             <Menu.Item
               className="menu-items-sidebar"
               key="12"
@@ -219,14 +178,6 @@ const Sidebar2 = () => {
               Vol Meter
             </Menu.Item>
           </SubMenu>
-          {/* <SubMenu
-                    key="sub2"
-                    icon={<i className="icon-user menu-icons"></i>}
-                    title="Reports"
-                    className="submenu-sidebar-icons"
-                  >
-                    
-                  </SubMenu> */}
         </Menu>
       </Sider>
     </Layout>

@@ -25,6 +25,12 @@ const downloadReducer = (state = initialState, action) => {
         Loading: true,
       };
 
+    case actions.DOWNLOAD_COUNTER_PARTY_REPORT_INIT:
+      return {
+        state,
+        Loading: true,
+      };
+
     default:
       return { ...state };
   }

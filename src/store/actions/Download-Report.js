@@ -3,6 +3,7 @@ import axios from "axios";
 import {
   downloadCorporateUserLogin,
   downloadBankUserLoginHistory,
+  counterPartyDownloadApi,
 } from "../../commen/apis/Api_config";
 import { RefreshToken } from "./Auth-Actions";
 import { downloadReportAPI } from "../../commen/apis/Api_ends_points";
@@ -132,4 +133,63 @@ const bankUserDownloadReport = (newReportData) => {
   };
 };
 
-export { downloadCorporateLoginReports, bankUserDownloadReport };
+// FOR DOWNLOAD COUNTER PARTY LIMIT REPORT FILE
+
+const downloadCounterFileInit = () => {
+  return {
+    type: actions.DOWNLOAD_COUNTER_PARTY_REPORT_INIT,
+  };
+};
+
+const counterPartyDownloadReport = (downloadCounterReport) => {
+  let token = JSON.parse(localStorage.getItem("token"));
+  let form = new FormData();
+  form.append("RequestMethod", counterPartyDownloadApi.RequestMethod);
+  form.append("RequestData", JSON.stringify(downloadCounterReport));
+  return (dispatch) => {
+    dispatch(downloadCounterFileInit());
+    axios({
+      method: "post",
+      url: downloadReportAPI,
+      data: form,
+      headers: {
+        _token: token,
+        "Content-Disposition": "attachment; filename=template.xlsx",
+        "Content-Type":
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      },
+      responseType: "arraybuffer",
+    })
+      .then(async (response) => {
+        console.log("counterPartyDownloadReport", response);
+
+        if (response.status === 417) {
+          await dispatch(RefreshToken());
+          dispatch(counterPartyDownloadReport(downloadCounterReport));
+        } else if (response.status === 200) {
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          console.log("counterPartyDownloadReport", url);
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute(
+            "download",
+            "download-counter-party-format-reports.xlsx"
+          );
+          document.body.appendChild(link);
+          link.click();
+
+          dispatch(loaderReport(false));
+        }
+      })
+      .catch((response) => {
+        console.log("counterPartyDownloadReport", response);
+        dispatch(SomeThingWentWrong(response));
+      });
+  };
+};
+
+export {
+  downloadCorporateLoginReports,
+  bankUserDownloadReport,
+  counterPartyDownloadReport,
+};

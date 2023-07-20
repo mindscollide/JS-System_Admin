@@ -25,7 +25,7 @@ const AdminDashboard = () => {
               style={{
                 width: "100%",
               }}
-              className="d-flex gap-4"
+              className="d-flex gap-3"
             >
               <Sidebar2 />
               <Outlet />

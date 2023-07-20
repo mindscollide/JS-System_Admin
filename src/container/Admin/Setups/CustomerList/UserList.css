@@ -13,7 +13,7 @@
 
 .user-List-paper {
   border-radius: 4px;
-  padding: 3px 10px !important;
+  padding: 10px 10px !important;
   width: 100% !important;
   overflow: hidden !important;
   background-color: #ffffff !important;
@@ -71,19 +71,27 @@
 
 .select-user-list-fontsize {
   font-size: 13px !important;
+  z-index: 20;
 }
 
 .User-List-table {
-  max-width: 100vw;
-  max-height: auto !important;
-  overflow: auto !important;
-  overflow-y: hidden;
+  max-height: 45vh !important;
+  max-width: 77vw;
+  width: 100%;
+  box-sizing: border-box !important;
+  overflow-x: auto !important;
   border-radius: 0px !important;
 }
 
 .User-List-table th.ant-table-cell {
   color: #ffffff !important;
   border-radius: 0% !important;
+  position: sticky !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  top: 0 !important;
+  z-index: 10;
   background: linear-gradient(to bottom, #5b67cd 0%, #2a38af 100%) !important;
 }
 
@@ -128,9 +136,64 @@
   font-size: 17px !important;
 }
 
-/* .User-list-user-spinner {
-    height: 40vh !important;
-    align-items: center !important;
-    display: flex;
-    justify-content: center !important;
-  } */
+/* for responsiveness on zoom in and zoom out */
+
+@media (max-width: 1300px) {
+  .User-List-table {
+    max-height: 45vh !important;
+    max-width: 75vw;
+    box-sizing: border-box !important;
+    border-radius: 0px !important;
+    overflow-x: scroll !important;
+  }
+}
+
+@media (max-width: 1100px) {
+  .User-List-table {
+    max-height: 45vh !important;
+    max-width: 72vw;
+    box-sizing: border-box !important;
+    border-radius: 0px !important;
+    overflow-x: scroll !important;
+  }
+}
+
+@media (max-width: 1000px) {
+  .User-List-table {
+    max-height: 45vh !important;
+    max-width: 67vw;
+    box-sizing: border-box !important;
+    border-radius: 0px !important;
+    overflow-x: scroll !important;
+  }
+}
+
+@media (min-width: 1500px) {
+  .User-List-table {
+    max-height: 45vh !important;
+    max-width: 80vw;
+    box-sizing: border-box !important;
+    border-radius: 0px !important;
+    overflow-x: scroll !important;
+  }
+}
+
+@media (min-width: 1600px) {
+  .User-List-table {
+    max-height: 45vh !important;
+    max-width: 82vw;
+    box-sizing: border-box !important;
+    border-radius: 0px !important;
+    overflow-x: scroll !important;
+  }
+}
+
+@media (min-width: 1800px) {
+  .User-List-table {
+    max-height: 45vh !important;
+    max-width: 100vw;
+    box-sizing: border-box !important;
+    border-radius: 0px !important;
+    overflow-x: scroll !important;
+  }
+}

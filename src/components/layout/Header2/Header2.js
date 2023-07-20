@@ -47,7 +47,7 @@ const Header = () => {
               </Nav>
             </Navbar.Collapse>
 
-            <Dropdown className="profilebtn-dropdown-header2">
+            <Dropdown>
               <Dropdown.Toggle className="dropdown-toggle-header2">
                 <p className="user-name-header2">Owais Wajid</p>
                 <img src={JohnCater} className="image-john-header2" />

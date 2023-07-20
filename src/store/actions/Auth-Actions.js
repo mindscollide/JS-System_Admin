@@ -7,15 +7,15 @@ import {
   authenticationRefreshToken,
   getCorporateCategory,
   userBankLoginHistory,
-  companySearchLoginHistory,
   bankSearchLoginHistory,
   getAllUserStatusERMAdmin,
   getAllCorporatesApiERM,
   getAllNatureAPI,
-  getCorporateUserLoginApiERM,
   getallCoporatesSystem,
   UpdateCorporateMapping,
   DeleteCategory,
+  searchGetCompanyUserLoginHistory,
+  searchGetBankUserLoginHistory,
 } from "../../commen/apis/Api_config";
 import {
   authenticationAPI,
@@ -510,11 +510,11 @@ const RefreshToken = (navigate) => {
 // signUp Api for userRole List
 const allUserRoles = (navigate) => {
   let token = JSON.parse(localStorage.getItem("token"));
-  return (dispatch) => {
+  return async (dispatch) => {
     dispatch(rolesInit());
     let form = new FormData();
     form.append("RequestMethod", authenticationRoleList.RequestMethod);
-    axios({
+    await axios({
       method: "POST",
       url: authenticationAPI,
       data: form,
@@ -753,103 +753,6 @@ const bankUserLogin = (navigate, newData) => {
   };
 };
 
-//Search Company User Login Hisory
-const searchCompanyInit = () => {
-  return {
-    type: actions.SEARCH_COMPANY_USER_LOGIN_INIT,
-  };
-};
-
-const searchCompanySuccess = (response, message) => {
-  return {
-    type: actions.SEARCH_COMPANY_USER_LOGIN_SUCCESS,
-    response: response,
-    message: message,
-  };
-};
-
-const serachCompanyFail = (message) => {
-  return {
-    type: actions.SEARCH_COMPANY_USER_LOGIN_FAIL,
-    message: message,
-  };
-};
-
-const searchCompanyLogin = (navigate, loginSearchData) => {
-  let token = JSON.parse(localStorage.getItem("token"));
-
-  return (dispatch) => {
-    dispatch(searchCompanyInit());
-    let form = new FormData();
-    form.append("RequestMethod", companySearchLoginHistory.RequestMethod);
-    form.append("RequestData", JSON.stringify(loginSearchData));
-    axios({
-      method: "post",
-      url: authenticationAPI,
-      data: form,
-      headers: {
-        _token: token,
-      },
-    })
-      .then(async (response) => {
-        if (response.data.responseCode === 417) {
-          await dispatch(RefreshToken(navigate));
-          dispatch(searchCompanyLogin(navigate, loginSearchData));
-        } else if (response.data.responseCode === 200) {
-          if (response.data.responseResult.isExecuted === true) {
-            if (
-              response.data.responseResult.responseMessage
-                .toLowerCase()
-                .includes(
-                  "ERM_AuthService_CommonManager_SearchCompanyUsersLoginHistory_01".toLowerCase()
-                )
-            ) {
-              dispatch(
-                searchCompanySuccess(
-                  response.data.responseResult.corporateUserLoginHistory,
-                  "Record Found"
-                )
-              );
-            } else if (
-              response.data.responseResult.responseMessage
-                .toLowerCase()
-                .includes(
-                  "ERM_AuthService_CommonManager_SearchCompanyUsersLoginHistory_02".toLowerCase()
-                )
-            ) {
-              dispatch(serachCompanyFail("No Record found"));
-            } else if (
-              response.data.responseResult.responseMessage
-                .toLowerCase()
-                .includes(
-                  "ERM_AuthService_CommonManager_SearchCompanyUsersLoginHistory_03".toLowerCase()
-                )
-            ) {
-              dispatch(serachCompanyFail("Invalid Role"));
-            } else if (
-              response.data.responseResult.responseMessage
-                .toLowerCase()
-                .includes(
-                  "ERM_AuthService_CommonManager_SearchCompanyUsersLoginHistory_04".toLowerCase()
-                )
-            ) {
-              dispatch(
-                serachCompanyFail("Exception No Corporate Customer Found")
-              );
-            }
-          } else {
-            dispatch(serachCompanyFail("Something went wrong"));
-          }
-        } else {
-          dispatch(serachCompanyFail("Something went wrong"));
-        }
-      })
-      .catch((response) => {
-        dispatch(serachCompanyFail("Something went wrong"));
-      });
-  };
-};
-
 // Search Bank User Login History
 const searchBankInit = () => {
   return {
@@ -969,12 +872,12 @@ const getAllStatusFail = (message) => {
 
 const getStatusApi = (navigate) => {
   let token = JSON.parse(localStorage.getItem("token"));
-  return (dispatch) => {
+  return async (dispatch) => {
     dispatch(getAllStatusInit());
     let form = new FormData();
     form.append("RequestMethod", getAllUserStatusERMAdmin.RequestMethod);
     form.append("RequestData", JSON.stringify());
-    axios({
+    await axios({
       method: "POST",
       url: authenticationAPI,
       data: form,
@@ -1063,7 +966,6 @@ const getAllCorporateCompany = (navigate) => {
     dispatch(categoryCompanyInit());
     let form = new FormData();
     form.append("RequestMethod", getAllCorporatesApiERM.RequestMethod);
-    form.append("RequestData", JSON.stringify());
     axios({
       method: "POST",
       url: authenticationAPI,
@@ -1150,7 +1052,6 @@ const getNatureBusiness = (navigate) => {
     dispatch(natureBusinessInit());
     let form = new FormData();
     form.append("RequestMethod", getAllNatureAPI.RequestMethod);
-    form.append("RequestData", JSON.stringify());
     axios({
       method: "POST",
       url: authenticationAPI,
@@ -1208,103 +1109,6 @@ const getNatureBusiness = (navigate) => {
       })
       .catch((response) => {
         dispatch(natureBusinessFail("something went wrong"));
-      });
-  };
-};
-
-//FOR CUSTOMER USER LOGIN HISTORY API
-
-const getCustomerLoginInit = () => {
-  return {
-    type: actions.GET_ALL_CORPORATE_LOGIN_HISTORY_INIT,
-  };
-};
-
-const getCustomerLoginSuccess = (response, message) => {
-  return {
-    type: actions.GET_ALL_CORPORATE_LOGIN_HISTORY_SUCCESS,
-    response: response,
-    message: message,
-  };
-};
-
-const getCustomerLoginFail = (message) => {
-  return {
-    type: actions.GET_ALL_CORPORATE_LOGIN_HISTORY_FAIL,
-    message: message,
-  };
-};
-
-const getCustomerLoginHistory = (navigate, loginData) => {
-  let token = JSON.parse(localStorage.getItem("token"));
-  return (dispatch) => {
-    dispatch(getCustomerLoginInit());
-    let form = new FormData();
-    form.append("RequestMethod", getCorporateUserLoginApiERM.RequestMethod);
-    form.append("RequestData", JSON.stringify(loginData));
-    axios({
-      method: "post",
-      url: authenticationAPI,
-      data: form,
-      headers: {
-        _token: token,
-      },
-    })
-      .then(async (response) => {
-        if (response.data.responseCode === 417) {
-          await dispatch(RefreshToken(navigate));
-          dispatch(getCustomerLoginHistory(navigate, loginData));
-        } else if (response.data.responseCode === 200) {
-          if (response.data.responseResult.isExecuted === true) {
-            if (
-              response.data.responseResult.responseMessage
-                .toLowerCase()
-                .includes(
-                  "ERM_AuthService_CommonManager_GetCorporateUsersLoginHistory_01".toLowerCase()
-                )
-            ) {
-              dispatch(
-                getCustomerLoginSuccess(
-                  response.data.responseResult.corporateUserLoginHistory,
-                  "Record Found"
-                )
-              );
-            } else if (
-              response.data.responseResult.responseMessage
-                .toLowerCase()
-                .includes(
-                  "ERM_AuthService_CommonManager_GetCorporateUsersLoginHistory_02".toLowerCase()
-                )
-            ) {
-              dispatch(getCustomerLoginFail("No record found"));
-            } else if (
-              response.data.responseResult.responseMessage
-                .toLowerCase()
-                .includes(
-                  "ERM_AuthService_CommonManager_GetCorporateUsersLoginHistory_03".toLowerCase()
-                )
-            ) {
-              dispatch(getCustomerLoginFail("Invalid role."));
-            } else if (
-              response.data.responseResult.responseMessage
-                .toLowerCase()
-                .includes(
-                  "ERM_AuthService_CommonManager_GetCorporateUsersLoginHistory_04".toLowerCase()
-                )
-            ) {
-              dispatch(
-                getCustomerLoginFail("Exception No login History Found")
-              );
-            }
-          } else {
-            dispatch(getCustomerLoginFail("Something went wrong"));
-          }
-        } else {
-          dispatch(getCustomerLoginFail("Something went wrong"));
-        }
-      })
-      .catch((response) => {
-        dispatch(getCustomerLoginFail("Something went wrong"));
       });
   };
 };
@@ -1608,6 +1412,199 @@ const DeleteCorporateCategoryAPI = (navigate, data, setDeleteRejectModal) => {
       });
   };
 };
+
+// FOR USER LOGIN HISTORY SEARCH AND GET API
+const userLoginInit = () => {
+  return {
+    type: actions.SEARCH_GET_COMPANY_USER_LOGIN_INIT,
+  };
+};
+
+const userLoginSuccess = (response, message) => {
+  return {
+    type: actions.SEARCH_GET_COMPANY_USER_LOGIN_SUCCESS,
+    response: response,
+    message: message,
+  };
+};
+
+const userLoginFail = (message) => {
+  return {
+    type: actions.SEARCH_GET_COMPANY_USER_LOGIN_FAIL,
+    message: message,
+  };
+};
+
+const userSearhGetLoginHistory = (navigate, newData) => {
+  console.log(newData, "newDatanewDatanewData");
+  let token = JSON.parse(localStorage.getItem("token"));
+
+  return (dispatch) => {
+    dispatch(userLoginInit());
+    let form = new FormData();
+    form.append(
+      "RequestMethod",
+      searchGetCompanyUserLoginHistory.RequestMethod
+    );
+    form.append("RequestData", JSON.stringify(newData));
+    axios({
+      method: "POST",
+      url: authenticationAPI,
+      data: form,
+      headers: {
+        _token: token,
+      },
+    })
+      .then(async (response) => {
+        console.log("userloginuserlogin", response);
+        if (response.data.responseCode === 417) {
+          await dispatch(RefreshToken(navigate));
+          dispatch(userSearhGetLoginHistory(navigate, newData));
+        } else if (response.data.responseCode === 200) {
+          if (response.data.responseResult.isExecuted === true) {
+            if (
+              response.data.responseResult.responseMessage.toLowerCase() ===
+              "ERM_AuthService_CommonManager_SearchCompanyUsersLoginHistory_01".toLowerCase()
+            ) {
+              console.log("userloginuserloginuserloginuserlogin", response);
+              dispatch(
+                userLoginSuccess(
+                  response.data.responseResult.corporateUserLoginHistory,
+                  "Record found"
+                )
+              );
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "ERM_AuthService_CommonManager_SearchCompanyUsersLoginHistory_02".toLowerCase()
+                )
+            ) {
+              dispatch(userLoginFail("No Record Found"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "ERM_AuthService_CommonManager_SearchCompanyUsersLoginHistory_03".toLowerCase()
+                )
+            ) {
+              dispatch(userLoginFail("Invalid role"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "ERM_AuthService_CommonManager_SearchCompanyUsersLoginHistory_04".toLowerCase()
+                )
+            ) {
+              dispatch(userLoginFail("Exception Something went wrong"));
+            }
+          } else {
+            dispatch(userLoginFail("Something went wrong"));
+          }
+        } else {
+          dispatch(userLoginFail("Something went wrong"));
+        }
+      })
+      .catch((response) => {
+        dispatch(userLoginFail("something went wrong"));
+      });
+  };
+};
+
+//FOR BANK USER LOGIN HISTORY SEARCH AND GET API
+const bankUserLoginInit = () => {
+  return {
+    type: actions.SEARCH_GET_BANK_USER_LOGIN_INIT,
+  };
+};
+
+const bankUserLoginSuccess = (response, message) => {
+  return {
+    type: actions.SEARCH_GET_BANK_USER_LOGIN_SUCCESS,
+    response: response,
+    message: message,
+  };
+};
+
+const bankUserLoginFail = (message) => {
+  return {
+    type: actions.SEARCH_GET_BANK_USER_LOGIN_FAIL,
+    message: message,
+  };
+};
+
+const bankUserSeacrhGetLogin = (navigate, newDataa, seacrhBankData) => {
+  let token = JSON.parse(localStorage.getItem("token"));
+
+  return (dispatch) => {
+    dispatch(bankUserLoginInit());
+    let form = new FormData();
+    form.append("RequestMethod", searchGetBankUserLoginHistory.RequestMethod);
+    form.append("RequestData", JSON.stringify(newDataa, seacrhBankData));
+    axios({
+      method: "POST",
+      url: authenticationAPI,
+      data: form,
+      headers: {
+        _token: token,
+      },
+    })
+      .then(async (response) => {
+        console.log("userloginuserlogin", response);
+        if (response.data.responseCode === 417) {
+          await dispatch(RefreshToken(navigate));
+          dispatch(bankUserSeacrhGetLogin(navigate, newDataa, seacrhBankData));
+        } else if (response.data.responseCode === 200) {
+          if (response.data.responseResult.isExecuted === true) {
+            if (
+              response.data.responseResult.responseMessage.toLowerCase() ===
+              "ERM_AuthService_CommonManager_SearchBankUsersLoginHistory_01".toLowerCase()
+            ) {
+              console.log("userloginuserloginuserloginuserlogin", response);
+              dispatch(
+                bankUserLoginSuccess(
+                  response.data.responseResult.bankUserLoginHistory,
+                  "Record found"
+                )
+              );
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "ERM_AuthService_CommonManager_SearchBankUsersLoginHistory_02".toLowerCase()
+                )
+            ) {
+              dispatch(bankUserLoginFail("No Record Found"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "ERM_AuthService_CommonManager_SearchBankUsersLoginHistory_03".toLowerCase()
+                )
+            ) {
+              dispatch(bankUserLoginFail("Invalid role"));
+            } else if (
+              response.data.responseResult.responseMessage
+                .toLowerCase()
+                .includes(
+                  "ERM_AuthService_CommonManager_SearchBankUsersLoginHistory_04".toLowerCase()
+                )
+            ) {
+              dispatch(bankUserLoginFail("Exception Something went wrong"));
+            }
+          } else {
+            dispatch(bankUserLoginFail("Something went wrong"));
+          }
+        } else {
+          dispatch(bankUserLoginFail("Something went wrong"));
+        }
+      })
+      .catch((response) => {
+        dispatch(bankUserLoginFail("something went wrong"));
+      });
+  };
+};
+
 export {
   logIn,
   signUp,
@@ -1616,13 +1613,13 @@ export {
   allUserRoles,
   getAllCategoriesCorporate,
   bankUserLogin,
-  searchCompanyLogin,
   searchBankLogin,
   getStatusApi,
   getAllCorporateCompany,
   getNatureBusiness,
-  getCustomerLoginHistory,
   getAllCorporatesCategory,
   UpdatecorporateMapping,
   DeleteCorporateCategoryAPI,
+  userSearhGetLoginHistory,
+  bankUserSeacrhGetLogin,
 };

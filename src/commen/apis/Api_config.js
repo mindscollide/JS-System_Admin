@@ -24,11 +24,6 @@ const userBankLoginHistory = {
   RequestMethod: "ServiceManager.GetBankUsersLoginHistory",
 };
 
-// search company Users Login History Api
-const companySearchLoginHistory = {
-  RequestMethod: "ServiceManager.SearchCompanyUsersLoginHistory",
-};
-
 // search Bank Users Login History API
 const bankSearchLoginHistory = {
   RequestMethod: "ServiceManager.SearchBankUsersLoginHistory",
@@ -69,19 +64,9 @@ const getAllNatureAPI = {
   RequestMethod: "ServiceManager.GetAllNatureOfBussiness",
 };
 
-// get all Corporate Users Login History Api
-const getCorporateUserLoginApiERM = {
-  RequestMethod: "ServiceManager.GetCorporateUsersLoginHistory",
-};
-
 // get all Corporate Name By Bank ID
 const getCorporateNameApi = {
   RequestMethod: "ServiceManager.GetAllCorporateNameByBankID",
-};
-
-// get all bank users in bank user list page
-const getBankUserApi = {
-  RequestMethod: "ServiceManager.GetAllBankUsers",
 };
 
 const UpdateCorporateMapping = {
@@ -103,11 +88,6 @@ const UpdateCorporateCategory = {
 // for update on bank user list page UpdateUserByUserID
 const updateUserByUserIDApi = {
   RequestMethod: "ServiceManager.UpdateUserbyUserID",
-};
-
-// search bank user list API
-const searchBankListApi = {
-  RequestMethod: "ServiceManager.SearchBankUsers",
 };
 
 // download Reports coporateUserLogin History Report
@@ -151,6 +131,31 @@ const DeleteCategory = {
   RequestMethod: "ServiceManager.DeleteCorporateCategory",
 };
 
+// search company user login history this API is use for data rendering or searching(both)
+const searchGetCompanyUserLoginHistory = {
+  RequestMethod: "ServiceManager.SearchCompanyUsersLoginHistory",
+};
+
+// search bank user login history this API is use for data rendering or searching(both)
+const searchGetBankUserLoginHistory = {
+  RequestMethod: "ServiceManager.SearchBankUsersLoginHistory",
+};
+
+// search bank User List this API is used for data rendering or Searching(both)
+const searchGetBankUserList = {
+  RequestMethod: "ServiceManager.SearchBankUsers",
+};
+
+// updateCorporateByCorporateId in system Admin on Customer List page to update NAture Business
+const updateCorporateIdApi = {
+  RequestMethod: "ServiceManager.UpdateCorporateByCorporateID",
+};
+
+// download counter party file
+const counterPartyDownloadApi = {
+  RequestMethod: "DownloadFile",
+};
+
 export {
   authenticationLogIn,
   authenticationSignUp,
@@ -158,7 +163,6 @@ export {
   authenticationRoleList,
   getCorporateCategory,
   userBankLoginHistory,
-  companySearchLoginHistory,
   bankSearchLoginHistory,
   getAllCorporateUserSysAdmin,
   searchCorporateUsersSysAdmin,
@@ -167,9 +171,7 @@ export {
   updateCorporateApiSysAdmin,
   getAllBankCorporate,
   getAllNatureAPI,
-  getCorporateUserLoginApiERM,
   getCorporateNameApi,
-  getBankUserApi,
   UpdateCorporateMapping,
   Addcateogry,
   getallCoporatesSystem,
@@ -180,8 +182,12 @@ export {
   getCounterPartyLmit,
   saveCounterPartyApi,
   updateUserByUserIDApi,
-  searchBankListApi,
   VolatilityMeterAPI,
   addUpdateVolApi,
   DeleteCategory,
+  searchGetCompanyUserLoginHistory,
+  searchGetBankUserLoginHistory,
+  searchGetBankUserList,
+  updateCorporateIdApi,
+  counterPartyDownloadApi,
 };

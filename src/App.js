@@ -11,10 +11,6 @@ function App() {
       <Sidebar2 />
       <Header />
       <PropertyType />
-      {/* <Calculator /> */}
-      {/* <Client /> */}
-
-      <div className="App"></div>
     </>
   );
 }
