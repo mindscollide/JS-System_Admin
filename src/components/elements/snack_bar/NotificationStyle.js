@@ -12,13 +12,11 @@ export const useStyles = makeStyles((theme) => ({
       "linear-gradient(to bottom, #eeb592 0%, #fc6d0f 100%) !important",
     marginTop: theme.spacing(5),
     position: "relative",
-    zIndex: 50,
   },
   BackGroundfailed: {
     width: "100%",
     backgroundColor: "#ce0000",
     position: "relative",
     marginTop: theme.spacing(6),
-    zIndex: 50,
   },
 }));

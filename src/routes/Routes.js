@@ -29,25 +29,25 @@ export const router = createHashRouter(
     <>
       <Route exact path="SignUp" element={<SignUp />} />
       <Route exact path="/" element={<AdminLogin />} />
-      <Route element={<PrivateRoutes />}>
-        <Route exact path="SignUpRequest" element={<SignUpRequest />} />
-        <Route exact path="/AdminDashboard/" element={<AdminDashboard />}>
-          <Route path="" element={<PropertyType />} />
-          <Route path="PropertyType" element={<PropertyType />} />
-          <Route path="ApprovalReason" element={<ApprovalReason />} />
-          <Route path="RejectionReason" element={<RejectionReason />} />
-          <Route path="AssetBanking" element={<AssetsBanking />} />
-          <Route path="loginHistory" element={<LoginHistory />} />
-          <Route path="userLogin" element={<UserLogin />} />
-          <Route path="tradeCount" element={<TradeCount />} />
-          <Route path="counterLimit" element={<CounterLimit />} />
-          <Route path="volMeter" element={<VolMeter />} />
-          <Route path="BankList" element={<BankList />} />
-          <Route path="customerList" element={<Customerlist />} />
-          <Route path="Userlist" element={<Userlist />} />
-          <Route path="categorymanagement" element={<CategoryManagement />} />
-        </Route>
+      {/* <Route element={<PrivateRoutes />}> */}
+      <Route exact path="SignUpRequest" element={<SignUpRequest />} />
+      <Route exact path="/AdminDashboard/" element={<AdminDashboard />}>
+        <Route path="" element={<PropertyType />} />
+        <Route path="PropertyType" element={<PropertyType />} />
+        <Route path="ApprovalReason" element={<ApprovalReason />} />
+        <Route path="RejectionReason" element={<RejectionReason />} />
+        <Route path="AssetBanking" element={<AssetsBanking />} />
+        <Route path="loginHistory" element={<LoginHistory />} />
+        <Route path="userLogin" element={<UserLogin />} />
+        <Route path="tradeCount" element={<TradeCount />} />
+        <Route path="counterLimit" element={<CounterLimit />} />
+        <Route path="volMeter" element={<VolMeter />} />
+        <Route path="BankList" element={<BankList />} />
+        <Route path="customerList" element={<Customerlist />} />
+        <Route path="Userlist" element={<Userlist />} />
+        <Route path="categorymanagement" element={<CategoryManagement />} />
       </Route>
+      {/* </Route> */}
     </>
   )
 );

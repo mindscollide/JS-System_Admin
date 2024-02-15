@@ -121,6 +121,7 @@ const AdminLogin = () => {
                             value={loginCredentials.UserName}
                             className="form-comtrol-textfield"
                             placeholder="Email ID"
+                            autoComplete="off"
                             aria-label="Username"
                             onChange={setCredentialHandler}
                             aria-describedby="basic-addon1"
@@ -139,6 +140,7 @@ const AdminLogin = () => {
                             name="Password"
                             className="form-comtrol-textfield-password"
                             placeholder="Password"
+                            autoComplete="off"
                             onChange={setCredentialHandler}
                             // value={loginCredentials.Password}
                             aria-label="Username"

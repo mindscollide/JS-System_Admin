@@ -576,7 +576,7 @@ const UserLogin = () => {
                 <DatePicker
                   selected={startDate}
                   highlightToday={true}
-                  onOpenPickNewDate={false}
+                  onOpenPickNewDate={true}
                   value={userLoginHistory.startDate.value}
                   placeholder="Start date"
                   selectsStart
